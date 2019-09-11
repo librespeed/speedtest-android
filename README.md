@@ -1,6 +1,9 @@
  ![Speedtest-Android Logo](https://github.com/adolfintel/speedtest-android/blob/master/.github/Readme-Logo.png?raw=true)
  
 # Speedtest Android Template
+The Speedtest Android template allows you to configure and distribute an Android app that performs a speedtest using your existing [HTML5 Speedtest](https://github.com/adolfintel/speedtest) server(s).
+
+The template is easy to setup, customize and distribute.
  
 ## Try it
 Coming soon
