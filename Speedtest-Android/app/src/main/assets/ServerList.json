@@ -6,5 +6,29 @@
         "ulURL":"empty.php",
         "pingURL":"empty.php",
         "getIpURL":"getIP.php"
+    },
+    {
+        "name":"Bologna, Italy",
+        "server":"//st-be-bo1.infra.garr.it",
+        "dlURL":"garbage.php",
+        "ulURL":"empty.php",
+        "pingURL":"empty.php",
+        "getIpURL":"getIP.php"
+    },
+    {
+        "name":"Roma, Italy",
+        "server":"//st-be-rm2.infra.garr.it",
+        "dlURL":"garbage.php",
+        "ulURL":"empty.php",
+        "pingURL":"empty.php",
+        "getIpURL":"getIP.php"
+    },
+    {
+        "name":"Bari, Italy",
+        "server":"//st-be-ba1.infra.garr.it",
+        "dlURL":"garbage.php",
+        "ulURL":"empty.php",
+        "pingURL":"empty.php",
+        "getIpURL":"getIP.php"
     }
 ] 

@@ -8,7 +8,7 @@ import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.View;
 
-import your.name.here.speedtest.R;
+import com.dosse.speedtest.R;
 
 public class GaugeView extends View {
     private float strokeWidth;

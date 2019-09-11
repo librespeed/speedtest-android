@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="splashBackground">#6060AA</color>
+    <color name="splashText">#dce0df</color>
     <color name="appBackground">#FFFFFF</color>
     <color name="textColor">#404040</color>
     <color name="loadingColor">#6060AA</color>
