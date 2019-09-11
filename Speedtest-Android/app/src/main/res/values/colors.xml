@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="splashBackground">#6060AA</color>
+    <color name="appBackground">#FFFFFF</color>
+    <color name="textColor">#404040</color>
+    <color name="loadingColor">#6060AA</color>
+    <color name="gaugesBackground">#AACCCCCC</color>
+    <color name="progressBackground">#AACCCCCC</color>
+    <color name="progressColor">#AAAAAA</color>
+    <color name="dlGauge">#6060AA</color>
+    <color name="dlText">#616161</color>
+    <color name="ulGauge">#616161</color>
+    <color name="ulText">#616161</color>
+    <color name="pingText">#AA6060</color>
+    <color name="jitterText">#AA6060</color>
+    <color name="startButton_background">#6060AA</color>
+    <color name="startButton_text">#FFFFFF</color>
+    <color name="failButton_background">#6060AA</color>
+    <color name="failButton_text">#FFFFFF</color>
+    <color name="shareButton_background">#BF360C</color>
+    <color name="shareButton_text">#FFFFFF</color>
+    <color name="restartButton_background">#6060AA</color>
+    <color name="restartButton_text">#FFFFFF</color>
+    <color name="privacyLinks">#808080</color>
+</resources>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="GaugeView">
+        <attr name="gauge_backgroundColor" format="color" />
+        <attr name="gauge_fillColor" format="color" />
+        <attr name="gauge_strokeWidth" format="dimension" />
+        <attr name="gauge_startAngle" format="integer" />
+        <attr name="gauge_angles" format="integer" />
+        <attr name="gauge_maxValue" format="integer" />
+    </declare-styleable>
+</resources>

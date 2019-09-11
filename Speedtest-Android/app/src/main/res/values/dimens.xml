@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="text">16dp</dimen>
+    <dimen name="speedMeasure">20dp</dimen>
+    <dimen name="timeMeasure">18dp</dimen>
+    <dimen name="pingJitterLabel">18dp</dimen>
+    <dimen name="pingJitterText">32dp</dimen>
+    <dimen name="gaugeLabel">18dp</dimen>
+    <dimen name="gaugeText">36dp</dimen>
+    <dimen name="gaugeSize">150dp</dimen>
+    <dimen name="gaugeThickness">10dp</dimen>
+    <dimen name="progressSize">80dp</dimen>
+    <dimen name="ipInfoText">16dp</dimen>
+    <dimen name="privacyLinks">16dp</dimen>
+
+    <dimen name="pingArea_maxWidth">300dp</dimen>
+    <dimen name="gaugeArea_maxWidth">500dp</dimen>
+
+    <dimen name="logo_maxWidth">400dp</dimen>
+    <dimen name="logo_inapp_height">60dp</dimen>
+    <dimen name="loading_size">24dp</dimen>
+
+    <dimen name="failButton_text">16dp</dimen>
+    <dimen name="failButton_hPadding">6dp</dimen>
+    <dimen name="failButton_vPadding">6dp</dimen>
+    <dimen name="startButton_text">16dp</dimen>
+    <dimen name="startButton_hPadding">6dp</dimen>
+    <dimen name="startButton_vPadding">6dp</dimen>
+    <dimen name="shareButton_text">16dp</dimen>
+    <dimen name="shareButton_hPadding">6dp</dimen>
+    <dimen name="shareButton_vPadding">6dp</dimen>
+    <dimen name="restartButton_text">16dp</dimen>
+    <dimen name="restartButton_hPadding">6dp</dimen>
+    <dimen name="restartButton_vPadding">6dp</dimen>
+
+    <dimen name="margin_medium">16dp</dimen>
+    <dimen name="margin_sep">18dp</dimen>
+    <dimen name="margin_smallSep">8dp</dimen>
+    <dimen name="margin_largeSep">48dp</dimen>
+
+</resources>
