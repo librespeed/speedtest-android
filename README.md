@@ -3,10 +3,12 @@
 # Speedtest Android Template
 The Speedtest Android template allows you to configure and distribute an Android app that performs a speedtest using your existing [HTML5 Speedtest](https://github.com/adolfintel/speedtest) server(s).
 
-The template is easy to setup, customize and distribute.
+The template is easy to configure, customize and distribute.
  
 ## Try it
-Coming soon
+[Download Demo APK](https://downloads.fdossena.com/geth.php?r=speedtest-android-apk)
+
+Coming soon to F-Droid
 
 ## Compatibility
 Android 4.0.3 and up (SDK 15), all architectures.
