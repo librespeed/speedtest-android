@@ -1,10 +1,10 @@
  ![Speedtest-Android Logo](https://github.com/adolfintel/speedtest-android/blob/master/.github/Readme-Logo.png?raw=true)
  
-# Speedtest Android Template
-The Speedtest Android template allows you to configure and distribute an Android app that performs a speedtest using your existing [HTML5 Speedtest](https://github.com/adolfintel/speedtest) server(s).
+# Speedtest by Federico Dossena
+This demo shows how the Speedtest Android Template can be configured to work with your servers.
 
-The template is easy to configure, customize and distribute.
- 
+Test points are kindly provided by [Consortium GARR](https://garr.it) and [B2B Risk](https://b2brisk.com).
+
 ## Try it
 [Download Demo APK](https://downloads.fdossena.com/geth.php?r=speedtest-android-apk)
 
@@ -22,11 +22,6 @@ Android 4.0.3 and up (SDK 15), all architectures.
 * Telemetry (optional)
 * Results sharing (optional)
 * Multiple Points of Test (optional)
-
-![Screenshot](https://github.com/adolfintel/speedtest-android/blob/master/.github/screenshots.png?raw=true)
-
-## Server requirements
-One or more servers with [HTML5 Speedtest](https://github.com/adolfintel/speedtest) installed.
 
 ## Donate
 [![Donate with Liberapay](https://liberapay.com/assets/widgets/donate.svg)](https://liberapay.com/fdossena/donate)  
