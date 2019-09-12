@@ -161,7 +161,7 @@ Here's a list of all the test parameters. All parameters are optional. Do not ch
 * __`"useMebibits"`__: If set to true, the download and upload speeds will be measured in mebibits instead of megabits
     * Default: `false`
 * __`"test_order"`__: The order in which tests are performed. Each character in this string represents a test. Tests can only be run once
-    * Default: `"IP_D_U"
+    * Default: `"IP_D_U"`
     * `I`: IP address and ISP information
     * `P`: Ping+jitter test
     * `D`: Download test
@@ -574,7 +574,7 @@ __Methods:__
 * `getTotalDownloaded()`: returns the amount of downloaded data since the beginning or last reset
 * `join()`: waits for the instance of Downloader to die
 
-### `uploader` package
+### `upload` package
 ##### `Uploader` class
 A Thread that uses a Connection to upload an endless stream of POST request containing garbage data to the server. The upload starts immediately (no need to call `start()`).
 
@@ -819,7 +819,7 @@ __Methods:__
 
 * `clone()`: generates a clone of this object
 
-#### `TelemetryConfig` class
+##### `TelemetryConfig` class
 Stores the configuration for the telemetry, and provides some constants used throughout the application.
 
 __Constructors:__
