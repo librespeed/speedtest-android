@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Speedtest</string>
+    <string name="app_name">Speedtest by Federico Dossena</string>
     <string name="splash_text">By Federico Dossena</string>
     <string name="logo_inapp_link">https://speedtest.fdossena.com</string>
     <string name="privacy_policy">file:///android_asset/privacy_en.html</string>
