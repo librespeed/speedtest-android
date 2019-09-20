@@ -117,7 +117,7 @@ Here's a list of all the test parameters. All parameters are optional. Do not ch
 * __`"dl_parallelStreams"`__: Number of concurrent streams used by the download test.
     * Default: `3`
     * Recommended: `1`-`6`.
-* __`"dl_parallelStreams"`__: Number of concurrent streams used by the upload test.
+* __`"ul_parallelStreams"`__: Number of concurrent streams used by the upload test.
     * Default: `2`
     * Recommended: `1`-`6`.
 * __`"dl_streamDelay"`__: Delay in milliseconds between starts of concurrent streams in the download test
