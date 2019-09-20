@@ -3,6 +3,7 @@
     <dimen name="text">16dp</dimen>
     <dimen name="speedMeasure">20dp</dimen>
     <dimen name="timeMeasure">18dp</dimen>
+    <dimen name="serverText">14dp</dimen>
     <dimen name="pingJitterLabel">18dp</dimen>
     <dimen name="pingJitterText">32dp</dimen>
     <dimen name="gaugeLabel">18dp</dimen>

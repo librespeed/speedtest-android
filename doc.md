@@ -220,6 +220,7 @@ Here's a list of where each color is used:
 * __`ulText`__: Color of the text indicating the upload speed
 * __`pingText`__: Color of the text indicating the ping time
 * __`jitterText`__: Color of the text indicating the jitter time
+* __`serverText`__: Color of the text indicating the server name
 * __`startButton_background`__: Color of the start button
 * __`startButton_test`__: Color of the text in the start button
 * __`failButton_background`__: Color of the fail button (the one that says Retry)

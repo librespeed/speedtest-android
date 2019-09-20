@@ -237,6 +237,7 @@ public class MainActivity extends AppCompatActivity {
     private void page_test(final TestPoint selected){
         transition(R.id.page_test,TRANSITION_LENGTH);
         st.setSelectedServer(selected);
+        ((TextView)findViewById(R.id.serverName)).setText(selected.getName());
         ((TextView)findViewById(R.id.dlText)).setText(format(0));
         ((TextView)findViewById(R.id.ulText)).setText(format(0));
         ((TextView)findViewById(R.id.pingText)).setText(format(0));

@@ -209,9 +209,21 @@
                     android:layout_width="wrap_content"
                     android:layout_height="@dimen/logo_inapp_height"
                     android:id="@+id/logo_inapp"
-                    android:layout_marginBottom="@dimen/margin_sep"
+                    android:layout_marginBottom="@dimen/margin_smallSep"
                     android:src="@drawable/logo_inapp"
                     />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="SERVER NAME"
+                    android:gravity="center"
+                    android:layout_below="@id/logo_inapp"
+                    android:id="@+id/serverName"
+                    android:layout_marginBottom="@dimen/margin_sep"
+                    android:textColor="@color/serverText"
+                    android:textSize="@dimen/serverText"
+                    ></TextView>
 
                 <LinearLayout
                     android:layout_width="@dimen/pingArea_maxWidth"
@@ -219,7 +231,7 @@
                     android:id="@+id/pingArea"
                     android:gravity="center"
                     android:layout_centerHorizontal="true"
-                    android:layout_below="@+id/logo_inapp"
+                    android:layout_below="@+id/serverName"
                     >
 
                     <RelativeLayout
