@@ -373,7 +373,7 @@
                         <ProgressBar
                             android:layout_width="@dimen/progressSize"
                             android:layout_height="wrap_content"
-                            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                            style="@android:style/Widget.DeviceDefault.ProgressBar.Horizontal"
                             android:max="100"
                             android:layout_below="@id/dlGauge"
                             android:layout_centerHorizontal="true"
@@ -441,7 +441,7 @@
                         <ProgressBar
                             android:layout_width="@dimen/progressSize"
                             android:layout_height="wrap_content"
-                            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                            style="@android:style/Widget.DeviceDefault.ProgressBar.Horizontal"
                             android:max="100"
                             android:layout_below="@id/ulGauge"
                             android:layout_centerHorizontal="true"
