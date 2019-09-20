@@ -1,11 +1,11 @@
 package com.fdossena.speedtest.ui;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.View;
@@ -34,7 +34,7 @@ import java.util.Locale;
 
 import com.dosse.speedtest.R;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -237,6 +237,7 @@ public class MainActivity extends AppCompatActivity {
     private void page_test(final TestPoint selected){
         transition(R.id.page_test,TRANSITION_LENGTH);
         st.setSelectedServer(selected);
+        ((TextView)findViewById(R.id.serverName)).setText(selected.getName());
         ((TextView)findViewById(R.id.dlText)).setText(format(0));
         ((TextView)findViewById(R.id.ulText)).setText(format(0));
         ((TextView)findViewById(R.id.pingText)).setText(format(0));

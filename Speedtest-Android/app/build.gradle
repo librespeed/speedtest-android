@@ -7,8 +7,8 @@ android {
         applicationId 'com.dosse.speedtest'
         minSdkVersion 15
         targetSdkVersion 28
-        versionCode 1
-        versionName 'demo-1.0'
+        versionCode 2
+        versionName 'demo-1.1'
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -21,5 +21,4 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'com.android.support:appcompat-v7:28.0.0'
 }

@@ -1,7 +1,7 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="android:Theme.Holo.Light.DarkActionBar">
+    <style name="AppTheme" parent="android:Theme.Material.Light.DarkActionBar">
         <item name="android:textColor">@color/textColor</item>
         <item name="android:textSize">@dimen/text</item>
         <item name="android:windowBackground">@color/appBackground</item>
