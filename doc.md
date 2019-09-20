@@ -118,7 +118,7 @@ Here's a list of all the test parameters. All parameters are optional. Do not ch
     * Default: `3`
     * Recommended: `1`-`6`.
 * __`"ul_parallelStreams"`__: Number of concurrent streams used by the upload test.
-    * Default: `2`
+    * Default: `3`
     * Recommended: `1`-`6`.
 * __`"dl_streamDelay"`__: Delay in milliseconds between starts of concurrent streams in the download test
     * Default: `300`
@@ -141,7 +141,7 @@ Here's a list of all the test parameters. All parameters are optional. Do not ch
     * Default: `1.5`
     * Recommended: >`0`
 * __`"ul_graceTime"`__: Seconds at the beginning of the upload test where data is discarded (prevents initial spike due to buffering)
-    * Default: `3`
+    * Default: `1.5`
     * Recommended: >`0`
 * __`"errorHandlingMode"`__: What the test should do in case an error is encountered
     * `"fail"`: Fail the test immediately
@@ -180,7 +180,7 @@ Here's a list of all the test parameters. All parameters are optional. Do not ch
     * Default: `-1`
     * `-1` means System default
 * __`"ul_recvBuffer"`__, __`"ul_sendBuffer"`__: Sizes of socket buffers used in the upload test
-    * Default: `-1`
+    * Default: `-1` and `16384` respectively
     * `-1` means System default
 * __`"ping_recvBuffer"`__, __`"ping_sendBuffer"`__: Sizes of socket buffers used in the ping+jitter test
     * Default: `-1`
