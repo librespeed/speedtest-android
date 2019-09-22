@@ -243,7 +243,6 @@ Here's a description of each string:
 * __`privacy_policy`__: URL to the privacy policy for this specific locale. You can have multiple privacy policies for different languages in the assets folder
 * __`init_init`__: Displayed while the app is loading
 * __`initFail_configError`__: Error that appears if the configuration couldn't be loaded
-* __`initFail_noInternet`__: Error that appears if there is no internet connectivity
 * __`initFail_retry`__: Text of the Retry button when initialization or server selection fails
 * __`init_selecting`__: Displayed while the app is selecting a server
 * __`initFail_noServers`__: Displayed if no servers are available
