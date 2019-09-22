@@ -64,7 +64,6 @@ public abstract class Telemetry extends Thread{
             onDataReceived(data);
             c.close();
         }catch(Throwable t){
-            t.printStackTrace();
             try{c.close();}catch(Throwable t1){}
             onError(t.toString());
         }
