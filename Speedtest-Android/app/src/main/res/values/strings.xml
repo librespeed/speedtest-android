@@ -7,7 +7,6 @@
 
     <string name="init_init">Loading</string>
     <string name="initFail_configError">Configuration error</string>
-    <string name="initFail_noInternet">Check your Internet connection</string>
     <string name="initFail_retry">Retry</string>
     <string name="init_selecting">Selecting server</string>
     <string name="initFail_noServers">No servers available</string>
