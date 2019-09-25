@@ -1,7 +1,7 @@
- ![Speedtest-Android Logo](https://github.com/adolfintel/speedtest-android/blob/master/.github/Readme-Logo.png?raw=true)
+ ![LibreSpeed-Android Logo](https://github.com/librespeed/speedtest-android/blob/master/.github/Readme-Logo.png?raw=true)
  
 # Speedtest by Federico Dossena
-This demo shows how the Speedtest Android Template can be configured to work with your servers.
+This demo shows how the LibreSpeed Android Template can be configured to work with your servers.
 
 Test points are kindly provided by [Consortium GARR](https://garr.it) and [B2B Risk](https://b2brisk.com).
 
@@ -22,6 +22,8 @@ Android 4.0.3 and up (SDK 15), all architectures.
 * Telemetry (optional)
 * Results sharing (optional)
 * Multiple Points of Test (optional)
+
+![Screenshot](https://github.com/librespeed/speedtest-android/blob/master/.github/screenshots.png?raw=true)
 
 ## Donate
 [![Donate with Liberapay](https://liberapay.com/assets/widgets/donate.svg)](https://liberapay.com/fdossena/donate)  
