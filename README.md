@@ -1,7 +1,7 @@
- ![Speedtest-Android Logo](https://github.com/adolfintel/speedtest-android/blob/master/.github/Readme-Logo.png?raw=true)
+ ![LibreSpeed-Android Logo](https://github.com/adolfintel/speedtest-android/blob/master/.github/Readme-Logo.png?raw=true)
  
-# Speedtest Android Template
-The Speedtest Android template allows you to configure and distribute an Android app that performs a speedtest using your existing [HTML5 Speedtest](https://github.com/adolfintel/speedtest) server(s).
+# LibreSpeed Android Template
+The Speedtest Android template allows you to configure and distribute an Android app that performs a speedtest using your existing [LibreSpeed](https://github.com/librespeed/speedtest) server(s).
 
 The template is easy to configure, customize and distribute.
  
@@ -23,10 +23,10 @@ Android 4.0.3 and up (SDK 15), all architectures.
 * Results sharing (optional)
 * Multiple Points of Test (optional)
 
-![Screenshot](https://github.com/adolfintel/speedtest-android/blob/master/.github/screenshots.png?raw=true)
+![Screenshot](https://github.com/librespeed/speedtest-android/blob/master/.github/screenshots.png?raw=true)
 
 ## Server requirements
-One or more servers with [HTML5 Speedtest](https://github.com/adolfintel/speedtest) installed.
+One or more servers with [LibreSpeed](https://github.com/librespeed/speedtest) installed.
 
 ## Donate
 [![Donate with Liberapay](https://liberapay.com/assets/widgets/donate.svg)](https://liberapay.com/fdossena/donate)  

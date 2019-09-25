@@ -1,16 +1,16 @@
-# Speedtest Android template
+# LibreSpeed Android template
 
-The Speedtest Android template allows you to configure and distribute an Android app that performs a speedtest using your existing [HTML5 Speedtest](https://github.com/adolfintel/speedtest) server(s).
+The LibreSpeed Android template allows you to configure and distribute an Android app that performs a speedtest using your existing [LibreSpeed](https://github.com/librespeed/speedtest) server(s).
 
 ## Configuring the template
 Here's an overview of the structure of the template, configured with the default settings. Click to expand.
 
-[![Overview of the template](https://github.com/adolfintel/speedtest-android/blob/master/.github/template_fsm.png?raw=true)](https://github.com/adolfintel/speedtest-android/blob/master/.github/template_fsm.png?raw=true)
+[![Overview of the template](https://github.com/librespeed/speedtest-android/blob/master/.github/template_fsm.png?raw=true)](https://github.com/librespeed/speedtest-android/blob/master/.github/template_fsm.png?raw=true)
 
 ### Download the template
 The first thing to do is download latest version of the template:
 ```
-git clone https://github.com/adolfintel/speedtest-android
+git clone https://github.com/librespeed/speedtest-android
 ```
 
 Now you will have a directory containing the template project and some documentation. Open the Speedtest-Android project in Android Studio.
@@ -52,7 +52,7 @@ Expand app > assets and open ServerList.json. Here you will find a list of test 
 
 Here's a more in-depth explanation of what the individual fields for each servers are:
 * __`"name"`__: User friendly name (eg. `"Milan, Italy"`)
-* __`"server"`__: URL to the server where HTML5 Speedtest is installed. If it only supports HTTP or HTTPS, specify it; if it supports both, simply use // followed by the address
+* __`"server"`__: URL to the server where LibreSpeed is installed. If it only supports HTTP or HTTPS, specify it; if it supports both, simply use // followed by the address
 * __`"dlURL"`__: Path on your server where the download test can be performed (typically `"garbage.php"` or `"backend/garbage.php"`)
 * __`"urURL"`__: Path on your server where the upload test can be performed (typically `"empty.php"` or `"backend/empty.php"`)
 * __`"pingURL"`__: Path on your server where the ping/jitter test can be performed (typically `"empty.php"` or `"backend/empty.php"`)
@@ -61,7 +61,7 @@ Here's a more in-depth explanation of what the individual fields for each server
 __Important__: This app DOES NOT handle HTTP redirects (3xx codes)!
 
 ### Telemetry and results sharing
-If you want to enable telemetry and results sharing, edit TelemetryConfig.json. Here you need to add the information about your telemetry server (HTML5 Speedtest frontend server). This feature is disabled by default.
+If you want to enable telemetry and results sharing, edit TelemetryConfig.json. Here you need to add the information about your telemetry server (LibreSpeed frontend server). This feature is disabled by default.
 
 * Follow this syntax:  
 ```json
@@ -81,7 +81,7 @@ Here's a more in-depth explanation of what the individual fields are:
     * `"basic"`: Stores results for completed tests without log
     * `"full"`: Stores results and log for all tests, even if they are aborted or if they fail
     * Default: `"disabled"`
-* __`"server"`__: URL to the server where the HTML5 Speedtest telemetry is installed (the frontend server). If it only supports HTTP or HTTPS, specify it; if it supports both, simply use // followed by the address
+* __`"server"`__: URL to the server where the LibreSpeed telemetry is installed (the frontend server). If it only supports HTTP or HTTPS, specify it; if it supports both, simply use // followed by the address
 * __`"path"`__: Path on your server where telemetry can be stored (typically `results/telemetry.php`)
 * __`"shareURL"`__: Path on your server where the results sharing links point to (typically `results/?id=%s` or an empty string if you don't want to enable this feature). %s will be replaced by the test ID. Omit this if you don't want to use results sharing
 
@@ -262,7 +262,7 @@ Here's a description of each string:
 * __`privacy_close`__: Text of the link that closes the privacy policy
 
 ### The end
-Your template is now fully configured for your HTML5 Speedtest server(s). Enjoy!
+Your template is now fully configured for your LibreSpeed server(s). Enjoy!
 
 This template is licensed under the [GNU LGPLv3 License](https://www.gnu.org/licenses/lgpl-3.0.en.html). In short, you are free to use, study, modify, and distribute modified copies of this application, but they must remain under the same GNU LGPLv3 license. This means that if you make any modification to the application, the source code must be made publicly available. Merely changing the configuration of this template as we did in this chapter does NOT count as a modified version, so you are free to distribute it as an APK, but any other change made to the app does count as a modification and you MUST provide the source code.
 
@@ -419,7 +419,7 @@ Note: aborting the test is not instantaneous. This is done asynchronously. If th
 ## Implementation details
 This chapter is dedicated to the inner workings of the `com.fdossena.speedtest.core` package. You don't need to read this section if you're just customizing the template or making a custom UI, it's only here if you need to make changes to how the speedtest client works.
 
-If you also need to know how the speedtest server works, see [here](https://github.com/adolfintel/speedtest/wiki/Implementation-details).
+If you also need to know how the speedtest server works, see [here](https://github.com/librespeed/speedtest/wiki/Implementation-details).
 
 __Remember that both the server and this client are under a GNU LGPLv3 license, so any modification you make to it MUST be publicly available in source form! No exceptions.__
 
@@ -725,7 +725,7 @@ public TestPoint(String name, String server, String dlURL, String ulURL, String 
 ```
 
 * `name`: User friendly name (eg. `"Milan, Italy"`)
-* `server`: URL to the server where HTML5 Speedtest is installed. If it only supports HTTP or HTTPS, specify it; if it supports both, simply use // followed by the address
+* `server`: URL to the server where LibreSpeed is installed. If it only supports HTTP or HTTPS, specify it; if it supports both, simply use // followed by the address
 * `dlURL`: Path on your server where the download test can be performed (typically `"garbage.php"` or `"backend/garbage.php"`)
 * `urURL`: Path on your server where the upload test can be performed (typically `"empty.php"` or `"backend/empty.php"`)
 * `pingURL`: Path on your server where the ping/jitter test can be performed (typically `"empty.php"` or `"backend/empty.php"`)
