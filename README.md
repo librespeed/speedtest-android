@@ -1,4 +1,4 @@
- ![LibreSpeed-Android Logo](https://github.com/adolfintel/speedtest-android/blob/master/.github/Readme-Logo.png?raw=true)
+![LibreSpeed-Android Logo](https://github.com/adolfintel/speedtest-android/blob/master/.github/Readme-Logo.png?raw=true)
  
 # LibreSpeed Android Template
 The Speedtest Android template allows you to configure and distribute an Android app that performs a speedtest using your existing [LibreSpeed](https://github.com/librespeed/speedtest) server(s).
@@ -6,9 +6,12 @@ The Speedtest Android template allows you to configure and distribute an Android
 The template is easy to configure, customize and distribute.
  
 ## Try it
-[Download Demo APK](https://downloads.fdossena.com/geth.php?r=speedtest-android-apk)
 
-Coming soon to F-Droid
+[<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png"
+     alt="Get it on F-Droid"
+     height="80">](https://f-droid.org/packages/com.dosse.speedtest/)
+
+Alternatively, you can [download a demo APK](https://downloads.fdossena.com/geth.php?r=speedtest-android-apk)
 
 ## Compatibility
 Android 4.0.3 and up (SDK 15), all architectures.
