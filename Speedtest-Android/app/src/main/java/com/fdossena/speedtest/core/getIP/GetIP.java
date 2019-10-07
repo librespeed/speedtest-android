@@ -33,10 +33,9 @@ public abstract class GetIP extends Thread{
             c.GET(s,true);
             HashMap<String,String> h=c.parseResponseHeaders();
             BufferedReader br=new BufferedReader(c.getInputStreamReader());
-            char[] buf=new char[Integer.parseInt(h.get("Content-Length"))];
+            char[] buf=new char[Integer.parseInt(h.get("content-length"))];
             br.read(buf);
             String data=new String(buf);
-            String type=h.get("Content-Type");
             onDataReceived(data);
             c.close();
         }catch(Throwable t){

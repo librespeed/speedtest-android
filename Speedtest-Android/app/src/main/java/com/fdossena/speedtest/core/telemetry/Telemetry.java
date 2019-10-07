@@ -56,7 +56,7 @@ public abstract class Telemetry extends Thread{
             ps.flush();
             HashMap<String,String> h=c.parseResponseHeaders();
             String data="";
-            String transferEncoding=h.get("Transfer-Encoding");
+            String transferEncoding=h.get("transfer-encoding");
             if(transferEncoding!=null&&transferEncoding.equalsIgnoreCase("chunked")){
                 c.readLineUnbuffered();
             }
