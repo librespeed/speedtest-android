@@ -21,7 +21,7 @@ public class Connection {
     private int mode=MODE_NOT_SET;
     private static final int MODE_NOT_SET=0, MODE_HTTP=1, MODE_HTTPS=2;
 
-    private static final String USER_AGENT="Speedtest-Android/1.1 (SDK "+Build.VERSION.SDK_INT+"; "+Build.PRODUCT+"; Android "+Build.VERSION.RELEASE+")",
+    private static final String USER_AGENT="Speedtest-Android/1.1.2 (SDK "+Build.VERSION.SDK_INT+"; "+Build.PRODUCT+"; Android "+Build.VERSION.RELEASE+")",
                                 LOCALE= Build.VERSION.SDK_INT>=21?Locale.getDefault().toLanguageTag():null;
 
     public Connection(String url, int connectTimeout, int soTimeout, int recvBuffer, int sendBuffer){
@@ -206,7 +206,7 @@ public class Connection {
                 s=readLineUnbuffered();
                 if(s.trim().isEmpty()) break;
                 if(s.contains(":")){
-                    ret.put(s.substring(0,s.indexOf(":")).trim(),s.substring(s.indexOf(":")+1).trim());
+                    ret.put(s.substring(0,s.indexOf(":")).trim().toLowerCase(),s.substring(s.indexOf(":")+1).trim());
                 }
             }
             return ret;
