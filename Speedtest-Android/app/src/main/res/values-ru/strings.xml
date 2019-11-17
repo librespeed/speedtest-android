@@ -1,0 +1,22 @@
+<resources>
+    <string name="logo_inapp_link">https://github.com/librespeed/speedtest-android</string>
+
+
+    <string name="init_init">Выгрузка</string>
+    <string name="initFail_configError">Ошибка конфигурации</string>
+    <string name="initFail_retry">Повтор</string>
+    <string name="init_selecting">Выбор сервера</string>
+    <string name="initFail_noServers">Нет доступных серверов</string>
+    <string name="serverSelect_message">Выберите сервер</string>
+    <string name="start">Начать</string>
+    <string name="test_dl">Загрузка</string>
+    <string name="test_ul">Выгрузка</string>
+    <string name="test_speedMeasure">Мб/с</string>
+    <string name="test_ping">Ping</string>
+    <string name="test_jitter">Jitter</string>
+    <string name="test_timeMeasure">мс</string>
+    <string name="test_share">Отправить результат</string>
+    <string name="test_restart">Новый тест</string>
+    <string name="testFail_err">Произошла ошибка</string>
+    <string name="testFail_retry">Попробуйте снова</string>
+</resources>
