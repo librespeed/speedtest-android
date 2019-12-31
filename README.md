@@ -1,4 +1,4 @@
- ![LibreSpeed-Android Logo](https://github.com/librespeed/speedtest-android/blob/master/.github/Readme-Logo.png?raw=true)
+![LibreSpeed-Android Logo](https://github.com/librespeed/speedtest-android/blob/master/.github/Readme-Logo.png?raw=true)
  
 # Speedtest by Federico Dossena
 This demo shows how the LibreSpeed Android Template can be configured to work with your servers.
@@ -6,9 +6,12 @@ This demo shows how the LibreSpeed Android Template can be configured to work wi
 Test points are kindly provided by [Consortium GARR](https://garr.it) and [B2B Risk](https://b2brisk.com).
 
 ## Try it
-[Download Demo APK](https://downloads.fdossena.com/geth.php?r=speedtest-android-apk)
 
-Coming soon to F-Droid
+[<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png"
+     alt="Get it on F-Droid"
+     height="80">](https://f-droid.org/packages/com.dosse.speedtest/)
+
+Alternatively, you can [download a demo APK](https://downloads.fdossena.com/geth.php?r=speedtest-android-apk)
 
 ## Compatibility
 Android 4.0.3 and up (SDK 15), all architectures.
