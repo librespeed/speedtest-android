@@ -33,10 +33,20 @@ public abstract class GetIP extends Thread{
             c.GET(s,true);
             HashMap<String,String> h=c.parseResponseHeaders();
             BufferedReader br=new BufferedReader(c.getInputStreamReader());
-            char[] buf=new char[Integer.parseInt(h.get("content-length"))];
-            br.read(buf);
-            String data=new String(buf);
-            onDataReceived(data);
+            if(h.get("content-length")!=null){
+                //standard encoding
+                char[] buf=new char[Integer.parseInt(h.get("content-length"))];
+                br.read(buf);
+                String data=new String(buf);
+                onDataReceived(data);
+            }else{
+                //chunked encoding hack. TODO: improve this garbage with proper chunked support
+                c.readLineUnbuffered(); //ignore first line
+                String data=c.readLineUnbuffered(); //actual info we want
+                c.readLineUnbuffered(); //ignore last line (0)
+                onDataReceived(data);
+            }
+
             c.close();
         }catch(Throwable t){
             try{c.close();}catch(Throwable t1){}

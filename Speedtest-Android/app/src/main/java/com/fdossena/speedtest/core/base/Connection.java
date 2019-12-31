@@ -1,6 +1,7 @@
 package com.fdossena.speedtest.core.base;
 
 import android.os.Build;
+import android.util.Log;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
