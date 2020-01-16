@@ -1,7 +1,5 @@
 package com.fdossena.speedtest.core.base;
 
-import android.os.Build;
-
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -9,6 +7,7 @@ import java.io.PrintStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Locale;
 
@@ -21,12 +20,11 @@ public class Connection {
     private int mode=MODE_NOT_SET;
     private static final int MODE_NOT_SET=0, MODE_HTTP=1, MODE_HTTPS=2;
 
-    private static final String USER_AGENT="Speedtest-Android/1.1.3 (SDK "+Build.VERSION.SDK_INT+"; "+Build.PRODUCT+"; Android "+Build.VERSION.RELEASE+")",
-                                LOCALE= Build.VERSION.SDK_INT>=21?Locale.getDefault().toLanguageTag():null;
+    private static final String USER_AGENT="LibreSpeed/2.0.0",
+                                LOCALE= Locale.getDefault() != null?Locale.getDefault().toLanguageTag():null;
 
     public Connection(String url, int connectTimeout, int soTimeout, int recvBuffer, int sendBuffer){
         boolean tryHTTP=false, tryHTTPS=false;
-        Locale.getDefault().toString();
         if(url.startsWith("http://")){
             tryHTTP=true;
             try{
@@ -136,7 +134,7 @@ public class Connection {
     public InputStreamReader getInputStreamReader(){
         if(isr==null){
             try{
-                isr=new InputStreamReader(getInputStream(),"utf-8");
+                isr=new InputStreamReader(getInputStream(), StandardCharsets.UTF_8);
             }catch(Throwable t){
                 isr=null;
             }
