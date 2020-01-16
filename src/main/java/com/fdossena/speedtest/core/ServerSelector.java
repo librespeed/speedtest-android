@@ -1,4 +1,4 @@
-package com.fdossena.speedtest.core.serverSelector;
+package com.fdossena.speedtest.core;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -7,9 +7,8 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import com.fdossena.speedtest.core.config.SpeedtestConfig;
-import com.fdossena.speedtest.core.ping.PingStream;
 
-public abstract class ServerSelector {
+abstract class ServerSelector {
     private ArrayList<TestPoint> servers=new ArrayList<>();
     private static final int PARALLELISM=6;
     private TestPoint selectedTestPoint=null;
@@ -19,20 +18,20 @@ public abstract class ServerSelector {
     private static final int PINGS=3, SLOW_THRESHOLD=500;
     private boolean stopASAP=false;
 
-    public ServerSelector(TestPoint[] servers, int timeout){
+    ServerSelector(TestPoint[] servers, int timeout){
         addTestPoints(servers);
         this.timeout=timeout;
     }
-    public void addTestPoint(TestPoint t){
+    void addTestPoint(TestPoint t){
         if(state!=NOT_STARTED) throw new IllegalStateException("Cannot add test points at this time");
         if(t==null) return;
         servers.add(t);
     }
-    public void addTestPoint(JSONObject t){
+    void addTestPoint(JSONObject t){
         if(state!=NOT_STARTED) throw new IllegalStateException("Cannot add test points at this time");
         servers.add(new TestPoint(t));
     }
-    public void addTestPoints(JSONArray a){
+    void addTestPoints(JSONArray a){
         if(state!=NOT_STARTED) throw new IllegalStateException("Cannot add test points at this time");
         for(int i=0;i<a.length();i++){
             try {
@@ -40,21 +39,21 @@ public abstract class ServerSelector {
             }catch (JSONException e){}
         }
     }
-    public void addTestPoints(TestPoint[] servers){
+    void addTestPoints(TestPoint[] servers){
         if(state!=NOT_STARTED) throw new IllegalStateException("Cannot add test points at this time");
         for(TestPoint t:servers) addTestPoint(t);
     }
 
-    public TestPoint getSelectedTestPoint() {
+    TestPoint getSelectedTestPoint() {
         if(state!=DONE) throw new IllegalStateException("Test point hasn't been selected yet");
         return selectedTestPoint;
     }
 
-    public TestPoint[] getTestPoints(){
+    TestPoint[] getTestPoints(){
         return servers.toArray(new TestPoint[0]);
     }
 
-    private Object mutex=new Object();
+    private final Object mutex=new Object();
     private int tpPointer=0;
     private int activeStreams=0;
     private void next(){
@@ -76,14 +75,14 @@ public abstract class ServerSelector {
             final TestPoint tp=servers.get(tpPointer++);
             PingStream ps=new PingStream(tp.getServer(),tp.getPingURL(),PINGS, SpeedtestConfig.ONERROR_FAIL,timeout,timeout,-1,-1,null) {
                 @Override
-                public void onError(String err) {
+                void onError(String err) {
                     tp.ping=-1;
                     synchronized (mutex){activeStreams--;}
                     next();
                 }
 
                 @Override
-                public boolean onPong(long ns) {
+                boolean onPong(long ns) {
                     float p=ns/1000000f;
                     if(tp.ping==-1||p<tp.ping) tp.ping=p;
                     if(stopASAP) return false;
@@ -91,7 +90,7 @@ public abstract class ServerSelector {
                 }
 
                 @Override
-                public void onDone() {
+                void onDone() {
                     synchronized (mutex){activeStreams--;}
                     next();
                 }
@@ -100,16 +99,16 @@ public abstract class ServerSelector {
         }
     }
 
-    public void start(){
+    void start(){
         if(state!=NOT_STARTED) throw new IllegalStateException("Already started");
         state=WORKING;
         for(TestPoint t:servers) t.ping=-1;
         for(int i=0;i<PARALLELISM;i++) next();
     }
 
-    public void stopASAP(){
+    void stopASAP(){
         stopASAP=true;
     }
 
-    public abstract void onServerSelected(TestPoint server);
+    abstract void onServerSelected(TestPoint server);
 }

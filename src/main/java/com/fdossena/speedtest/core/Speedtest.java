@@ -8,9 +8,6 @@ import java.util.ArrayList;
 
 import com.fdossena.speedtest.core.config.SpeedtestConfig;
 import com.fdossena.speedtest.core.config.TelemetryConfig;
-import com.fdossena.speedtest.core.serverSelector.ServerSelector;
-import com.fdossena.speedtest.core.serverSelector.TestPoint;
-import com.fdossena.speedtest.core.worker.SpeedtestWorker;
 
 public class Speedtest {
     private ArrayList<TestPoint> servers=new ArrayList<>();
@@ -19,7 +16,7 @@ public class Speedtest {
     private TelemetryConfig telemetryConfig=new TelemetryConfig();
     private int state=0; //0=configs, 1=test points, 2=server selection, 3=ready, 4=testing, 5=finished
 
-    private Object mutex=new Object();
+    private final Object mutex=new Object();
 
     private String originalExtra="";
 

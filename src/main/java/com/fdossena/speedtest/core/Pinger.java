@@ -1,15 +1,15 @@
-package com.fdossena.speedtest.core.ping;
+package com.fdossena.speedtest.core;
 
 import java.io.InputStream;
 
-import com.fdossena.speedtest.core.base.Connection;
+import com.fdossena.speedtest.core.Connection;
 
-public abstract class Pinger extends Thread{
+abstract class Pinger extends Thread{
     private Connection c;
     private String path;
     private boolean stopASAP=false;
 
-    public Pinger(Connection c, String path){
+    Pinger(Connection c, String path){
         this.c=c;
         this.path=path;
         start();
@@ -38,10 +38,10 @@ public abstract class Pinger extends Thread{
         }
     }
 
-    public abstract boolean onPong(long ns);
-    public abstract void onError(String err);
+    abstract boolean onPong(long ns);
+    abstract void onError(String err);
 
-    public void stopASAP(){
+    void stopASAP(){
         this.stopASAP=true;
     }
 }

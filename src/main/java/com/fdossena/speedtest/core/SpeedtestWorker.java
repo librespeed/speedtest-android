@@ -1,22 +1,22 @@
-package com.fdossena.speedtest.core.worker;
+package com.fdossena.speedtest.core;
 
 import org.json.JSONObject;
 
-import com.fdossena.speedtest.core.base.Connection;
-import com.fdossena.speedtest.core.base.Utils;
+import com.fdossena.speedtest.core.Connection;
+import com.fdossena.speedtest.core.Utils;
 import com.fdossena.speedtest.core.config.SpeedtestConfig;
 import com.fdossena.speedtest.core.config.TelemetryConfig;
-import com.fdossena.speedtest.core.download.DownloadStream;
-import com.fdossena.speedtest.core.getIP.GetIP;
-import com.fdossena.speedtest.core.log.Logger;
-import com.fdossena.speedtest.core.ping.PingStream;
-import com.fdossena.speedtest.core.serverSelector.TestPoint;
-import com.fdossena.speedtest.core.telemetry.Telemetry;
-import com.fdossena.speedtest.core.upload.UploadStream;
+import com.fdossena.speedtest.core.DownloadStream;
+import com.fdossena.speedtest.core.GetIP;
+import com.fdossena.speedtest.core.Logger;
+import com.fdossena.speedtest.core.PingStream;
+import com.fdossena.speedtest.core.TestPoint;
+import com.fdossena.speedtest.core.Telemetry;
+import com.fdossena.speedtest.core.UploadStream;
 
 import java.util.Locale;
 
-public abstract class SpeedtestWorker extends Thread{
+abstract class SpeedtestWorker extends Thread{
     private TestPoint backend;
     private SpeedtestConfig config;
     private TelemetryConfig telemetryConfig;
@@ -25,7 +25,7 @@ public abstract class SpeedtestWorker extends Thread{
     private String ipIsp="";
     private Logger log=new Logger();
 
-    public SpeedtestWorker(TestPoint backend, SpeedtestConfig config, TelemetryConfig telemetryConfig){
+    SpeedtestWorker(TestPoint backend, SpeedtestConfig config, TelemetryConfig telemetryConfig){
         this.backend=backend;
         this.config=config==null?new SpeedtestConfig():config;
         this.telemetryConfig=telemetryConfig==null?new TelemetryConfig():telemetryConfig;
@@ -68,7 +68,7 @@ public abstract class SpeedtestWorker extends Thread{
         }
         GetIP g = new GetIP(c, backend.getGetIpURL(), config.getGetIP_isp(), config.getGetIP_distance()) {
             @Override
-            public void onDataReceived(String data) {
+            void onDataReceived(String data) {
                 ipIsp=data;
                 try{
                     data=new JSONObject(data).getString("processedString");
@@ -78,7 +78,7 @@ public abstract class SpeedtestWorker extends Thread{
             }
 
             @Override
-            public void onError(String err) {
+            void onError(String err) {
                 log.l("GetIP: FAILED (took "+(System.currentTimeMillis()-start)+"ms)");
                 abort();
                 onCriticalFailure(err);
@@ -96,7 +96,7 @@ public abstract class SpeedtestWorker extends Thread{
         for(int i=0;i<streams.length;i++){
             streams[i]=new DownloadStream(backend.getServer(),backend.getDlURL(),config.getDl_ckSize(),config.getErrorHandlingMode(),config.getDl_connectTimeout(),config.getDl_soTimeout(),config.getDl_recvBuffer(),config.getDl_sendBuffer(),log) {
                 @Override
-                public void onError(String err) {
+                void onError(String err) {
                     log.l("Download: FAILED (took "+(System.currentTimeMillis()-start)+"ms)");
                     abort();
                     onCriticalFailure(err);
@@ -148,7 +148,7 @@ public abstract class SpeedtestWorker extends Thread{
         for(int i=0;i<streams.length;i++){
             streams[i]=new UploadStream(backend.getServer(),backend.getUlURL(),config.getUl_ckSize(),config.getErrorHandlingMode(),config.getUl_connectTimeout(),config.getUl_soTimeout(),config.getUl_recvBuffer(),config.getUl_sendBuffer(),log) {
                 @Override
-                public void onError(String err) {
+                void onError(String err) {
                     log.l("Upload: FAILED (took "+(System.currentTimeMillis()-start)+"ms)");
                     abort();
                     onCriticalFailure(err);
@@ -200,14 +200,14 @@ public abstract class SpeedtestWorker extends Thread{
             private double minPing=Double.MAX_VALUE, prevPing=-1;
             private int counter=0;
             @Override
-            public void onError(String err) {
+            void onError(String err) {
                 log.l("Ping: FAILED (took "+(System.currentTimeMillis()-start)+"ms)");
                 abort();
                 onCriticalFailure(err);
             }
 
             @Override
-            public boolean onPong(long ns) {
+            boolean onPong(long ns) {
                 counter++;
                 double ms = ns / 1000000.0;
                 if (ms < minPing) minPing = ms;
@@ -225,7 +225,7 @@ public abstract class SpeedtestWorker extends Thread{
             }
 
             @Override
-            public void onDone() {
+            void onDone() {
             }
         };
         ps.join();
@@ -241,14 +241,14 @@ public abstract class SpeedtestWorker extends Thread{
             Connection c=new Connection(telemetryConfig.getServer(),-1,-1,-1,-1);
             Telemetry t=new Telemetry(c,telemetryConfig.getPath(),telemetryConfig.getTelemetryLevel(),ipIsp,config.getTelemetry_extra(),dl==-1?"":String.format(Locale.ENGLISH,"%.2f",dl),ul==-1?"":String.format(Locale.ENGLISH,"%.2f",ul),ping==-1?"":String.format(Locale.ENGLISH,"%.2f",ping),jitter==-1?"":String.format(Locale.ENGLISH,"%.2f",jitter),log.getLog()) {
                 @Override
-                public void onDataReceived(String data) {
+                void onDataReceived(String data) {
                     if(data.startsWith("id")){
                         onTestIDReceived(data.split(" ")[1]);
                     }
                 }
 
                 @Override
-                public void onError(String err) {
+                void onError(String err) {
                     System.err.println("Telemetry error: "+err);
                 }
             };
@@ -259,19 +259,19 @@ public abstract class SpeedtestWorker extends Thread{
         }
     }
 
-    public void abort(){
+    void abort(){
         if(stopASAP) return;
         log.l("Manually aborted");
         stopASAP=true;
     }
 
-    public abstract void onDownloadUpdate(double dl, double progress);
-    public abstract void onUploadUpdate(double ul, double progress);
-    public abstract void onPingJitterUpdate(double ping, double jitter, double progress);
-    public abstract void onIPInfoUpdate(String ipInfo);
-    public abstract void onTestIDReceived(String id);
-    public abstract void onEnd();
+    abstract void onDownloadUpdate(double dl, double progress);
+    abstract void onUploadUpdate(double ul, double progress);
+    abstract void onPingJitterUpdate(double ping, double jitter, double progress);
+    abstract void onIPInfoUpdate(String ipInfo);
+    abstract void onTestIDReceived(String id);
+    abstract void onEnd();
 
-    public abstract void onCriticalFailure(String err);
+    abstract void onCriticalFailure(String err);
 
 }

@@ -1,18 +1,18 @@
-package com.fdossena.speedtest.core.download;
+package com.fdossena.speedtest.core;
 
 import java.io.InputStream;
 
-import com.fdossena.speedtest.core.base.Connection;
-import com.fdossena.speedtest.core.base.Utils;
+import com.fdossena.speedtest.core.Connection;
+import com.fdossena.speedtest.core.Utils;
 
-public abstract class Downloader extends Thread{
+abstract class Downloader extends Thread{
     private Connection c;
     private String path;
     private int ckSize;
     private boolean stopASAP=false, resetASAP=false;
     private long totDownloaded=0;
 
-    public Downloader(Connection c, String path, int ckSize){
+    Downloader(Connection c, String path, int ckSize){
         this.c=c;
         this.path=path;
         this.ckSize=ckSize<1?1:ckSize;
@@ -56,18 +56,18 @@ public abstract class Downloader extends Thread{
         }
     }
 
-    public void stopASAP(){
+    void stopASAP(){
         this.stopASAP=true;
     }
 
-    public abstract void onProgress(long downloaded);
-    public abstract void onError(String err);
+    abstract void onProgress(long downloaded);
+    abstract void onError(String err);
 
-    public void resetDownloadCounter(){
+    void resetDownloadCounter(){
         resetASAP=true;
     }
 
-    public long getDownloaded() {
+    long getDownloaded() {
         return resetASAP?0:totDownloaded;
     }
 }

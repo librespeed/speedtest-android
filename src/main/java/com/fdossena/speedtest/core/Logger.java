@@ -1,16 +1,16 @@
-package com.fdossena.speedtest.core.log;
+package com.fdossena.speedtest.core;
 
-public class Logger {
+class Logger {
     private String log="";
-    public Logger(){}
+    Logger(){}
 
-    public String getLog(){
+    String getLog(){
         synchronized (this){
             return log;
         }
     }
 
-    public void l(String s){
+    void l(String s){
         synchronized (this){
             log+=System.currentTimeMillis()+" "+s+"\n";
         }

@@ -1,4 +1,4 @@
-package com.fdossena.speedtest.core.base;
+package com.fdossena.speedtest.core;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -14,7 +14,7 @@ import java.util.Locale;
 import javax.net.SocketFactory;
 import javax.net.ssl.SSLSocketFactory;
 
-public class Connection {
+class Connection {
     private Socket socket;
     private String host; private int port;
     private int mode=MODE_NOT_SET;
@@ -23,7 +23,7 @@ public class Connection {
     private static final String USER_AGENT="LibreSpeed/2.0.0",
                                 LOCALE= Locale.getDefault() != null?Locale.getDefault().toLanguageTag():null;
 
-    public Connection(String url, int connectTimeout, int soTimeout, int recvBuffer, int sendBuffer){
+    Connection(String url, int connectTimeout, int soTimeout, int recvBuffer, int sendBuffer){
         boolean tryHTTP=false, tryHTTPS=false;
         if(url.startsWith("http://")){
             tryHTTP=true;
@@ -99,11 +99,11 @@ public class Connection {
     }
 
     private static final int DEFAULT_CONNECT_TIMEOUT=2000, DEFAULT_SO_TIMEOUT=5000;
-    public Connection(String url){
+    Connection(String url){
         this(url,DEFAULT_CONNECT_TIMEOUT,DEFAULT_SO_TIMEOUT,-1,-1);
     }
 
-    public InputStream getInputStream(){
+    InputStream getInputStream(){
         try{
             return socket.getInputStream();
         }catch (Throwable t){
@@ -111,7 +111,7 @@ public class Connection {
         }
     }
 
-    public OutputStream getOutputStream(){
+    OutputStream getOutputStream(){
         try{
             return socket.getOutputStream();
         }catch (Throwable t){
@@ -120,7 +120,7 @@ public class Connection {
     }
 
     private PrintStream ps=null;
-    public PrintStream getPrintStream(){
+    PrintStream getPrintStream(){
         if(ps==null){
             try{
                 ps=new PrintStream(getOutputStream(),false,"utf-8");
@@ -131,7 +131,7 @@ public class Connection {
         return ps;
     }
     private InputStreamReader isr=null;
-    public InputStreamReader getInputStreamReader(){
+    InputStreamReader getInputStreamReader(){
         if(isr==null){
             try{
                 isr=new InputStreamReader(getInputStream(), StandardCharsets.UTF_8);
@@ -142,7 +142,7 @@ public class Connection {
         return isr;
     }
 
-    public void GET(String path, boolean keepAlive) throws Exception{
+    void GET(String path, boolean keepAlive) throws Exception{
         try{
             if(!path.startsWith("/")) path="/"+path;
             PrintStream ps=getPrintStream();
@@ -159,7 +159,7 @@ public class Connection {
         }
     }
 
-    public void POST(String path, boolean keepAlive, String contentType, long contentLength) throws Exception{
+    void POST(String path, boolean keepAlive, String contentType, long contentLength) throws Exception{
         try{
             if(!path.startsWith("/")) path="/"+path;
             PrintStream ps=getPrintStream();
@@ -179,7 +179,7 @@ public class Connection {
         }
     }
 
-    public String readLineUnbuffered(){
+    String readLineUnbuffered(){
         try {
             InputStreamReader in = getInputStreamReader();
             StringBuilder sb=new StringBuilder();
@@ -195,7 +195,7 @@ public class Connection {
         }
     }
 
-    public HashMap<String, String> parseResponseHeaders() throws Exception{
+    HashMap<String, String> parseResponseHeaders() throws Exception{
         try{
             HashMap<String,String> ret=new HashMap<>();
             String s=readLineUnbuffered();
@@ -213,22 +213,22 @@ public class Connection {
         }
     }
 
-    public void close(){
+    void close(){
         try{
             socket.close();
         }catch(Throwable t){}
         socket=null;
     }
 
-    public String getHost() {
+    String getHost() {
         return host;
     }
 
-    public int getPort() {
+    int getPort() {
         return port;
     }
 
-    public int getMode() {
+    int getMode() {
         return mode;
     }
 

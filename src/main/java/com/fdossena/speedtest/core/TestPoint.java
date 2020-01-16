@@ -1,4 +1,4 @@
-package com.fdossena.speedtest.core.serverSelector;
+package com.fdossena.speedtest.core;
 
 import org.json.JSONException;
 import org.json.JSONObject;

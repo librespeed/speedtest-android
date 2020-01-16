@@ -1,11 +1,8 @@
-package com.fdossena.speedtest.core.ping;
+package com.fdossena.speedtest.core;
 
 import com.fdossena.speedtest.core.config.SpeedtestConfig;
-import com.fdossena.speedtest.core.base.Connection;
-import com.fdossena.speedtest.core.base.Utils;
-import com.fdossena.speedtest.core.log.Logger;
 
-public abstract class PingStream {
+abstract class PingStream {
     private String server, path;
     private int remainingPings=10;
     private int connectTimeout, soTimeout, recvBuffer, sendBuffer;
@@ -15,7 +12,7 @@ public abstract class PingStream {
     private boolean stopASAP=false;
     private Logger log;
 
-    public PingStream(String server, String path, int pings, String errorHandlingMode, int connectTimeout, int soTimeout, int recvBuffer, int sendBuffer, Logger log){
+    PingStream(String server, String path, int pings, String errorHandlingMode, int connectTimeout, int soTimeout, int recvBuffer, int sendBuffer, Logger log){
         this.server=server;
         this.path=path;
         remainingPings=pings<1?1:pings;
@@ -45,7 +42,7 @@ public abstract class PingStream {
                     }
                     pinger =new Pinger(c,path) {
                         @Override
-                        public boolean onPong(long ns) {
+                        boolean onPong(long ns) {
                             boolean r=PingStream.this.onPong(ns);
                             if(--remainingPings<=0||!r){
                                 onDone();
@@ -54,7 +51,7 @@ public abstract class PingStream {
                         }
 
                         @Override
-                        public void onError(String err) {
+                        void onError(String err) {
                             log("A pinger died");
                             if(errorHandlingMode.equals(SpeedtestConfig.ONERROR_FAIL)){
                                 PingStream.this.onError(err);
@@ -78,16 +75,16 @@ public abstract class PingStream {
         }.start();
     }
 
-    public abstract void onError(String err);
-    public abstract boolean onPong(long ns);
-    public abstract void onDone();
+    abstract void onError(String err);
+    abstract boolean onPong(long ns);
+    abstract void onDone();
 
-    public void stopASAP(){
+    void stopASAP(){
         stopASAP=true;
         if(pinger !=null) pinger.stopASAP();
     }
 
-    public void join(){
+    void join(){
         while(pinger==null) Utils.sleep(0,100);
         try{pinger.join();}catch (Throwable t){}
     }

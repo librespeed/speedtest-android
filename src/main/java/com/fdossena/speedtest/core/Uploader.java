@@ -1,18 +1,18 @@
-package com.fdossena.speedtest.core.upload;
+package com.fdossena.speedtest.core;
 
 import java.io.OutputStream;
 import java.util.Random;
 
-import com.fdossena.speedtest.core.base.Connection;
+import com.fdossena.speedtest.core.Connection;
 
-public abstract class Uploader extends Thread{
+abstract class Uploader extends Thread{
     private Connection c;
     private String path;
     private boolean stopASAP=false, resetASAP=false;
     private long totUploaded=0;
     private byte[] garbage;
 
-    public Uploader(Connection c, String path, int ckSize){
+    Uploader(Connection c, String path, int ckSize){
         this.c=c;
         this.path=path;
         garbage=new byte[ckSize*1048576];
@@ -56,18 +56,18 @@ public abstract class Uploader extends Thread{
         }
     }
 
-    public void stopASAP(){
+    void stopASAP(){
         this.stopASAP=true;
     }
 
-    public abstract void onProgress(long uploaded);
-    public abstract void onError(String err);
+    abstract void onProgress(long uploaded);
+    abstract void onError(String err);
 
-    public void resetUploadCounter(){
+    void resetUploadCounter(){
         resetASAP=true;
     }
 
-    public long getUploaded() {
+    long getUploaded() {
         return resetASAP?0:totUploaded;
     }
 }

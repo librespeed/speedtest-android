@@ -1,18 +1,18 @@
-package com.fdossena.speedtest.core.getIP;
+package com.fdossena.speedtest.core;
 
 import java.io.BufferedReader;
 import java.util.HashMap;
 
 import com.fdossena.speedtest.core.config.SpeedtestConfig;
-import com.fdossena.speedtest.core.base.Connection;
-import com.fdossena.speedtest.core.base.Utils;
+import com.fdossena.speedtest.core.Connection;
+import com.fdossena.speedtest.core.Utils;
 
-public abstract class GetIP extends Thread{
+abstract class GetIP extends Thread{
     private Connection c;
     private String path;
     private boolean isp;
     private String distance;
-    public GetIP(Connection c, String path, boolean isp, String distance){
+    GetIP(Connection c, String path, boolean isp, String distance){
         this.c=c;
         this.path=path;
         this.isp=isp;
@@ -54,6 +54,6 @@ public abstract class GetIP extends Thread{
         }
     }
 
-    public abstract void onDataReceived(String data);
-    public abstract void onError(String err);
+    abstract void onDataReceived(String data);
+    abstract void onError(String err);
 }

@@ -1,22 +1,19 @@
-package com.fdossena.speedtest.core.upload;
+package com.fdossena.speedtest.core;
 
-import com.fdossena.speedtest.core.base.Connection;
-import com.fdossena.speedtest.core.base.Utils;
 import com.fdossena.speedtest.core.config.SpeedtestConfig;
-import com.fdossena.speedtest.core.log.Logger;
 
-public abstract class UploadStream {
+abstract class DownloadStream {
     private String server, path;
     private int ckSize;
     private int connectTimeout, soTimeout, recvBuffer, sendBuffer;
     private Connection c=null;
-    private Uploader uploader;
+    private Downloader downloader;
     private String errorHandlingMode= SpeedtestConfig.ONERROR_ATTEMPT_RESTART;
-    private long currentUploaded=0, previouslyUploaded=0;
+    private long currentDownloaded=0, previouslyDownloaded=0;
     private boolean stopASAP=false;
     private Logger log;
 
-    public UploadStream(String server, String path, int ckSize, String errorHandlingMode, int connectTimeout, int soTimeout, int recvBuffer, int sendBuffer, Logger log){
+    DownloadStream(String server, String path, int ckSize, String errorHandlingMode, int connectTimeout, int soTimeout, int recvBuffer, int sendBuffer, Logger log){
         this.server=server;
         this.path=path;
         this.ckSize=ckSize;
@@ -36,36 +33,36 @@ public abstract class UploadStream {
                 if(c!=null){
                     try{c.close();}catch (Throwable t){}
                 }
-                if(uploader !=null) uploader.stopASAP();
-                currentUploaded=0;
+                if(downloader !=null) downloader.stopASAP();
+                currentDownloaded=0;
                 try {
                     c = new Connection(server, connectTimeout, soTimeout, recvBuffer, sendBuffer);
                     if(stopASAP){
                         try{c.close();}catch (Throwable t){}
                         return;
                     }
-                    uploader =new Uploader(c,path,ckSize) {
+                    downloader =new Downloader(c,path,ckSize) {
                         @Override
-                        public void onProgress(long uploaded) {
-                            currentUploaded=uploaded;
+                        void onProgress(long downloaded) {
+                            currentDownloaded=downloaded;
                         }
 
                         @Override
-                        public void onError(String err) {
-                            log("An uploader died");
+                        void onError(String err) {
+                            log("A downloader died");
                             if(errorHandlingMode.equals(SpeedtestConfig.ONERROR_FAIL)){
-                                UploadStream.this.onError(err);
+                                DownloadStream.this.onError(err);
                                 return;
                             }
                             if(errorHandlingMode.equals(SpeedtestConfig.ONERROR_ATTEMPT_RESTART)||errorHandlingMode.equals(SpeedtestConfig.ONERROR_MUST_RESTART)){
-                                previouslyUploaded+=currentUploaded;
+                                previouslyDownloaded+=currentDownloaded;
                                 Utils.sleep(100);
                                 init();
                             }
                         }
                     };
                 }catch (Throwable t){
-                    log("An uploader failed hard");
+                    log("A downloader failed hard");
                     try{c.close();}catch (Throwable t1){}
                     if(errorHandlingMode.equals(SpeedtestConfig.ONERROR_MUST_RESTART)){
                         Utils.sleep(100);
@@ -74,28 +71,29 @@ public abstract class UploadStream {
                 }
             }
         }.start();
+
     }
 
-    public abstract void onError(String err);
+    abstract void onError(String err);
 
-    public void stopASAP(){
+    void stopASAP(){
         stopASAP=true;
-        if(uploader !=null) uploader.stopASAP();
+        if(downloader !=null) downloader.stopASAP();
     }
 
-    public long getTotalUploaded(){
-        return previouslyUploaded+currentUploaded;
+    long getTotalDownloaded(){
+        return previouslyDownloaded+currentDownloaded;
     }
 
-    public void resetUploadCounter(){
-        previouslyUploaded=0;
-        currentUploaded=0;
-        if(uploader !=null) uploader.resetUploadCounter();
+    void resetDownloadCounter(){
+        previouslyDownloaded=0;
+        currentDownloaded=0;
+        if(downloader !=null) downloader.resetDownloadCounter();
     }
 
-    public void join(){
-        while(uploader==null) Utils.sleep(0,100);
-        try{uploader.join();}catch (Throwable t){}
+    void join(){
+        while(downloader==null) Utils.sleep(0,100);
+        try{downloader.join();}catch (Throwable t){}
     }
 
     private void log(String s){

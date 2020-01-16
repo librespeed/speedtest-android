@@ -1,18 +1,18 @@
-package com.fdossena.speedtest.core.telemetry;
+package com.fdossena.speedtest.core;
 
 import java.io.PrintStream;
 import java.util.HashMap;
 
 import com.fdossena.speedtest.core.config.TelemetryConfig;
-import com.fdossena.speedtest.core.base.Connection;
-import com.fdossena.speedtest.core.base.Utils;
+import com.fdossena.speedtest.core.Connection;
+import com.fdossena.speedtest.core.Utils;
 
-public abstract class Telemetry extends Thread{
+abstract class Telemetry extends Thread{
     private Connection c;
     private String path;
     private String level, ispinfo, extra, dl, ul, ping, jitter, log;
 
-    public Telemetry(Connection c, String path, String level, String ispinfo, String extra, String dl, String ul, String ping, String jitter, String log){
+    Telemetry(Connection c, String path, String level, String ispinfo, String extra, String dl, String ul, String ping, String jitter, String log){
         if(level.equals(TelemetryConfig.LEVEL_DISABLED)){
             onDataReceived(null);
             return;
@@ -69,6 +69,6 @@ public abstract class Telemetry extends Thread{
         }
     }
 
-    public abstract void onDataReceived(String data);
-    public abstract void onError(String err);
+    abstract void onDataReceived(String data);
+    abstract void onError(String err);
 }
