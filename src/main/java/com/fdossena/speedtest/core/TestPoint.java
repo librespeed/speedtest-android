@@ -20,10 +20,25 @@ package com.fdossena.speedtest.core;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+/**
+ * The representation of a LibreSpeed server
+ *
+ * @see <a href="https://github.com/librespeed/speedtest">LibreSpeed server</a>
+ */
 public class TestPoint {
     private final String name, server, dlURL, ulURL, pingURL, getIpURL;
     protected float ping=-1;
 
+    /**
+     * Create a new instance of {@link TestPoint}.
+     *
+     * @param name A user friendly name for the server
+     * @param server The server's root URL (e.g. https://speedtest.example.com)
+     * @param dlURL The path to the download address (e.g. backend/garbage.php)
+     * @param ulURL The path to the upload address (e.g. backend/empty.php)
+     * @param pingURL The path to the ping address (e.g. backend/empty.php)
+     * @param getIpURL The path to the address to get the IP info (e.g. backend/getIP.php)
+     */
     public TestPoint(String name, String server, String dlURL, String ulURL, String pingURL, String getIpURL){
         this.name=name;
         this.server=server;
@@ -33,6 +48,10 @@ public class TestPoint {
         this.getIpURL=getIpURL;
     }
 
+    /**
+     * Create a new instance of {@link TestPoint} from a JSON object.
+     * @param json the json object to use for this object's creation
+     */
     public TestPoint(JSONObject json){
         try {
             name = json.getString("name");

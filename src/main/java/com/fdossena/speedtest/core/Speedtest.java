@@ -26,6 +26,12 @@ import java.util.ArrayList;
 import com.fdossena.speedtest.core.config.SpeedtestConfig;
 import com.fdossena.speedtest.core.config.TelemetryConfig;
 
+/**
+ * A utility class to measure network speed to one or more LibreSpeed servers.
+ *
+ * @see <a href="https://github.com/librespeed/speedtest">LibreSpeed server</a>
+ */
+@SuppressWarnings("unused") // Public API
 public class Speedtest {
     private ArrayList<TestPoint> servers=new ArrayList<>();
     private TestPoint selectedServer=null;
@@ -37,56 +43,116 @@ public class Speedtest {
 
     private String originalExtra="";
 
+    /**
+     * Initialize an instance of a {@link Speedtest} with the default configuration and no servers.
+     * <p>
+     * Configuration can be added to this object by using {@link #setSpeedtestConfig(SpeedtestConfig)} and {@link #setTelemetryConfig(TelemetryConfig)}
+     * <p>
+     * Servers can be added with {@link #addTestPoint(TestPoint)}, {@link #addTestPoints(TestPoint[])}, {@link #addTestPoint(JSONObject)}
+     * or {@link #addTestPoints(JSONArray)} and a server can be selected for the test with {@link #selectServer(ServerSelectedHandler)} or
+     * {@link #setSelectedServer(TestPoint)}
+     */
     public Speedtest(){
 
     }
 
-    public void setSpeedtestConfig(SpeedtestConfig c){
+    /**
+     * Set the configuration for this speed test
+     * @param speedtestConfig the configuration to set
+     */
+    public void setSpeedtestConfig(SpeedtestConfig speedtestConfig){
         synchronized (mutex){
             if(state!=0) throw new IllegalStateException("Cannot change config at this moment");
-            config=c.clone();
+            config=speedtestConfig.clone();
             String extra=config.getTelemetry_extra();
             if(extra!=null&&!extra.isEmpty()) originalExtra=extra;
         }
     }
 
-    public void setTelemetryConfig(TelemetryConfig c){
+    /**
+     * Set a telemetry configuration for this speed test
+     * @param telemetryConfig the configuration to set
+     */
+    public void setTelemetryConfig(TelemetryConfig telemetryConfig){
         synchronized (mutex) {
             if (state != 0) throw new IllegalStateException("Cannot change config at this moment");
-            telemetryConfig = c.clone();
+            this.telemetryConfig = telemetryConfig.clone();
         }
     }
 
-    public void addTestPoint(TestPoint t){
+    /**
+     * Add one server to this speed test.
+     * <p>
+     * Note that the server is not automatically selected for the speed test and that either {@link Speedtest#selectServer(ServerSelectedHandler)}
+     * or {@link Speedtest#setSelectedServer(TestPoint)} still needs to be called
+     *
+     * @param testPoint The server to add
+     */
+    public void addTestPoint(TestPoint testPoint){
         synchronized (mutex) {
             if (state == 0) state = 1;
             if (state > 1) throw new IllegalStateException("Cannot add test points at this moment");
-            servers.add(t);
+            servers.add(testPoint);
         }
     }
 
-    public void addTestPoints(TestPoint[] s){
+    /**
+     * Add servers to this speed test
+     * <p>
+     * Note that the server is not automatically selected for the speed test and that either {@link Speedtest#selectServer(ServerSelectedHandler)}
+     * or {@link Speedtest#setSelectedServer(TestPoint)} still needs to be called
+     *
+     * @param testPoints The servers to add
+     */
+    public void addTestPoints(TestPoint[] testPoints){
         synchronized (mutex) {
-            for (TestPoint t : s) addTestPoint(t);
+            for (TestPoint t : testPoints) addTestPoint(t);
         }
     }
 
-    public void addTestPoint(JSONObject json){
+    /**
+     * Add one server to this speed test.
+     * <p>
+     * The server is given as a JSON object. This methods parses the JSON object and adds the corresponding server to the list of available
+     * servers
+     * <p>
+     * Note that the server is not automatically selected for the speed test and that either {@link Speedtest#selectServer(ServerSelectedHandler)}
+     * or {@link Speedtest#setSelectedServer(TestPoint)} still needs to be called
+     *
+     * @param jsonTestPoint The server to add
+     */
+    public void addTestPoint(JSONObject jsonTestPoint){
         synchronized (mutex) {
-            addTestPoint(new TestPoint(json));
+            addTestPoint(new TestPoint(jsonTestPoint));
         }
     }
 
-    public void addTestPoints(JSONArray json){
+    /**
+     * Add servers to this speed test.
+     * <p>
+     * The servers are given as a JSON array. This methods parses the JSON array and adds the corresponding servers to the list of available
+     * servers
+     * <p>
+     * Note that the server is not automatically selected for the speed test and that either {@link Speedtest#selectServer(ServerSelectedHandler)}
+     * or {@link Speedtest#setSelectedServer(TestPoint)} still needs to be called
+     *
+     * @param jsonTestPoints The servers to add
+     */
+    public void addTestPoints(JSONArray jsonTestPoints){
         synchronized (mutex) {
-            for (int i = 0; i < json.length(); i++)
+            for (int i = 0; i < jsonTestPoints.length(); i++)
                 try {
-                    addTestPoint(json.getJSONObject(i));
+                    addTestPoint(jsonTestPoints.getJSONObject(i));
                 } catch (JSONException t) {
                 }
         }
     }
 
+    /**
+     * Get the servers available for this speed test
+     *
+     * @return The available servers
+     */
     public TestPoint[] getTestPoints(){
         synchronized (mutex) {
             return servers.toArray(new TestPoint[0]);
@@ -94,6 +160,12 @@ public class Speedtest {
     }
 
     private ServerSelector ss=null;
+
+    /**
+     * Automatically search for the closest server (by ping) and select it for use in the speed test.
+     *
+     * @param callback A handler defining the action to perform when a server has been selected
+     */
     public void selectServer(final ServerSelectedHandler callback){
         synchronized (mutex) {
             if (state == 0) throw new IllegalStateException("No test points added");
@@ -102,7 +174,7 @@ public class Speedtest {
             state = 2;
             ss = new ServerSelector(getTestPoints(), config.getPing_connectTimeout()) {
                 @Override
-                public void onServerSelected(TestPoint server) {
+                void onServerSelected(TestPoint server) {
                     selectedServer = server;
                     synchronized (mutex) {
                         if (server != null) state = 3; else state = 1;
@@ -114,16 +186,27 @@ public class Speedtest {
         }
     }
 
-    public void setSelectedServer(TestPoint t){
+    /**
+     * Manually set the server to user for the speed test
+     *
+     * @param testPoint The server to use
+     */
+    public void setSelectedServer(TestPoint testPoint){
         synchronized (mutex) {
             if (state == 2) throw new IllegalStateException("Server selection is in progress");
-            if (t == null) throw new IllegalArgumentException("t is null");
-            selectedServer = t;
+            if (testPoint == null) throw new IllegalArgumentException("t is null");
+            selectedServer = testPoint;
             state = 3;
         }
     }
 
     private SpeedtestWorker st=null;
+
+    /**
+     * Start the speed test.
+     *
+     * @param callback The handler defining the actions to perform when the speed test makes progress
+     */
     public void start(final SpeedtestHandler callback){
         synchronized (mutex) {
             if (state < 3) throw new IllegalStateException("Server hasn't been selected yet");
@@ -139,34 +222,34 @@ public class Speedtest {
             }
             st = new SpeedtestWorker(selectedServer, config, telemetryConfig) {
                 @Override
-                public void onDownloadUpdate(double dl, double progress) {
+                void onDownloadUpdate(double dl, double progress) {
                     callback.onDownloadUpdate(dl, progress);
                 }
 
                 @Override
-                public void onUploadUpdate(double ul, double progress) {
+                void onUploadUpdate(double ul, double progress) {
                     callback.onUploadUpdate(ul, progress);
                 }
 
                 @Override
-                public void onPingJitterUpdate(double ping, double jitter, double progress) {
+                void onPingJitterUpdate(double ping, double jitter, double progress) {
                     callback.onPingJitterUpdate(ping, jitter, progress);
                 }
 
                 @Override
-                public void onIPInfoUpdate(String ipInfo) {
+                void onIPInfoUpdate(String ipInfo) {
                     callback.onIPInfoUpdate(ipInfo);
                 }
 
                 @Override
-                public void onTestIDReceived(String id) {
+                void onTestIDReceived(String id) {
                     String shareURL=prepareShareURL(telemetryConfig);
                     if(shareURL!=null) shareURL=String.format(shareURL,id);
                     callback.onTestIDReceived(id,shareURL);
                 }
 
                 @Override
-                public void onEnd() {
+                void onEnd() {
                     synchronized (mutex) {
                         state = 5;
                     }
@@ -174,7 +257,7 @@ public class Speedtest {
                 }
 
                 @Override
-                public void onCriticalFailure(String err) {
+                void onCriticalFailure(String err) {
                     synchronized (mutex) {
                         state = 5;
                     }
@@ -194,6 +277,11 @@ public class Speedtest {
         return server+shareURL;
     }
 
+    /**
+     * Stop the test whenever possible.
+     * <p>
+     * Note that some tasks might take some time to finish after calling this method.
+     */
     public void abort(){
         synchronized (mutex) {
             if (state == 2) ss.stopASAP();
@@ -202,16 +290,74 @@ public class Speedtest {
         }
     }
 
+    /**
+     * A handler to define action to perform when a server has been selected
+     */
     public static abstract class ServerSelectedHandler{
+
+        /**
+         * Called when a server has been selected
+         *
+         * @param server The selected server
+         */
         public abstract void onServerSelected(TestPoint server);
     }
+
+    /**
+     * A handler to define actions to perform when the speed test makes progress.
+     */
     public static abstract class SpeedtestHandler{
-        public abstract void onDownloadUpdate(double dl, double progress);
-        public abstract void onUploadUpdate(double ul, double progress);
+        /**
+         * Called when download measurement is actualized.
+         *
+         * @param speed The download speed in Mbps
+         * @param progress The current progress of the download test between 0 and 1 where 0 means that the test hasn't started yet and 1 means that the test is finished
+         */
+        public abstract void onDownloadUpdate(double speed, double progress);
+
+        /**
+         * Called when upload measurement is actualized.
+         *
+         * @param speed The upload speed in Mbps
+         * @param progress The current progress of the upload test between 0 and 1 where 0 means that the test hasn't started yet and 1 means that the test is finished
+         */
+        public abstract void onUploadUpdate(double speed, double progress);
+
+        /**
+         * Called when ping measurement is actualized.
+         *
+         * @param ping The lowest ping measured in milliseconds
+         * @param jitter The ping measurements' jitter in milliseconds
+         * @param progress The current progress of the ping test between 0 and 1 where 0 means that the test hasn't started yet and 1 means that the test is finished
+         */
         public abstract void onPingJitterUpdate(double ping, double jitter, double progress);
+
+        /**
+         * Called when the client's IP and information about this IP is updated.
+         *
+         * @param ipInfo the IP address and its info
+         */
         public abstract void onIPInfoUpdate(String ipInfo);
+
+        /**
+         * Called when the test result id has been received from the server.
+         *
+         * @param id The id of the result
+         * @param shareURL The url to the image representing the result
+         */
         public abstract void onTestIDReceived(String id, String shareURL);
+
+
+        /**
+         * Called when the test finishes.
+         */
         public abstract void onEnd();
+
+        /**
+         * Called if an error occurs during the test
+         *
+         * @param err Information about the error
+         */
         public abstract void onCriticalFailure(String err);
     }
 }

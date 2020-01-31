@@ -64,7 +64,39 @@ public class SpeedtestConfig {
         check();
     }
 
-    public SpeedtestConfig(int dl_ckSize, int ul_ckSize, int dl_parallelStreams, int ul_parallelStreams, int dl_streamDelay, int ul_streamDelay, double dl_graceTime, double ul_graceTime, int dl_connectTimeout, int dl_soTimeout, int ul_connectTimeout, int ul_soTimeout, int ping_connectTimeout, int ping_soTimeout, int dl_recvBuffer, int dl_sendBuffer, int ul_recvBuffer, int ul_sendBuffer, int ping_recvBuffer, int ping_sendBuffer, String errorHandlingMode, int time_dl_max, int time_ul_max, boolean time_auto, int count_ping, String telemetry_extra, double overheadCompensationFactor, boolean getIP_isp, String getIP_distance, boolean useMebibits, String test_order) {
+    public SpeedtestConfig(
+            int dl_ckSize,
+            int ul_ckSize,
+            int dl_parallelStreams,
+            int ul_parallelStreams,
+            int dl_streamDelay,
+            int ul_streamDelay,
+            double dl_graceTime,
+            double ul_graceTime,
+            int dl_connectTimeout,
+            int dl_soTimeout,
+            int ul_connectTimeout,
+            int ul_soTimeout,
+            int ping_connectTimeout,
+            int ping_soTimeout,
+            int dl_recvBuffer,
+            int dl_sendBuffer,
+            int ul_recvBuffer,
+            int ul_sendBuffer,
+            int ping_recvBuffer,
+            int ping_sendBuffer,
+            String errorHandlingMode,
+            int time_dl_max,
+            int time_ul_max,
+            boolean time_auto,
+            int count_ping,
+            String telemetry_extra,
+            double overheadCompensationFactor,
+            boolean getIP_isp,
+            String getIP_distance,
+            boolean useMebibits,
+            String test_order
+    ) {
         this.dl_ckSize = dl_ckSize;
         this.ul_ckSize = ul_ckSize;
         this.dl_parallelStreams = dl_parallelStreams;
