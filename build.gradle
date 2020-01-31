@@ -18,6 +18,7 @@
 plugins {
     // Apply the java-library plugin to add support for Java Library
     id 'java-library'
+    id "com.vanniktech.maven.publish" version "0.8.0"
 }
 
 repositories {
