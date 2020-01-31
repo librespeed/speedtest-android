@@ -37,8 +37,9 @@ class Connection {
     private int mode=MODE_NOT_SET;
     private static final int MODE_NOT_SET=0, MODE_HTTP=1, MODE_HTTPS=2;
 
-    private static final String USER_AGENT="LibreSpeed/2.0.0",
-                                LOCALE= Locale.getDefault() != null?Locale.getDefault().toLanguageTag():null;
+    private static final String USER_AGENT="LibreSpeed/2.0.0 " +
+            (System.getProperty("http.agent") != null ? System.getProperty("http.agent") : "(" + System.getProperty("os.name") + ")");
+    private static final String LOCALE= Locale.getDefault() != null?Locale.getDefault().toLanguageTag():null;
 
     Connection(String url, int connectTimeout, int soTimeout, int recvBuffer, int sendBuffer){
         boolean tryHTTP=false, tryHTTPS=false;
