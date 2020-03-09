@@ -1,6 +1,8 @@
 package com.fdossena.speedtest.core.ping;
 
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.fdossena.speedtest.core.base.Connection;
 
@@ -24,10 +26,21 @@ public abstract class Pinger extends Thread{
                 c.GET(s,true);
                 if(stopASAP) break;
                 long t=System.nanoTime();
-                if(c.readLineUnbuffered().trim().isEmpty()) throw new Exception("Persistent connection died");
+                boolean chunked=false;
+                boolean ok=false;
+                while(true){
+                    String l=c.readLineUnbuffered();
+                    if(l==null) break;
+                    l=l.trim().toLowerCase();
+                    if(l.equals("transfer-encoding: chunked")) chunked=true;
+                    if(l.contains("200 ok")) ok=true;
+                    if(l.trim().isEmpty()){
+                        if(chunked){c.readLineUnbuffered(); c.readLineUnbuffered();}
+                        break;
+                    }
+                }
+                if(!ok) throw new Exception("Did not get a 200");
                 t=System.nanoTime()-t;
-                if(stopASAP) break;
-                while(!c.readLineUnbuffered().trim().isEmpty());
                 if(stopASAP) break;
                 if(!onPong(t/2)) break;
             }
