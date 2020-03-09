@@ -1,8 +1,6 @@
 package com.fdossena.speedtest.core.ping;
 
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
 
 import com.fdossena.speedtest.core.base.Connection;
 
