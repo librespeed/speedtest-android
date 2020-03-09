@@ -17,13 +17,12 @@
 
 package com.fdossena.speedtest.core;
 
+import com.fdossena.speedtest.core.config.SpeedtestConfig;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-
-import com.fdossena.speedtest.core.config.SpeedtestConfig;
 
 abstract class ServerSelector {
     private ArrayList<TestPoint> servers=new ArrayList<>();
