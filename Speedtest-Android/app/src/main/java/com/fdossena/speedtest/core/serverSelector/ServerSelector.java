@@ -4,8 +4,16 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URI;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 
+import com.fdossena.speedtest.core.base.Connection;
 import com.fdossena.speedtest.core.config.SpeedtestConfig;
 import com.fdossena.speedtest.core.ping.PingStream;
 
@@ -18,6 +26,7 @@ public abstract class ServerSelector {
     private int timeout;
     private static final int PINGS=3, SLOW_THRESHOLD=500;
     private boolean stopASAP=false;
+    private boolean loadingServers=false;
 
     public ServerSelector(TestPoint[] servers, int timeout){
         addTestPoints(servers);

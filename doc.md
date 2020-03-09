@@ -48,6 +48,11 @@ Expand app > assets and open ServerList.json. Here you will find a list of test 
         ...
     ]
     ```
+    If you want the test to load this list from an URL instead of a file, just put the URL that you want to be loaded in the file in quotes, like this:
+    ```
+    "//mydomain.com/ServerList.json"
+    ```
+    The syntax of the remote JSON file is the same as the local one.
 * Save the file
 
 Here's a more in-depth explanation of what the individual fields for each servers are:
@@ -336,6 +341,12 @@ TestPoint[] servers=new TestPoint[]{
 };
 st.addTestPoints(servers);
 ```
+
+If you want to load the servers from an URL instead, use:
+```java
+st.loadServerList(url)
+```
+__Important__: This function is blocking and must not be called from the UI thread.
 
 These are the same settings mentioned in the Adding your test points section.
 

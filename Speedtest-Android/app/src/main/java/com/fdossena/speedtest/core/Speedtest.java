@@ -4,6 +4,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.ArrayList;
 
 import com.fdossena.speedtest.core.config.SpeedtestConfig;
@@ -70,6 +74,58 @@ public class Speedtest {
                     addTestPoint(json.getJSONObject(i));
                 } catch (JSONException t) {
                 }
+        }
+    }
+
+    private static class ServerListLoader {
+        private static String read(String url){
+            try{
+                URL u=new URL(url);
+                InputStream in=u.openStream();
+                BufferedReader br=new BufferedReader(new InputStreamReader(u.openStream()));
+                String s="";
+                try{
+                    for(;;){
+                        String r=br.readLine();
+                        if(r==null) break; else s+=r;
+                    }
+                }catch(Throwable t){}
+                br.close();
+                in.close();
+                return s;
+            }catch(Throwable t){
+                return null;
+            }
+        }
+
+        public static TestPoint[] loadServerList(String url){
+            try{
+                String s=null;
+                if(url.startsWith("//")){
+                    s=read("https:"+url);
+                    if(s==null) s=read("http:"+url);
+                }else s=read(url);
+                if(s==null) throw new Exception("Failed");
+                JSONArray a=new JSONArray(s);
+                ArrayList<TestPoint> ret=new ArrayList<>();
+                for(int i=0;i<a.length();i++){
+                    ret.add(new TestPoint(a.getJSONObject(i)));
+                }
+                return ret.toArray(new TestPoint[0]);
+            }catch(Throwable t){
+                return null;
+            }
+        }
+    }
+    public boolean loadServerList(String url){
+        synchronized (mutex) {
+            if (state == 0) state = 1;
+            if (state > 1) throw new IllegalStateException("Cannot add test points at this moment");
+            TestPoint[] pts= ServerListLoader.loadServerList(url);
+            if(pts!=null){
+                addTestPoints(pts);
+                return true;
+            }else return false;
         }
     }
 

@@ -75,98 +75,85 @@ public class MainActivity extends Activity {
     private static Speedtest st=null;
 
     private void page_init(){
-        transition(R.id.page_init,TRANSITION_LENGTH);
-        final TextView t=((TextView)findViewById(R.id.init_text));
-        runOnUiThread(new Runnable() {
+        new Thread(){
             @Override
             public void run() {
-                t.setText(R.string.init_init);
-            }
-        });
-        SpeedtestConfig config=null;
-        TelemetryConfig telemetryConfig=null;
-        TestPoint[] servers=null;
-        try{
-            String c=readFileFromAssets("SpeedtestConfig.json");
-            JSONObject o=new JSONObject(c);
-            config=new SpeedtestConfig(o);
-            c=readFileFromAssets("TelemetryConfig.json");
-            o=new JSONObject(c);
-            telemetryConfig=new TelemetryConfig(o);
-            if(telemetryConfig.getTelemetryLevel().equals(TelemetryConfig.LEVEL_DISABLED)){
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        hideView(R.id.privacy_open);
+                        transition(R.id.page_init,TRANSITION_LENGTH);
                     }
                 });
-            }
-            c=readFileFromAssets("ServerList.json");
-            JSONArray a=new JSONArray(c);
-            if(a.length()==0) throw new Exception("No test points");
-            ArrayList<TestPoint> s=new ArrayList<>();
-            for(int i=0;i<a.length();i++) s.add(new TestPoint(a.getJSONObject(i)));
-            servers=s.toArray(new TestPoint[0]);
-            if(st!=null){
-                try{st.abort();}catch (Throwable e){}
-            }
-            st=new Speedtest();
-            st.setSpeedtestConfig(config);
-            st.setTelemetryConfig(telemetryConfig);
-            st.addTestPoints(servers);
-            final String testOrder=config.getTest_order();
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    if(!testOrder.contains("D")){
-                        hideView(R.id.dlArea);
-                    }
-                    if(!testOrder.contains("U")){
-                        hideView(R.id.ulArea);
-                    }
-                    if(!testOrder.contains("P")){
-                        hideView(R.id.pingArea);
-                    }
-                    if(!testOrder.contains("I")){
-                        hideView(R.id.ipInfo);
-                    }
-                }
-            });
-        }catch (final Throwable e){
-            st=null;
-            transition(R.id.page_fail,TRANSITION_LENGTH);
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    ((TextView)findViewById(R.id.fail_text)).setText(getString(R.string.initFail_configError)+": "+e.getMessage());
-                    final Button b=(Button)findViewById(R.id.fail_button);
-                    b.setText(R.string.initFail_retry);
-                    b.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            page_init();
-                            b.setOnClickListener(null);
-                        }
-                    });
-                }
-            });
-            return;
-        }
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                t.setText(R.string.init_selecting);
-            }
-        });
-        st.selectServer(new Speedtest.ServerSelectedHandler() {
-            @Override
-            public void onServerSelected(final TestPoint server) {
+                final TextView t=((TextView)findViewById(R.id.init_text));
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        if(server==null){
-                            transition(R.id.page_fail,TRANSITION_LENGTH);
-                            ((TextView)findViewById(R.id.fail_text)).setText(getString(R.string.initFail_noServers));
+                        t.setText(R.string.init_init);
+                    }
+                });
+                SpeedtestConfig config=null;
+                TelemetryConfig telemetryConfig=null;
+                TestPoint[] servers=null;
+                try{
+                    String c=readFileFromAssets("SpeedtestConfig.json");
+                    JSONObject o=new JSONObject(c);
+                    config=new SpeedtestConfig(o);
+                    c=readFileFromAssets("TelemetryConfig.json");
+                    o=new JSONObject(c);
+                    telemetryConfig=new TelemetryConfig(o);
+                    if(telemetryConfig.getTelemetryLevel().equals(TelemetryConfig.LEVEL_DISABLED)){
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                hideView(R.id.privacy_open);
+                            }
+                        });
+                    }
+                    if(st!=null){
+                        try{st.abort();}catch (Throwable e){}
+                    }
+                    st=new Speedtest();
+                    st.setSpeedtestConfig(config);
+                    st.setTelemetryConfig(telemetryConfig);
+                    c=readFileFromAssets("ServerList.json");
+                    if(c.startsWith("\"")||c.startsWith("'")){ //fetch server list from URL
+                        if(!st.loadServerList(c.subSequence(1,c.length()-1).toString())){
+                            throw new Exception("Failed to load server list");
+                        }
+                    }else{ //use provided server list
+                        JSONArray a=new JSONArray(c);
+                        if(a.length()==0) throw new Exception("No test points");
+                        ArrayList<TestPoint> s=new ArrayList<>();
+                        for(int i=0;i<a.length();i++) s.add(new TestPoint(a.getJSONObject(i)));
+                        servers=s.toArray(new TestPoint[0]);
+                        st.addTestPoints(servers);
+                    }
+                    final String testOrder=config.getTest_order();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if(!testOrder.contains("D")){
+                                hideView(R.id.dlArea);
+                            }
+                            if(!testOrder.contains("U")){
+                                hideView(R.id.ulArea);
+                            }
+                            if(!testOrder.contains("P")){
+                                hideView(R.id.pingArea);
+                            }
+                            if(!testOrder.contains("I")){
+                                hideView(R.id.ipInfo);
+                            }
+                        }
+                    });
+                }catch (final Throwable e){
+                    System.err.println(e);
+                    st=null;
+                    transition(R.id.page_fail,TRANSITION_LENGTH);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            ((TextView)findViewById(R.id.fail_text)).setText(getString(R.string.initFail_configError)+": "+e.getMessage());
                             final Button b=(Button)findViewById(R.id.fail_button);
                             b.setText(R.string.initFail_retry);
                             b.setOnClickListener(new View.OnClickListener() {
@@ -176,13 +163,43 @@ public class MainActivity extends Activity {
                                     b.setOnClickListener(null);
                                 }
                             });
-                        }else{
-                            page_serverSelect(server,st.getTestPoints());
                         }
+                    });
+                    return;
+                }
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        t.setText(R.string.init_selecting);
+                    }
+                });
+                st.selectServer(new Speedtest.ServerSelectedHandler() {
+                    @Override
+                    public void onServerSelected(final TestPoint server) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if(server==null){
+                                    transition(R.id.page_fail,TRANSITION_LENGTH);
+                                    ((TextView)findViewById(R.id.fail_text)).setText(getString(R.string.initFail_noServers));
+                                    final Button b=(Button)findViewById(R.id.fail_button);
+                                    b.setText(R.string.initFail_retry);
+                                    b.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            page_init();
+                                            b.setOnClickListener(null);
+                                        }
+                                    });
+                                }else{
+                                    page_serverSelect(server,st.getTestPoints());
+                                }
+                            }
+                        });
                     }
                 });
             }
-        });
+        }.start();
     }
 
     private void page_serverSelect(TestPoint selected, TestPoint[] servers){
