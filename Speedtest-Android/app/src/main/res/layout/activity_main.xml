@@ -35,16 +35,6 @@
                 android:id="@+id/logo"
                 android:layout_centerHorizontal="true"
                 />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/logo"
-                android:text="@string/splash_text"
-                android:textColor="@color/splashText"
-                android:textSize="@dimen/text"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="@dimen/margin_smallSep"
-                />
 
         </RelativeLayout>
 

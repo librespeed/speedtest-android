@@ -1,6 +1,6 @@
 {
   "telemetryLevel":"full",
-  "server":"//speedtest.fdossena.com",
+  "server":"//librespeed.org",
   "path":"results/telemetry.php",
   "shareURL": "results/?id=%s"
 }

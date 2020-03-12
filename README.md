@@ -1,9 +1,12 @@
 ![LibreSpeed-Android Logo](https://github.com/librespeed/speedtest-android/blob/master/.github/Readme-Logo.png?raw=true)
  
-# Speedtest by Federico Dossena
+# LibreSpeed
 This demo shows how the LibreSpeed Android Template can be configured to work with your servers.
 
-Test points are kindly provided by [Consortium GARR](https://garr.it) and [B2B Risk](https://b2brisk.com).
+Test points are kindly provided by:
+* [Consortium GARR](https://garr.it)
+* [B2B Risk](https://b2brisk.com)
+* Several independent contributors
 
 ## Try it
 
@@ -33,7 +36,7 @@ Android 4.0.3 and up (SDK 15), all architectures.
 [Donate with PayPal](https://www.paypal.me/sineisochronic)  
 
 ## License
-Copyright (C) 2019 Federico Dossena
+Copyright (C) 2020 Federico Dossena
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Lesser General Public License as published by
