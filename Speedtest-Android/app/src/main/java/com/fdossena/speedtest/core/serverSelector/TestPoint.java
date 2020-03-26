@@ -5,6 +5,7 @@ import org.json.JSONObject;
 
 public class TestPoint {
     private final String name, server, dlURL, ulURL, pingURL, getIpURL;
+    private String sponsorName=null, sponsorURL=null;
     protected float ping=-1;
 
     public TestPoint(String name, String server, String dlURL, String ulURL, String pingURL, String getIpURL){
@@ -30,6 +31,8 @@ public class TestPoint {
             if (pingURL == null) throw new IllegalArgumentException("Missing pingURL field");
             getIpURL = json.getString("getIpURL");
             if (getIpURL == null) throw new IllegalArgumentException("Missing getIpURL field");
+            sponsorName = json.isNull("sponsorName")?null:json.getString("sponsorName");
+            sponsorURL = json.isNull("sponsorURL")?null:json.getString("sponsorURL");
         }catch (JSONException t){
             throw new IllegalArgumentException("Invalid JSON");
         }
@@ -62,4 +65,9 @@ public class TestPoint {
     public float getPing() {
         return ping;
     }
+
+    public String getSponsorName() { return sponsorName; }
+
+    public String getSponsorURL() { return sponsorURL; }
+
 }

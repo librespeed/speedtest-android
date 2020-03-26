@@ -23,4 +23,7 @@
     <string name="testFail_retry">Try again</string>
     <string name="privacy_open"><u>Privacy</u></string>
     <string name="privacy_close"><u>Back</u></string>
+
+    <string name="sponsoredBy">Sponsored by </string>
+
 </resources>

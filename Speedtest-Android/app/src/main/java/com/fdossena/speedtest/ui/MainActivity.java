@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -11,6 +12,7 @@ import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -218,6 +220,42 @@ public class MainActivity extends Activity {
         ArrayAdapter<String> adapter=new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,options.toArray(new String[0]));
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                final TestPoint p=availableServers.get(position);
+                if(p.getSponsorName()!=null){
+                    findViewById(R.id.sponsorArea).setVisibility(View.VISIBLE);
+                    TextView sponsor=(TextView)findViewById(R.id.sponsor);
+                    if(p.getSponsorURL()!=null){
+                        sponsor.setTextColor(getResources().getColor(R.color.sponsorLinkColor));
+                        sponsor.setText(p.getSponsorName());
+                        sponsor.setPaintFlags(sponsor.getPaintFlags()|Paint.UNDERLINE_TEXT_FLAG);
+                        sponsor.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                String url=p.getSponsorURL();
+                                if(url.startsWith("//")) url="https:"+url;
+                                Intent i=new Intent(Intent.ACTION_VIEW);
+                                i.setData(Uri.parse(url));
+                                startActivity(i);
+                            }
+                        });
+                    }else{
+                        sponsor.setText(p.getSponsorName());
+                        sponsor.setTextColor(getResources().getColor(R.color.textColor));
+                        sponsor.setOnClickListener(null);
+                        sponsor.setPaintFlags(sponsor.getPaintFlags()&(Paint.UNDERLINE_TEXT_FLAG^0xFFFFFFFF));
+                    }
+                }else{
+                    findViewById(R.id.sponsorArea).setVisibility(View.GONE);
+                }
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                findViewById(R.id.sponsorArea).setVisibility(View.GONE);
+            }
+        });
         spinner.setSelection(selectedId);
         final Button b=(Button)findViewById(R.id.start);
         b.setOnClickListener(new View.OnClickListener() {

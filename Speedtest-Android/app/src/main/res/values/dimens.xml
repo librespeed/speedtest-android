@@ -39,4 +39,6 @@
     <dimen name="margin_smallSep">8dp</dimen>
     <dimen name="margin_largeSep">48dp</dimen>
 
+    <dimen name="sponsorText">16dp</dimen>
+
 </resources>

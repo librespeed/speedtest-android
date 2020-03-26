@@ -24,4 +24,5 @@
     <color name="restartButton_background">#6060AA</color>
     <color name="restartButton_text">#FFFFFF</color>
     <color name="privacyLinks">#808080</color>
+    <color name="sponsorLinkColor">#4040CC</color>
 </resources>
