@@ -1,0 +1,11 @@
+Misura la velocità della connessione Internet.
+
+I server di test sono forniti da GARR, B2B Risk, e vari contributori del progetto LibreSpeed.
+
+Funzionalità:
+
+* Test di download e upload
+* Test di ping e jitter
+* Rilevamento indirizzo IP, ISP, e distanza
+* Più server di test
+* Condivisione dei risultati

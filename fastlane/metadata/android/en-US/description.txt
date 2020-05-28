@@ -1,0 +1,11 @@
+Check the speed of your Internet connection.
+
+Test servers are provided by Consortium GARR, B2B Risk and several project contributors.
+
+Features:
+
+* Download and Upload tests
+* Ping and Jitter test
+* IP address, ISP and distance detection
+* Multiple test servers
+* Share your results

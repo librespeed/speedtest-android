@@ -1,0 +1,3 @@
+Version 1.2.1
+* The server list is now fetched from librespeed.org instead of being hardcoded
+* Minor improvements and bug fixes

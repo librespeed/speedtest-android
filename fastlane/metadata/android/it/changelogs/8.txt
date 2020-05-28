@@ -1,0 +1,3 @@
+Versione 1.2.1
+* La lista dei server viene recuperata da librespeed.org anzichè essere hardcoded dell'applicazione
+* Migliorie e correzione di bug vari
