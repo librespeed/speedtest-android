@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">LibreSpeed Android Template</string>
+    <string name="init_init">Laden</string>
+    <string name="initFail_configError">Konfigurationsfehler</string>
+    <string name="initFail_retry">Erneut versuchen</string>
+    <string name="init_selecting">Server auswählen</string>
+    <string name="initFail_noServers">Keine Server verfügbar</string>
+    <string name="serverSelect_message">Einen Server auswälen</string>
+    <string name="start">Start</string>
+    <string name="test_share">Ergebnis teilen</string>
+    <string name="test_restart">Neuer Test</string>
+    <string name="testFail_err">Ein Fehler ist aufgetreten</string>
+    <string name="testFail_retry">Erneut versuchen</string>
+    <string name="privacy_open"><u>Datenschutz</u></string>
+    <string name="privacy_close"><u>Zurück</u></string>
+</resources>
