@@ -1,10 +1,212 @@
 [
   {
-    "name":"Helsinki, Finland",
-    "server":"//fi.openspeed.org",
-    "dlURL":"garbage.php",
-    "ulURL":"empty.php",
-    "pingURL":"empty.php",
-    "getIpURL":"getIP.php"
+    "name": "Helsinki, Finland (1) (Hetzner)",
+    "server": "//fi1.backend.librespeed.org/",
+    "dlURL": "garbage.php",
+    "ulURL": "empty.php",
+    "pingURL": "empty.php",
+    "getIpURL": "getIP.php",
+    "sponsorName": "Snopyta",
+    "sponsorURL": "https://snopyta.org"
+  },
+  {
+    "name": "Helsinki, Finland (2) (Hetzner)",
+    "server": "https://fi2.backend.librespeed.org:8443/",
+    "dlURL": "garbage.php",
+    "ulURL": "empty.php",
+    "pingURL": "empty.php",
+    "getIpURL": "getIP.php",
+    "sponsorName": "Snopyta",
+    "sponsorURL": "https://snopyta.org"
+  },
+  {
+    "name": "Helsinki, Finland (3) (Hetzner)",
+    "server": "//fi.openspeed.org/",
+    "dlURL": "garbage.php",
+    "ulURL": "empty.php",
+    "pingURL": "empty.php",
+    "getIpURL": "getIP.php",
+    "sponsorName": "B2B Risk",
+    "sponsorURL": null
+  },
+  {
+    "name": "Helsinki, Finland (5) (Hetzner)",
+    "server": "//fast.kabi.tk/",
+    "dlURL": "garbage.php",
+    "ulURL": "empty.php",
+    "pingURL": "empty.php",
+    "getIpURL": "getIP.php",
+    "sponsorName": "KABI.tk",
+    "sponsorURL": "//kabi.tk"
+  },
+  {
+    "name": "Paris, France (Hurricane Electric)",
+    "server": "//librespeed.louifox.house/",
+    "dlURL": "backend/garbage.php",
+    "ulURL": "backend/empty.php",
+    "pingURL": "backend/empty.php",
+    "getIpURL": "backend/getIP.php",
+    "sponsorName": "LouiFox.House",
+    "sponsorURL": "https://louifox.house"
+  },
+  {
+    "name": "Paris, France (online.net)",
+    "server": "//fr1.backend.librespeed.org",
+    "dlURL": "garbage.php",
+    "ulURL": "empty.php",
+    "pingURL": "empty.php",
+    "getIpURL": "getIP.php",
+    "sponsorName": "lelux.fi",
+    "sponsorURL": "https://lelux.fi"
+  },
+  {
+    "name": "Nuremberg, Germany (1) (Hetzner)",
+    "server": "//de1.backend.librespeed.org",
+    "dlURL": "garbage.php",
+    "ulURL": "empty.php",
+    "pingURL": "empty.php",
+    "getIpURL": "getIP.php",
+    "sponsorName": "Snopyta",
+    "sponsorURL": "https://snopyta.org"
+  },
+  {
+    "name": "Nuremberg, Germany (2) (Netcup)",
+    "server": "//de2.backend.librespeed.org",
+    "dlURL": "garbage.php",
+    "ulURL": "empty.php",
+    "pingURL": "empty.php",
+    "getIpURL": "getIP.php",
+    "sponsorName": "NixNet",
+    "sponsorURL": "https://nixnet.services"
+  },
+  {
+    "name": "Nuremberg, Germany (3) (Hetzner)",
+    "server": "//de3.backend.librespeed.org",
+    "dlURL": "garbage.php",
+    "ulURL": "empty.php",
+    "pingURL": "empty.php",
+    "getIpURL": "getIP.php",
+    "sponsorName": null,
+    "sponsorURL": null
+  },
+  {
+    "name": "Nuremberg, Germany (4) (Hetzner)",
+    "server": "//de5.backend.librespeed.org",
+    "dlURL": "garbage.php",
+    "ulURL": "empty.php",
+    "pingURL": "empty.php",
+    "getIpURL": "getIP.php",
+    "sponsorName": null,
+    "sponsorURL": null
+  },
+  {
+    "name": "Nuremberg, Germany (5) (Hetzner)",
+    "server": "https://speedtest.ciapa.tech/",
+    "dlURL": "garbage.php",
+    "ulURL": "empty.php",
+    "pingURL": "empty.php",
+    "getIpURL": "getIP.php",
+    "sponsorName": null,
+    "sponsorURL": null
+  },
+  {
+    "name": "Bari, Italy (GARR)",
+    "server": "https://st-be-ba1.infra.garr.it",
+    "dlURL": "garbage.php",
+    "ulURL": "empty.php",
+    "pingURL": "empty.php",
+    "getIpURL": "getIP.php",
+    "sponsorName": "Consortium GARR",
+    "sponsorURL": "//garr.it"
+  },
+  {
+    "name": "Bologna, Italy (GARR)",
+    "server": "https://st-be-bo1.infra.garr.it",
+    "dlURL": "garbage.php",
+    "ulURL": "empty.php",
+    "pingURL": "empty.php",
+    "getIpURL": "getIP.php",
+    "sponsorName": "Consortium GARR",
+    "sponsorURL": "//garr.it"
+  },
+  {
+    "name": "Roma, Italy (GARR)",
+    "server": "https://st-be-rm2.infra.garr.it",
+    "dlURL": "garbage.php",
+    "ulURL": "empty.php",
+    "pingURL": "empty.php",
+    "getIpURL": "getIP.php",
+    "sponsorName": "Consortium GARR",
+    "sponsorURL": "//garr.it"
+  },
+  {
+    "name": "Vilnius, Lithuania (Time4VPS)",
+    "server": "//librespeed.fossdaily.xyz",
+    "dlURL": "garbage.php",
+    "ulURL": "empty.php",
+    "pingURL": "empty.php",
+    "getIpURL": "getIP.php",
+    "sponsorName": "Foss Daily",
+    "sponsorURL": "https://fossdaily.xyz/"
+  },
+  {
+    "name": "Las Vegas, United States (BuyVM)",
+    "server": "https://lv1.backend.librespeed.nixnet.services/",
+    "dlURL": "garbage.php",
+    "ulURL": "empty.php",
+    "pingURL": "empty.php",
+    "getIpURL": "getIP.php",
+    "sponsorName": "NixNet",
+    "sponsorURL": "https://nixnet.services"
+  },
+  {
+    "name": "New York, United States (BuyVM)",
+    "server": "https://ny1.backend.librespeed.nixnet.services/",
+    "dlURL": "garbage.php",
+    "ulURL": "empty.php",
+    "pingURL": "empty.php",
+    "getIpURL": "getIP.php",
+    "sponsorName": "NixNet",
+    "sponsorURL": "https://nixnet.services"
+  },
+  {
+    "name": "Roost, Luxembourg (BuyVM)",
+    "server": "https://lux1.backend.librespeed.nixnet.services/",
+    "dlURL": "garbage.php",
+    "ulURL": "empty.php",
+    "pingURL": "empty.php",
+    "getIpURL": "getIP.php",
+    "sponsorName": "NixNet",
+    "sponsorURL": "https://nixnet.services"
+  },
+  {
+    "name": "Borås, Sweden (Linux.Pizza)",
+    "server": "https://se1.speedtest.linux.pizza/",
+    "dlURL": "garbage.php",
+    "ulURL": "empty.php",
+    "pingURL": "empty.php",
+    "getIpURL": "getIP.php",
+    "sponsorName": "LinuxPizza",
+    "sponsorURL": "https://linux.pizza"
+  },
+  {
+    "name": "Maidenhead, England (Namecheap)",
+    "server": "https://uk1.backend.librespeed.org",
+    "dlURL": "garbage.php",
+    "ulURL": "empty.php",
+    "pingURL": "empty.php",
+    "getIpURL": "getIP.php",
+    "sponsorName": "fosshost.org",
+    "sponsorURL": "https://fosshost.org"
+  },
+  {
+    "name": "Strasbourg, France (Host Europe)",
+    "server": "https://sxb.bandspeed.de/",
+    "dlURL": "backend/garbage.php",
+    "ulURL": "backend/empty.php",
+    "pingURL": "backend/empty.php",
+    "getIpURL": "backend/getIP.php",
+    "sponsorName": "adminForge",
+    "sponsorURL": "https://adminforge.de/"
   }
 ]
