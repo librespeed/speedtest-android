@@ -141,8 +141,8 @@ abstract class SpeedtestWorker extends Thread{
                 for (DownloadStream d : streams) totDownloaded += d.getTotalDownloaded();
                 double speed = totDownloaded / ((t<100?100:t) / 1000.0);
                 if (config.getTime_auto()) {
-                    double b = (3.2 * speed) / 100000.0;
-                    bonusT += b > 400 ? 400 : b;
+                    double b = (2.5 * speed) / 100000.0;
+                    bonusT += b > 200 ? 200 : b;
                 }
                 double progress = (t + bonusT) / (double) (config.getTime_dl_max() * 1000);
                 speed = (speed * 8 * config.getOverheadCompensationFactor()) / (config.getUseMebibits() ? 1048576.0 : 1000000.0);
@@ -193,8 +193,8 @@ abstract class SpeedtestWorker extends Thread{
                 for (UploadStream u : streams) totUploaded += u.getTotalUploaded();
                 double speed = totUploaded / ((t<100?100:t) / 1000.0);
                 if (config.getTime_auto()) {
-                    double b = (3.2 * speed) / 100000.0;
-                    bonusT += b > 400 ? 400 : b;
+                    double b = (2.5 * speed) / 100000.0;
+                    bonusT += b > 200 ? 200 : b;
                 }
                 double progress = (t + bonusT) / (double) (config.getTime_ul_max() * 1000);
                 speed = (speed * 8 * config.getOverheadCompensationFactor()) / (config.getUseMebibits() ? 1048576.0 : 1000000.0);
