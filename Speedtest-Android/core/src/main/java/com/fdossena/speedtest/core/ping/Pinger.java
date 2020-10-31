@@ -10,6 +10,7 @@ public abstract class Pinger extends Thread{
     private boolean stopASAP=false;
 
     public Pinger(Connection c, String path){
+        super("Pinger");
         this.c=c;
         this.path=path;
         start();
@@ -20,9 +21,9 @@ public abstract class Pinger extends Thread{
             String s=path;
             InputStream in=c.getInputStream();
             for(;;){
-                if(stopASAP) break;
+                synchronized(this)  { if(stopASAP) break; }
                 c.GET(s,true);
-                if(stopASAP) break;
+                synchronized(this)  { if(stopASAP) break; }
                 long t=System.nanoTime();
                 boolean chunked=false;
                 boolean ok=false;
@@ -39,20 +40,24 @@ public abstract class Pinger extends Thread{
                 }
                 if(!ok) throw new Exception("Did not get a 200");
                 t=System.nanoTime()-t;
-                if(stopASAP) break;
+                synchronized(this)  { if(stopASAP) break; }
                 if(!onPong(t/2)) break;
             }
-            c.close();
         }catch(Throwable t){
             try{c.close();}catch(Throwable t1){}
             onError(t.toString());
         }
+        finally {
+            c.close();
+            onEnd();
+        }
     }
 
+    public abstract void onEnd();
     public abstract boolean onPong(long ns);
     public abstract void onError(String err);
 
-    public void stopASAP(){
+    public synchronized void stopASAP(){
         this.stopASAP=true;
     }
 }

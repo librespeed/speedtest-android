@@ -13,6 +13,7 @@ public abstract class Downloader extends Thread{
     private long totDownloaded=0;
 
     public Downloader(Connection c, String path, int ckSize){
+        super("DownLoader");
         this.c=c;
         this.path=path;
         this.ckSize=ckSize<1?1:ckSize;
@@ -30,32 +31,40 @@ public abstract class Downloader extends Thread{
             InputStream in=c.getInputStream();
             byte[] buf=new byte[BUFFER_SIZE];
             for(;;){
-                if(stopASAP) break;
+                synchronized(this)  { if(stopASAP) break; }
                 if(bytesLeft<=newRequestThreshold){
                     c.GET(s, true);
                     bytesLeft+=ckBytes;
                 }
-                if(stopASAP) break;
+                synchronized(this)  { if(stopASAP) break; }
                 int l=in.read(buf);
-                if(stopASAP) break;
-                bytesLeft-=l;
-                if(resetASAP){
-                    totDownloaded=0;
-                    resetASAP=false;
+                long curTotDownloaded;
+                synchronized(this) {
+                    if (stopASAP) break;
+                    bytesLeft -= l;
+                    if (resetASAP) {
+                        totDownloaded = 0;
+                        resetASAP = false;
+                    }
+                    totDownloaded+=l;
+                    curTotDownloaded = totDownloaded;
                 }
-                totDownloaded+=l;
+
                 if(System.currentTimeMillis()-lastProgressEvent>200){
                     lastProgressEvent=System.currentTimeMillis();
-                    onProgress(totDownloaded);
+                    onProgress(curTotDownloaded); // makes the call outside the critical region using a local variable as parameter
                 }
             }
-            c.close();
         }catch(Throwable t){
-            try{c.close();}catch(Throwable t1){}
             onError(t.toString());
+        }
+        finally {
+            try{c.close();}catch(Throwable t1){}
+            onEnd();
         }
     }
 
+    public abstract void onEnd();
     public void stopASAP(){
         this.stopASAP=true;
     }

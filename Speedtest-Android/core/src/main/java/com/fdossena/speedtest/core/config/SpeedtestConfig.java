@@ -22,6 +22,7 @@ public class SpeedtestConfig {
     public static final String DISTANCE_NO="no", DISTANCE_MILES="mi", DISTANCE_KM="km";
     private boolean useMebibits=false;
     private String test_order="IP_D_U";
+    private int max_number_of_restarts = 10;
 
     private void check(){
         if(dl_ckSize<1) throw new IllegalArgumentException("dl_ckSize must be at least 1");
@@ -47,7 +48,7 @@ public class SpeedtestConfig {
         check();
     }
 
-    public SpeedtestConfig(int dl_ckSize, int ul_ckSize, int dl_parallelStreams, int ul_parallelStreams, int dl_streamDelay, int ul_streamDelay, double dl_graceTime, double ul_graceTime, int dl_connectTimeout, int dl_soTimeout, int ul_connectTimeout, int ul_soTimeout, int ping_connectTimeout, int ping_soTimeout, int dl_recvBuffer, int dl_sendBuffer, int ul_recvBuffer, int ul_sendBuffer, int ping_recvBuffer, int ping_sendBuffer, String errorHandlingMode, int time_dl_max, int time_ul_max, boolean time_auto, int count_ping, String telemetry_extra, double overheadCompensationFactor, boolean getIP_isp, String getIP_distance, boolean useMebibits, String test_order) {
+    public SpeedtestConfig(int dl_ckSize, int ul_ckSize, int dl_parallelStreams, int ul_parallelStreams, int dl_streamDelay, int ul_streamDelay, double dl_graceTime, double ul_graceTime, int dl_connectTimeout, int dl_soTimeout, int ul_connectTimeout, int ul_soTimeout, int ping_connectTimeout, int ping_soTimeout, int dl_recvBuffer, int dl_sendBuffer, int ul_recvBuffer, int ul_sendBuffer, int ping_recvBuffer, int ping_sendBuffer, String errorHandlingMode, int time_dl_max, int time_ul_max, boolean time_auto, int count_ping, String telemetry_extra, double overheadCompensationFactor, boolean getIP_isp, String getIP_distance, boolean useMebibits, String test_order, int max_number_of_restarts) {
         this.dl_ckSize = dl_ckSize;
         this.ul_ckSize = ul_ckSize;
         this.dl_parallelStreams = dl_parallelStreams;
@@ -79,6 +80,7 @@ public class SpeedtestConfig {
         this.getIP_distance = getIP_distance;
         this.useMebibits = useMebibits;
         this.test_order = test_order;
+        this.max_number_of_restarts = max_number_of_restarts;
         check();
     }
 
@@ -122,6 +124,7 @@ public class SpeedtestConfig {
             if (json.has("getIP_distance")) this.getIP_distance = json.getString("getIP_distance");
             if (json.has("test_order")) this.test_order = json.getString("test_order");
             if (json.has("useMebibits")) this.useMebibits = json.getBoolean("useMebibits");
+            if (json.has("max_number_of_restarts")) this.max_number_of_restarts = json.getInt("max_number_of_restarts");
             check();
         }catch(JSONException t){
             throw new IllegalArgumentException("Invalid JSON ("+t.toString()+")");
@@ -409,7 +412,11 @@ public class SpeedtestConfig {
         this.test_order = test_order;
     }
 
+    public int getMax_number_of_restarts() {
+        return max_number_of_restarts;
+    }
+
     public SpeedtestConfig clone(){
-        return new SpeedtestConfig(dl_ckSize, ul_ckSize, dl_parallelStreams, ul_parallelStreams, dl_streamDelay, ul_streamDelay, dl_graceTime, ul_graceTime, dl_connectTimeout, dl_soTimeout, ul_connectTimeout, ul_soTimeout, ping_connectTimeout, ping_soTimeout, dl_recvBuffer, dl_sendBuffer, ul_recvBuffer, ul_sendBuffer, ping_recvBuffer, ping_sendBuffer, errorHandlingMode, time_dl_max, time_ul_max, time_auto, count_ping, telemetry_extra, overheadCompensationFactor, getIP_isp, getIP_distance, useMebibits, test_order);
+        return new SpeedtestConfig(dl_ckSize, ul_ckSize, dl_parallelStreams, ul_parallelStreams, dl_streamDelay, ul_streamDelay, dl_graceTime, ul_graceTime, dl_connectTimeout, dl_soTimeout, ul_connectTimeout, ul_soTimeout, ping_connectTimeout, ping_soTimeout, dl_recvBuffer, dl_sendBuffer, ul_recvBuffer, ul_sendBuffer, ping_recvBuffer, ping_sendBuffer, errorHandlingMode, time_dl_max, time_ul_max, time_auto, count_ping, telemetry_extra, overheadCompensationFactor, getIP_isp, getIP_distance, useMebibits, test_order, max_number_of_restarts);
     }
 }

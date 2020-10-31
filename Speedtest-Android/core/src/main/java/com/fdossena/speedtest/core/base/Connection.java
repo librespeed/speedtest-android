@@ -69,7 +69,10 @@ public class Connection {
                 }
                 mode=MODE_HTTPS;
             }
-        }catch(Throwable t){}
+        }catch(Throwable t)
+        {
+            t.printStackTrace();
+        }
         try{
             if(tryHTTP){
                 SocketFactory factory = SocketFactory.getDefault();
@@ -81,7 +84,11 @@ public class Connection {
                 }
                 mode=MODE_HTTP;
             }
-        }catch(Throwable t){}
+        }
+        catch(Throwable t)
+        {
+            t.printStackTrace();
+        }
         if(mode==MODE_NOT_SET) throw new IllegalStateException("Failed to connect");
         if(soTimeout>0) {
             try {

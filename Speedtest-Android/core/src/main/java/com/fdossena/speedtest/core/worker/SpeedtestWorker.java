@@ -49,7 +49,8 @@ public abstract class SpeedtestWorker extends Thread{
         try{
             sendTelemetry();
         }catch (Throwable t){}
-        onEnd();
+        onEnd(); // guaranteed to be called because no exceptions can scape the prior try/catches,
+                 // and no early returns exist in this method. So, no need to use finally.
     }
 
     private boolean getIPCalled=false;
@@ -94,7 +95,7 @@ public abstract class SpeedtestWorker extends Thread{
         onDownloadUpdate(0,0);
         DownloadStream[] streams=new DownloadStream[config.getDl_parallelStreams()];
         for(int i=0;i<streams.length;i++){
-            streams[i]=new DownloadStream(backend.getServer(),backend.getDlURL(),config.getDl_ckSize(),config.getErrorHandlingMode(),config.getDl_connectTimeout(),config.getDl_soTimeout(),config.getDl_recvBuffer(),config.getDl_sendBuffer(),log) {
+            streams[i]=new DownloadStream(backend.getServer(),backend.getDlURL(),config.getDl_ckSize(),config.getErrorHandlingMode(),config.getDl_connectTimeout(),config.getDl_soTimeout(),config.getDl_recvBuffer(),config.getDl_sendBuffer(), config.getMax_number_of_restarts(),log) {
                 @Override
                 public void onError(String err) {
                     log.l("Download: FAILED (took "+(System.currentTimeMillis()-start)+"ms)");
@@ -146,7 +147,7 @@ public abstract class SpeedtestWorker extends Thread{
         onUploadUpdate(0,0);
         UploadStream[] streams=new UploadStream[config.getUl_parallelStreams()];
         for(int i=0;i<streams.length;i++){
-            streams[i]=new UploadStream(backend.getServer(),backend.getUlURL(),config.getUl_ckSize(),config.getErrorHandlingMode(),config.getUl_connectTimeout(),config.getUl_soTimeout(),config.getUl_recvBuffer(),config.getUl_sendBuffer(),log) {
+            streams[i]=new UploadStream(backend.getServer(),backend.getUlURL(),config.getUl_ckSize(),config.getErrorHandlingMode(),config.getUl_connectTimeout(),config.getUl_soTimeout(),config.getUl_recvBuffer(), config.getMax_number_of_restarts(),config.getUl_sendBuffer(),log) {
                 @Override
                 public void onError(String err) {
                     log.l("Upload: FAILED (took "+(System.currentTimeMillis()-start)+"ms)");
@@ -196,7 +197,7 @@ public abstract class SpeedtestWorker extends Thread{
         if(pingCalled) return; else pingCalled=true;
         final long start=System.currentTimeMillis();
         onPingJitterUpdate(0,0,0);
-        PingStream ps=new PingStream(backend.getServer(),backend.getPingURL(),config.getCount_ping(),config.getErrorHandlingMode(),config.getPing_connectTimeout(),config.getPing_soTimeout(),config.getPing_recvBuffer(),config.getPing_sendBuffer(),log) {
+        PingStream ps=new PingStream(backend.getServer(),backend.getPingURL(),config.getCount_ping(),config.getErrorHandlingMode(),config.getPing_connectTimeout(),config.getPing_soTimeout(),config.getPing_recvBuffer(),config.getPing_sendBuffer(), config.getMax_number_of_restarts(),log) {
             private double minPing=Double.MAX_VALUE, prevPing=-1;
             private int counter=0;
             @Override

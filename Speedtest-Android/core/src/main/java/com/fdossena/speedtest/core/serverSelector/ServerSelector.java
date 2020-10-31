@@ -72,7 +72,7 @@ public abstract class ServerSelector {
                 return;
             }
             final TestPoint tp=servers.get(tpPointer++);
-            PingStream ps=new PingStream(tp.getServer(),tp.getPingURL(),PINGS, SpeedtestConfig.ONERROR_FAIL,timeout,timeout,-1,-1,null) {
+            PingStream ps=new PingStream(tp.getServer(),tp.getPingURL(),PINGS, SpeedtestConfig.ONERROR_FAIL,timeout,timeout,-1,-1, 1,null) {
                 @Override
                 public void onError(String err) {
                     tp.ping=-1;

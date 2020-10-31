@@ -4,6 +4,7 @@ import com.fdossena.speedtest.core.config.SpeedtestConfig;
 import com.fdossena.speedtest.core.base.Connection;
 import com.fdossena.speedtest.core.base.Utils;
 import com.fdossena.speedtest.core.log.Logger;
+import com.fdossena.speedtest.core.upload.UploadStream;
 
 public abstract class DownloadStream {
     private String server, path;
@@ -15,8 +16,11 @@ public abstract class DownloadStream {
     private long currentDownloaded=0, previouslyDownloaded=0;
     private boolean stopASAP=false;
     private Logger log;
+    private int max_number_of_restarts;
+    private int numEnded;
+    private int numStarted;
 
-    public DownloadStream(String server, String path, int ckSize, String errorHandlingMode, int connectTimeout, int soTimeout, int recvBuffer, int sendBuffer, Logger log){
+    public DownloadStream(String server, String path, int ckSize, String errorHandlingMode, int connectTimeout, int soTimeout, int recvBuffer, int sendBuffer, int max_number_of_restarts, Logger log) {
         this.server=server;
         this.path=path;
         this.ckSize=ckSize;
@@ -26,30 +30,37 @@ public abstract class DownloadStream {
         this.recvBuffer=recvBuffer;
         this.sendBuffer=sendBuffer;
         this.log=log;
+        this.max_number_of_restarts = max_number_of_restarts;
+        numEnded = 0;
+        numStarted = 0;
+
         init();
     }
 
     private void init(){
-        if(stopASAP) return;
-        new Thread(){
+        synchronized (this)
+        {
+            numStarted++;
+            // If this method was called from the onError method of the downloader, a new downloader will be created to replace that downloader.
+            // In this case, numStarted was incremented right before numEnded was incremented by the call to onEnd() of the downloader.
+            // The difference between numStarted and numEnded went to 2, so numEnded cannot become equal to numStart before the new downloader ends.
+            // If this method was called from the constructor, then numStarted was incremented in the creator thread and stopASAP() and join()
+            // can only be called after this increment.
+        }
+        new Thread("DownloadStream"){
             public void run(){
-                if(c!=null){
-                    try{c.close();}catch (Throwable t){}
+                synchronized (DownloadStream.this)  {
+                    currentDownloaded=0;
                 }
-                if(downloader !=null) downloader.stopASAP();
-                currentDownloaded=0;
                 try {
                     c = new Connection(server, connectTimeout, soTimeout, recvBuffer, sendBuffer);
-                    if(stopASAP){
-                        try{c.close();}catch (Throwable t){}
-                        return;
-                    }
-                    downloader =new Downloader(c,path,ckSize) {
+                    Downloader newDownloader =new Downloader(c,path,ckSize) {
                         @Override
                         public void onProgress(long downloaded) {
-                            currentDownloaded=downloaded;
+                            synchronized (DownloadStream.this) {
+                                currentDownloaded = downloaded;
+                            }
                         }
-
                         @Override
                         public void onError(String err) {
                             log("A downloader died");
@@ -59,44 +70,82 @@ public abstract class DownloadStream {
                             }
                             if(errorHandlingMode.equals(SpeedtestConfig.ONERROR_ATTEMPT_RESTART)||errorHandlingMode.equals(SpeedtestConfig.ONERROR_MUST_RESTART)){
                                 previouslyDownloaded+=currentDownloaded;
-                                Utils.sleep(100);
-                                init();
+                                synchronized (DownloadStream.this) {
+                                    previouslyDownloaded+=currentDownloaded;
+                                }
+                                if (max_number_of_restarts > numStarted)
+                                    init();
+                            }
+                        }
+                        @Override
+                        public void onEnd() {
+                            synchronized(DownloadStream.this) {
+                                DownloadStream.this.numEnded++; // if the difference between numStarted and numEnded goes to zero, the download test is over, so notify the waiting thread (see join() method)
+                                DownloadStream.this.notify();   // the difference only goes to zero if an downloader ends without calling onError() and creating a new downloader
                             }
                         }
                     };
+                    synchronized(DownloadStream.this)
+                    {
+                        if (!stopASAP) {
+                            downloader = newDownloader; // from ths point on, any calls to stopASAP will stop the new downloader
+                        }
+                        else
+                            // DownStream was stopped (by a call to stopASAP()) during the creation of the new Downloader or
+                            // right before and either told the old downloader to stop (by a call to downloader's stopASAP())
+                            // or told no downloader to stop because there was no old downloader. Anyway, the new downloader was
+                            // not told to stop.
+                            // Nobody will tell the downstream to stop again, so stop the new downloader immediately.
+                            newDownloader.stopASAP();
+                    }
                 }catch (Throwable t){
-                    log("A downloader failed hard");
-                    try{c.close();}catch (Throwable t1){}
+                    log("A Downloader failed hard");
+                    try{c.close();} catch (Throwable t1){} // If the Downloader failed to be created, it may not close the connection
                     if(errorHandlingMode.equals(SpeedtestConfig.ONERROR_MUST_RESTART)){
-                        Utils.sleep(100);
-                        init();
-                    }else onError(t.toString());
+                        synchronized (DownloadStream.this) {
+                            if (max_number_of_restarts > numStarted)
+                                init();
+                            numEnded++; // only marks the end after init() has marked the start of the new downloader
+                            if (numEnded == numStarted)
+                                DownloadStream.this.notify(); // notifies the waiting thread, because the download test over
+                        }
+                    } else {
+                        onError(t.toString());
+                        synchronized (DownloadStream.this) {
+                            numEnded++;
+                            if (numEnded == numStarted)
+                                DownloadStream.this.notify(); // notifies the waiting thread, because the downloader test is over
+                        }
+                    }
                 }
             }
         }.start();
-
     }
 
     public abstract void onError(String err);
 
-    public void stopASAP(){
+    public synchronized void stopASAP() {
         stopASAP=true;
-        if(downloader !=null) downloader.stopASAP();
+        if(downloader !=null)
+            downloader.stopASAP();
     }
 
-    public long getTotalDownloaded(){
+    public synchronized long getTotalDownloaded() {
         return previouslyDownloaded+currentDownloaded;
     }
 
-    public void resetDownloadCounter(){
+    public synchronized void resetDownloadCounter() {
         previouslyDownloaded=0;
         currentDownloaded=0;
-        if(downloader !=null) downloader.resetDownloadCounter();
+        if(downloader !=null)
+            downloader.resetDownloadCounter();
     }
 
     public void join(){
-        while(downloader==null) Utils.sleep(0,100);
-        try{downloader.join();}catch (Throwable t){}
+        synchronized(this) {
+            while (numStarted > numEnded) // if this test fails, all created uploaders have ended
+                try { wait(); } catch(InterruptedException e) {};
+        }
     }
 
     private void log(String s){

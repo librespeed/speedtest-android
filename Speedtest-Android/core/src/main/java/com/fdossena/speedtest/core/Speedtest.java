@@ -159,6 +159,7 @@ public class Speedtest {
     public void setSelectedServer(TestPoint t){
         synchronized (mutex) {
             if (state == 2) throw new IllegalStateException("Server selection is in progress");
+            if (state == 4) throw new IllegalStateException("Test already running");
             if (t == null) throw new IllegalArgumentException("t is null");
             selectedServer = t;
             state = 3;

@@ -13,6 +13,7 @@ public abstract class Uploader extends Thread{
     private byte[] garbage;
 
     public Uploader(Connection c, String path, int ckSize){
+        super("Uploader");
         this.c=c;
         this.path=path;
         garbage=new byte[ckSize*1048576];
@@ -29,45 +30,50 @@ public abstract class Uploader extends Thread{
             OutputStream out=c.getOutputStream();
             byte[] buf=new byte[BUFFER_SIZE];
             for(;;){
-                if(stopASAP) break;
+                synchronized(this)  { if(stopASAP) break; }
                 c.POST(s,true,"application/octet-stream",garbage.length);
                 for(int offset=0;offset<garbage.length;offset+=BUFFER_SIZE){
-                    if(stopASAP) break;
+                    synchronized(this)  { if(stopASAP) break; }
                     int l=(offset+BUFFER_SIZE>=garbage.length)?(garbage.length-offset):BUFFER_SIZE;
                     out.write(garbage,offset,l);
-                    if(stopASAP) break;
-                    if(resetASAP){
-                        totUploaded=0;
-                        resetASAP=false;
+                    long curTotUploaded;
+                    synchronized(this)  {
+                        if(stopASAP) break;
+                        if(resetASAP) {
+                            totUploaded = 0;
+                            resetASAP = false;
+                        }
+                        totUploaded+=l;
+                        curTotUploaded = totUploaded;
                     }
-                    totUploaded+=l;
                     if(System.currentTimeMillis()-lastProgressEvent>200){
                         lastProgressEvent=System.currentTimeMillis();
-                        onProgress(totUploaded);
+                        onProgress(curTotUploaded); // makes the call outside the critical region using a local variable as parameter
                     }
                 }
-                if(stopASAP) break;
-                while(!c.readLineUnbuffered().trim().isEmpty());
+                synchronized(this)  { if(stopASAP) break; }
+                while(!c.readLineUnbuffered().trim().isEmpty()); // Is this loop guaranteed to end?
             }
-            c.close();
-        }catch(Throwable t){
-            try{c.close();}catch(Throwable t1){}
+        } catch(Throwable t){
             onError(t.toString());
+        } finally {
+            try{c.close();}catch(Throwable t1){}
+            onEnd();
         }
     }
 
-    public void stopASAP(){
+    public synchronized void stopASAP(){
         this.stopASAP=true;
     }
 
+    public abstract void onEnd();
     public abstract void onProgress(long uploaded);
     public abstract void onError(String err);
 
-    public void resetUploadCounter(){
+    public synchronized void resetUploadCounter(){
         resetASAP=true;
     }
-
-    public long getUploaded() {
+    public synchronized long getUploaded() {
         return resetASAP?0:totUploaded;
     }
 }
