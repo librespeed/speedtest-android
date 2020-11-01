@@ -153,7 +153,7 @@ public class ExampleSpeedTest
             @Override
             public void onEnd()
             {
-                System.out.println("Speed test ended");
+                logger.speedTestlog("Speed test ended");
                 res.setEnded(true);
                 logger.speedTestlog(res.toString());
                 synchronized(res)
@@ -184,12 +184,13 @@ public class ExampleSpeedTest
         synchronized(res)
         {
             while (!res.isEnded())
-                try { wait();} catch(InterruptedException ignored) {}
+                try { res.wait();} catch(InterruptedException ignored) {}
         }
         synchronized(this)
         {
             testGoingOn = false;
         }
+        logger.speedTestlog("Speed test exited");
         return res;
     }
 }

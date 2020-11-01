@@ -17,9 +17,10 @@ public abstract class Pinger extends Thread{
     }
 
     public void run(){
+        InputStream in = null;
         try{
             String s=path;
-            InputStream in=c.getInputStream();
+            in=c.getInputStream();
             for(;;){
                 synchronized(this)  { if(stopASAP) break; }
                 c.GET(s,true);
@@ -44,6 +45,7 @@ public abstract class Pinger extends Thread{
                 if(!onPong(t/2)) break;
             }
         }catch(Throwable t){
+            try { if (in!=null) in.close(); } catch(Throwable t1){}
             try{c.close();}catch(Throwable t1){}
             onError(t.toString());
         }

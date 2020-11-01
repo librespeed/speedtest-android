@@ -38,10 +38,10 @@ public abstract class SpeedtestWorker extends Thread{
             for (char t : config.getTest_order().toCharArray()) {
                 if(stopASAP) break;
                 if (t == '_') Utils.sleep(1000);
-                if (t == 'I') getIP();
-                if (t == 'D') dlTest();
+                //if (t == 'I') getIP();
+                //if (t == 'D') dlTest();
                 if (t == 'U') ulTest();
-                if (t == 'P') pingTest();
+                //if (t == 'P') pingTest();
             }
         }catch (Throwable t){
             onCriticalFailure(t.toString());

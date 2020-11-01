@@ -22,13 +22,14 @@ public abstract class Downloader extends Thread{
 
     private static final int BUFFER_SIZE=16384;
     public void run(){
+        InputStream in = null;
         try{
             String s=path;
             s+= Utils.url_sep(s)+"ckSize="+ckSize;
             long lastProgressEvent=System.currentTimeMillis();
             long ckBytes=ckSize*1048576, newRequestThreshold=ckBytes/4;
             long bytesLeft=0;
-            InputStream in=c.getInputStream();
+            in=c.getInputStream();
             byte[] buf=new byte[BUFFER_SIZE];
             for(;;){
                 synchronized(this)  { if(stopASAP) break; }
@@ -59,6 +60,7 @@ public abstract class Downloader extends Thread{
             onError(t.toString());
         }
         finally {
+            try { if (in!=null) in.close(); } catch(Throwable t1){}
             try{c.close();}catch(Throwable t1){}
             onEnd();
         }

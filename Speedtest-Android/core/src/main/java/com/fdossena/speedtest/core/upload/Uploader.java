@@ -18,19 +18,24 @@ public abstract class Uploader extends Thread{
         this.path=path;
         garbage=new byte[ckSize*1048576];
         Random r=new Random(System.nanoTime());
+        long time1 = System.currentTimeMillis();
         r.nextBytes(garbage);
+        long time2 = System.currentTimeMillis();
+        System.out.println("Random byte generation took "+(time2-time1)+" ms for "+garbage.length+" bytes");
         start();
     }
 
     private static final int BUFFER_SIZE=16384;
     public void run(){
-        try{
+        OutputStream out = null;
+        try
+        {
             String s=path;
             long lastProgressEvent=System.currentTimeMillis();
-            OutputStream out=c.getOutputStream();
+            out=c.getOutputStream();
             byte[] buf=new byte[BUFFER_SIZE];
             for(;;){
-                synchronized(this)  { if(stopASAP) break; }
+                synchronized(this)  { if(stopASAP ) break; }
                 c.POST(s,true,"application/octet-stream",garbage.length);
                 for(int offset=0;offset<garbage.length;offset+=BUFFER_SIZE){
                     synchronized(this)  { if(stopASAP) break; }
@@ -57,7 +62,18 @@ public abstract class Uploader extends Thread{
         } catch(Throwable t){
             onError(t.toString());
         } finally {
-            try{c.close();}catch(Throwable t1){}
+            try {
+                if (out!=null) out.close();
+            }
+            catch(Throwable t1) {
+                t1.printStackTrace();
+            }
+            try {
+                c.close();
+            } catch (Throwable t1)
+            {
+                t1.printStackTrace();
+            }
             onEnd();
         }
     }
