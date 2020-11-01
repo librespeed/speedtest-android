@@ -24,7 +24,12 @@ public abstract class Uploader extends Thread{
         System.out.println("Random byte generation took "+(time2-time1)+" ms for "+garbage.length+" bytes");
         start();
     }
-
+/*
+    public void run()
+    {
+        onEnd();
+    }
+*/
     private static final int BUFFER_SIZE=16384;
     public void run(){
         OutputStream out = null;
@@ -35,7 +40,7 @@ public abstract class Uploader extends Thread{
             out=c.getOutputStream();
             byte[] buf=new byte[BUFFER_SIZE];
             for(;;){
-                synchronized(this)  { if(stopASAP ) break; }
+                synchronized(this)  { if(stopASAP) break; }
                 c.POST(s,true,"application/octet-stream",garbage.length);
                 for(int offset=0;offset<garbage.length;offset+=BUFFER_SIZE){
                     synchronized(this)  { if(stopASAP) break; }
