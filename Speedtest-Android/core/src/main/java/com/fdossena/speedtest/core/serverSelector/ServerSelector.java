@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import com.fdossena.speedtest.core.config.SpeedtestConfig;
 import com.fdossena.speedtest.core.ping.PingStream;
 
+import javax.net.SocketFactory;
+
 public abstract class ServerSelector {
     private ArrayList<TestPoint> servers=new ArrayList<>();
     private static final int PARALLELISM=6;
@@ -16,10 +18,12 @@ public abstract class ServerSelector {
     private int timeout;
     private static final int PINGS=3, SLOW_THRESHOLD=500;
     private boolean stopASAP=false;
+    SocketFactory clientSocketFactory;
 
-    public ServerSelector(TestPoint[] servers, int timeout){
+    public ServerSelector(TestPoint[] servers, int timeout, SocketFactory clientSocketFactory){
         addTestPoints(servers);
         this.timeout=timeout;
+        this.clientSocketFactory = clientSocketFactory;
     }
     public void addTestPoint(TestPoint t){
         if(state!=NOT_STARTED) throw new IllegalStateException("Cannot add test points at this time");
@@ -72,7 +76,7 @@ public abstract class ServerSelector {
                 return;
             }
             final TestPoint tp=servers.get(tpPointer++);
-            PingStream ps=new PingStream(tp.getServer(),tp.getPingURL(),PINGS, SpeedtestConfig.ONERROR_FAIL,timeout,timeout,-1,-1, 1,null) {
+            PingStream ps=new PingStream(tp.getServer(),tp.getPingURL(),PINGS, SpeedtestConfig.ONERROR_FAIL,timeout,timeout,-1,-1, 1,null, clientSocketFactory) {
                 @Override
                 public void onError(String err) {
                     tp.ping=-1;

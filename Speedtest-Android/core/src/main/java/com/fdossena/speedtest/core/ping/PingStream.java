@@ -6,6 +6,8 @@ import com.fdossena.speedtest.core.base.Utils;
 import com.fdossena.speedtest.core.log.Logger;
 import com.fdossena.speedtest.core.upload.UploadStream;
 
+import javax.net.SocketFactory;
+
 public abstract class PingStream {
     private String server, path;
     private int remainingPings=10;
@@ -18,8 +20,9 @@ public abstract class PingStream {
     private int max_number_of_restarts;
     private int numEnded;
     private int numStarted;
+    SocketFactory clientSocketFactory;
 
-    public PingStream(String server, String path, int pings, String errorHandlingMode, int connectTimeout, int soTimeout, int recvBuffer, int sendBuffer, int max_number_of_restarts, Logger log) {
+    public PingStream(String server, String path, int pings, String errorHandlingMode, int connectTimeout, int soTimeout, int recvBuffer, int sendBuffer, int max_number_of_restarts, Logger log, SocketFactory clientSocketFactory) {
         this.server=server;
         this.path=path;
         remainingPings=pings<1?1:pings;
@@ -32,6 +35,7 @@ public abstract class PingStream {
         this.max_number_of_restarts = max_number_of_restarts;
         numEnded = 0;
         numStarted = 0;
+        this.clientSocketFactory = clientSocketFactory;
         init();
     }
 
@@ -49,7 +53,7 @@ public abstract class PingStream {
             public void run(){
                 if(remainingPings<=0) return;
                 try {
-                    c = new Connection(server, connectTimeout, soTimeout, recvBuffer, sendBuffer);
+                    c = new Connection(server, connectTimeout, soTimeout, recvBuffer, sendBuffer, clientSocketFactory);
                     Pinger newPinger =new Pinger(c,path) {
                         @Override
                         public boolean onPong(long ns) {

@@ -24,7 +24,7 @@ public class Connection {
     private static final String USER_AGENT="Speedtest-Android/1.2 (SDK "+Build.VERSION.SDK_INT+"; "+Build.PRODUCT+"; Android "+Build.VERSION.RELEASE+")",
                                 LOCALE= Build.VERSION.SDK_INT>=21?Locale.getDefault().toLanguageTag():null;
 
-    public Connection(String url, int connectTimeout, int soTimeout, int recvBuffer, int sendBuffer){
+    public Connection(String url, int connectTimeout, int soTimeout, int recvBuffer, int sendBuffer, SocketFactory clientSocketFactory){
         boolean tryHTTP=false, tryHTTPS=false;
         Locale.getDefault().toString();
         if(url.startsWith("http://")){
@@ -60,7 +60,7 @@ public class Connection {
         }
         try{
             if(tryHTTPS){
-                SocketFactory factory = SSLSocketFactory.getDefault();
+                SocketFactory factory =  clientSocketFactory!=null ? clientSocketFactory : SSLSocketFactory.getDefault();
                 socket=factory.createSocket();
                 if(connectTimeout>0){
                     socket.connect(new InetSocketAddress(host, port==-1?443:port),connectTimeout);
@@ -75,7 +75,7 @@ public class Connection {
         }
         try{
             if(tryHTTP){
-                SocketFactory factory = SocketFactory.getDefault();
+                SocketFactory factory = clientSocketFactory!=null ? clientSocketFactory : SocketFactory.getDefault();
                 socket=factory.createSocket();
                 if(connectTimeout>0) {
                     socket.connect(new InetSocketAddress(host, port == -1 ? 80 : port), connectTimeout);
@@ -108,8 +108,8 @@ public class Connection {
     }
 
     private static final int DEFAULT_CONNECT_TIMEOUT=2000, DEFAULT_SO_TIMEOUT=5000;
-    public Connection(String url){
-        this(url,DEFAULT_CONNECT_TIMEOUT,DEFAULT_SO_TIMEOUT,-1,-1);
+    public Connection(String url, SocketFactory clientSocketFactory) {
+        this(url,DEFAULT_CONNECT_TIMEOUT,DEFAULT_SO_TIMEOUT,-1,-1, clientSocketFactory);
     }
 
     public InputStream getInputStream(){

@@ -6,6 +6,8 @@ import com.fdossena.speedtest.core.config.SpeedtestConfig;
 import com.fdossena.speedtest.core.log.Logger;
 import com.fdossena.speedtest.core.ping.PingStream;
 
+import javax.net.SocketFactory;
+
 public abstract class UploadStream {
     private String server, path;
     private int ckSize;
@@ -22,8 +24,9 @@ public abstract class UploadStream {
 
     static int nid = 0;
     int id;
+    SocketFactory clientSocketFactory;
 
-    public UploadStream(String server, String path, int ckSize, String errorHandlingMode, int connectTimeout, int soTimeout, int recvBuffer, int sendBuffer, int max_number_of_restarts, Logger log) {
+    public UploadStream(String server, String path, int ckSize, String errorHandlingMode, int connectTimeout, int soTimeout, int recvBuffer, int sendBuffer, int max_number_of_restarts, Logger log, SocketFactory clientSocketFactory) {
         this.server=server;
         this.path=path;
         this.ckSize=ckSize;
@@ -37,6 +40,7 @@ public abstract class UploadStream {
         numEnded = 0;
         numStarted = 0;
         id = nid++;
+        this.clientSocketFactory = clientSocketFactory;
         init();
     }
 
@@ -56,7 +60,7 @@ public abstract class UploadStream {
                     currentUploaded = 0;
                 }
                 try {
-                    c = new Connection(server, connectTimeout, soTimeout, recvBuffer, sendBuffer);
+                    c = new Connection(server, connectTimeout, soTimeout, recvBuffer, sendBuffer, clientSocketFactory);
                     Uploader newUploader =new Uploader(c,path,ckSize) {
                         @Override
                         public void onProgress(long uploaded) {

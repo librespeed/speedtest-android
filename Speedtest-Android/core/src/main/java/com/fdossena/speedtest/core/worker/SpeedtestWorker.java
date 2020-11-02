@@ -16,6 +16,8 @@ import com.fdossena.speedtest.core.upload.UploadStream;
 
 import java.util.Locale;
 
+import javax.net.SocketFactory;
+
 public abstract class SpeedtestWorker extends Thread{
     private TestPoint backend;
     private SpeedtestConfig config;
@@ -24,11 +26,13 @@ public abstract class SpeedtestWorker extends Thread{
     private double dl=-1, ul=-1, ping=-1, jitter=-1;
     private String ipIsp="";
     private Logger log=new Logger();
+    SocketFactory clientSocketFactory;
 
-    public SpeedtestWorker(TestPoint backend, SpeedtestConfig config, TelemetryConfig telemetryConfig){
+    public SpeedtestWorker(TestPoint backend, SpeedtestConfig config, TelemetryConfig telemetryConfig, SocketFactory clientSocketFactory){
         this.backend=backend;
         this.config=config==null?new SpeedtestConfig():config;
         this.telemetryConfig=telemetryConfig==null?new TelemetryConfig():telemetryConfig;
+        this.clientSocketFactory = clientSocketFactory;
         start();
     }
 
@@ -60,7 +64,7 @@ public abstract class SpeedtestWorker extends Thread{
         final long start=System.currentTimeMillis();
         Connection c = null;
         try {
-            c = new Connection(backend.getServer(), config.getPing_connectTimeout(), config.getPing_soTimeout(), -1, -1);
+            c = new Connection(backend.getServer(), config.getPing_connectTimeout(), config.getPing_soTimeout(), -1, -1, clientSocketFactory);
         } catch (Throwable t) {
             if (config.getErrorHandlingMode().equals(SpeedtestConfig.ONERROR_FAIL)){
                 abort();
@@ -96,7 +100,7 @@ public abstract class SpeedtestWorker extends Thread{
         onDownloadUpdate(0,0);
         DownloadStream[] streams=new DownloadStream[config.getDl_parallelStreams()];
         for(int i=0;i<streams.length;i++){
-            streams[i]=new DownloadStream(backend.getServer(),backend.getDlURL(),config.getDl_ckSize(),config.getErrorHandlingMode(),config.getDl_connectTimeout(),config.getDl_soTimeout(),config.getDl_recvBuffer(),config.getDl_sendBuffer(), config.getMax_number_of_restarts(),log) {
+            streams[i]=new DownloadStream(backend.getServer(),backend.getDlURL(),config.getDl_ckSize(),config.getErrorHandlingMode(),config.getDl_connectTimeout(),config.getDl_soTimeout(),config.getDl_recvBuffer(),config.getDl_sendBuffer(), config.getMax_number_of_restarts(),log,clientSocketFactory) {
                 @Override
                 public void onError(String err) {
                     log.l("Download: FAILED (took "+(System.currentTimeMillis()-start)+"ms)");
@@ -148,7 +152,7 @@ public abstract class SpeedtestWorker extends Thread{
         onUploadUpdate(0,0);
         UploadStream[] streams=new UploadStream[config.getUl_parallelStreams()];
         for(int i=0;i<streams.length;i++){
-            streams[i]=new UploadStream(backend.getServer(),backend.getUlURL(),config.getUl_ckSize(),config.getErrorHandlingMode(),config.getUl_connectTimeout(),config.getUl_soTimeout(),config.getUl_recvBuffer(), config.getMax_number_of_restarts(),config.getUl_sendBuffer(),log) {
+            streams[i]=new UploadStream(backend.getServer(),backend.getUlURL(),config.getUl_ckSize(),config.getErrorHandlingMode(),config.getUl_connectTimeout(),config.getUl_soTimeout(),config.getUl_recvBuffer(), config.getMax_number_of_restarts(),config.getUl_sendBuffer(),log, clientSocketFactory) {
                 @Override
                 public void onError(String err) {
                     log.l("Upload: FAILED (took "+(System.currentTimeMillis()-start)+"ms)");
@@ -198,7 +202,7 @@ public abstract class SpeedtestWorker extends Thread{
         if(pingCalled) return; else pingCalled=true;
         final long start=System.currentTimeMillis();
         onPingJitterUpdate(0,0,0);
-        PingStream ps=new PingStream(backend.getServer(),backend.getPingURL(),config.getCount_ping(),config.getErrorHandlingMode(),config.getPing_connectTimeout(),config.getPing_soTimeout(),config.getPing_recvBuffer(),config.getPing_sendBuffer(), config.getMax_number_of_restarts(),log) {
+        PingStream ps=new PingStream(backend.getServer(),backend.getPingURL(),config.getCount_ping(),config.getErrorHandlingMode(),config.getPing_connectTimeout(),config.getPing_soTimeout(),config.getPing_recvBuffer(),config.getPing_sendBuffer(), config.getMax_number_of_restarts(),log, clientSocketFactory) {
             private double minPing=Double.MAX_VALUE, prevPing=-1;
             private int counter=0;
             @Override
@@ -240,7 +244,7 @@ public abstract class SpeedtestWorker extends Thread{
         if(telemetryConfig.getTelemetryLevel().equals(TelemetryConfig.LEVEL_DISABLED)) return;
         if(stopASAP&&telemetryConfig.getTelemetryLevel().equals(TelemetryConfig.LEVEL_BASIC)) return;
         try{
-            Connection c=new Connection(telemetryConfig.getServer(),-1,-1,-1,-1);
+            Connection c=new Connection(telemetryConfig.getServer(),-1,-1,-1,-1,clientSocketFactory);
             Telemetry t=new Telemetry(c,telemetryConfig.getPath(),telemetryConfig.getTelemetryLevel(),ipIsp,config.getTelemetry_extra(),dl==-1?"":String.format(Locale.ENGLISH,"%.2f",dl),ul==-1?"":String.format(Locale.ENGLISH,"%.2f",ul),ping==-1?"":String.format(Locale.ENGLISH,"%.2f",ping),jitter==-1?"":String.format(Locale.ENGLISH,"%.2f",jitter),log.getLog()) {
                 @Override
                 public void onDataReceived(String data) {

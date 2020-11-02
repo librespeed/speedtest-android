@@ -16,6 +16,8 @@ import com.fdossena.speedtest.core.serverSelector.TestPoint;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import javax.net.SocketFactory;
+
 public class ExampleSpeedTest
 {
     public interface SpeedTestLog
@@ -47,7 +49,12 @@ public class ExampleSpeedTest
         double progress_downloadSpeed;
         double progress_uploadSpeed;
         boolean ended;
+        TestPoint tp;
 
+        SpeedTestResult(TestPoint tp)
+        {
+            this.tp = tp;
+        }
         public synchronized String toString()
         {
             return toJSON().toString();
@@ -68,6 +75,7 @@ public class ExampleSpeedTest
                 res.put("progress_downloadSpeed",progress_downloadSpeed);
                 res.put("progress_uploadSpeed",progress_uploadSpeed);
 		        res.put("ended",ended);
+                res.put("server",tp.toJSON());
                 return res;
             }
             catch (JSONException e)
@@ -110,7 +118,7 @@ public class ExampleSpeedTest
                 return res;
             }
             testGoingOn = true;
-            res = new SpeedTestResult();
+            res = new SpeedTestResult(tp);
         }
         Speedtest.SpeedtestHandler speedTestHandler = new Speedtest.SpeedtestHandler()
         {
@@ -171,6 +179,8 @@ public class ExampleSpeedTest
         };
         try
         {
+            st.setSpeedtestConfig(new SpeedtestConfig());  // you can change some parameters here
+            st.setSpeedtestSocketfactory(SocketFactory.getDefault()); // you can choose a different SocketFactory, for example to test mobile speed even if the default connection is wifi
             st.setSelectedServer(tp);
             st.start(speedTestHandler);
         }

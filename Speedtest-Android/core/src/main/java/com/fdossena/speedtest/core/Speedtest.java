@@ -16,6 +16,8 @@ import com.fdossena.speedtest.core.serverSelector.ServerSelector;
 import com.fdossena.speedtest.core.serverSelector.TestPoint;
 import com.fdossena.speedtest.core.worker.SpeedtestWorker;
 
+import javax.net.SocketFactory;
+
 public class Speedtest {
     private ArrayList<TestPoint> servers=new ArrayList<>();
     private TestPoint selectedServer=null;
@@ -26,14 +28,23 @@ public class Speedtest {
     private Object mutex=new Object();
 
     private String originalExtra="";
+    SocketFactory clientSocketFactory;
 
-    public Speedtest(){
-
+    public Speedtest() {
+        this(null);
     }
 
+    public Speedtest(SocketFactory clientSocketFactory){
+        this.clientSocketFactory = clientSocketFactory;
+    }
+
+    public void setSpeedtestSocketfactory(SocketFactory clientSocketFactory) {
+        if(state==4 || state==2) throw new IllegalStateException("Cannot change the socket factory at this moment");
+        this.clientSocketFactory = clientSocketFactory;
+    }
     public void setSpeedtestConfig(SpeedtestConfig c){
         synchronized (mutex){
-            if(state!=0) throw new IllegalStateException("Cannot change config at this moment");
+            if(state==2 || state==4) throw new IllegalStateException("Cannot change config at this moment");
             config=c.clone();
             String extra=config.getTelemetry_extra();
             if(extra!=null&&!extra.isEmpty()) originalExtra=extra;
@@ -142,7 +153,7 @@ public class Speedtest {
             if (state == 2) throw new IllegalStateException("Server selection is in progress");
             if (state > 2) throw new IllegalStateException("Server already selected");
             state = 2;
-            ss = new ServerSelector(getTestPoints(), config.getPing_connectTimeout()) {
+            ss = new ServerSelector(getTestPoints(), config.getPing_connectTimeout(), clientSocketFactory) {
                 @Override
                 public void onServerSelected(TestPoint server) {
                     selectedServer = server;
@@ -180,7 +191,7 @@ public class Speedtest {
                 config.setTelemetry_extra(extra.toString());
             } catch (Throwable t) {
             }
-            st = new SpeedtestWorker(selectedServer, config, telemetryConfig) {
+            st = new SpeedtestWorker(selectedServer, config, telemetryConfig, clientSocketFactory) {
                 @Override
                 public void onDownloadUpdate(double dl, double progress) {
                     callback.onDownloadUpdate(dl, progress);

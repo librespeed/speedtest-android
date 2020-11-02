@@ -62,4 +62,23 @@ public class TestPoint {
     public float getPing() {
         return ping;
     }
+
+    public JSONObject toJSON()
+    {
+        JSONObject json = new JSONObject();
+        try
+        {
+            json.put("name", name);
+            json.put("server", server);
+            json.put("dlURL", dlURL);
+            json.put("ulURL", ulURL);
+            json.put("pingURL", pingURL);
+            json.put("getIpURL", getIpURL);
+            return json;
+        }
+        catch (JSONException e)
+        {
+            return json;
+        }
+    }
 }

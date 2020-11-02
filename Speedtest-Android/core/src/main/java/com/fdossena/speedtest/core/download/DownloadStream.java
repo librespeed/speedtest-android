@@ -6,6 +6,8 @@ import com.fdossena.speedtest.core.base.Utils;
 import com.fdossena.speedtest.core.log.Logger;
 import com.fdossena.speedtest.core.upload.UploadStream;
 
+import javax.net.SocketFactory;
+
 public abstract class DownloadStream {
     private String server, path;
     private int ckSize;
@@ -19,8 +21,9 @@ public abstract class DownloadStream {
     private int max_number_of_restarts;
     private int numEnded;
     private int numStarted;
+    SocketFactory clientSocketFactory;
 
-    public DownloadStream(String server, String path, int ckSize, String errorHandlingMode, int connectTimeout, int soTimeout, int recvBuffer, int sendBuffer, int max_number_of_restarts, Logger log) {
+    public DownloadStream(String server, String path, int ckSize, String errorHandlingMode, int connectTimeout, int soTimeout, int recvBuffer, int sendBuffer, int max_number_of_restarts, Logger log, SocketFactory clientSocketFactory) {
         this.server=server;
         this.path=path;
         this.ckSize=ckSize;
@@ -33,7 +36,7 @@ public abstract class DownloadStream {
         this.max_number_of_restarts = max_number_of_restarts;
         numEnded = 0;
         numStarted = 0;
-
+        this.clientSocketFactory = clientSocketFactory;
         init();
     }
 
@@ -53,7 +56,7 @@ public abstract class DownloadStream {
                     currentDownloaded=0;
                 }
                 try {
-                    c = new Connection(server, connectTimeout, soTimeout, recvBuffer, sendBuffer);
+                    c = new Connection(server, connectTimeout, soTimeout, recvBuffer, sendBuffer, clientSocketFactory);
                     Downloader newDownloader =new Downloader(c,path,ckSize) {
                         @Override
                         public void onProgress(long downloaded) {
