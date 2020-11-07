@@ -170,6 +170,9 @@ public class Connection {
 
     public void POST(String path, boolean keepAlive, String contentType, long contentLength) throws Exception{
         try{
+            socket.setPerformancePreferences (0, 0, 1);
+            socket.setTrafficClass(0x08);
+            socket.setTcpNoDelay(false);
             if(!path.startsWith("/")) path="/"+path;
             PrintStream ps=getPrintStream();
             ps.print("POST "+path+" HTTP/1.1\r\n");

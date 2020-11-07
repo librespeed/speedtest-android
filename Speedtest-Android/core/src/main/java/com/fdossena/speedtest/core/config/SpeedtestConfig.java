@@ -4,15 +4,15 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class SpeedtestConfig {
-    private int dl_ckSize=100, ul_ckSize=20;
-    private int dl_parallelStreams=3, ul_parallelStreams=3;
+    private int dl_ckSize=100, ul_ckSize=2;
+    private int dl_parallelStreams=3, ul_parallelStreams=5;
     private int dl_streamDelay=300, ul_streamDelay=300;
     private double dl_graceTime=1.5, ul_graceTime=1.5;
     private int dl_connectTimeout=5000, dl_soTimeout=10000, ul_connectTimeout=5000, ul_soTimeout=10000, ping_connectTimeout=2000, ping_soTimeout=5000;
     private int dl_recvBuffer=-1, dl_sendBuffer=-1, ul_recvBuffer=-1, ul_sendBuffer=16384, ping_recvBuffer=-1, ping_sendBuffer=-1;
     private String errorHandlingMode=ONERROR_ATTEMPT_RESTART;
     public static final String ONERROR_FAIL="fail", ONERROR_ATTEMPT_RESTART="attempt-restart", ONERROR_MUST_RESTART="must-restart";
-    private int time_dl_max=15, time_ul_max=15;
+    private int time_dl_max=15, time_ul_max=30;
     private boolean time_auto=true;
     private int count_ping=10;
     private String telemetry_extra="";

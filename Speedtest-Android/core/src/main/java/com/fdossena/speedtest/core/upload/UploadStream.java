@@ -66,11 +66,13 @@ public abstract class UploadStream {
                         public void onProgress(long uploaded) {
                             synchronized (UploadStream.this) {
                                 currentUploaded = uploaded;
+                                System.out.println("Uploadstream update");
                             }
                         }
                         @Override
                         public void onError(String err) {
                             log("An uploader died");
+                            UploadStream.this.onError(err);
                             if(errorHandlingMode.equals(SpeedtestConfig.ONERROR_FAIL)){
                                 UploadStream.this.onError(err);
                                 return;
@@ -80,8 +82,21 @@ public abstract class UploadStream {
                                     previouslyUploaded+=currentUploaded;
                                 }
                                 if (max_number_of_restarts > numStarted)
+                                {
+                                    UploadStream.this.onWarning(err);
                                     init();
+                                }
+                                else
+                                {
+                                    UploadStream.this.onError(err);
+                                    return;
+                                }
                             }
+                        }
+                        @Override
+                        public void onWarning(String err)
+                        {
+                            UploadStream.this.onWarning(err);
                         }
                         @Override
                         public void onEnd() {
@@ -131,6 +146,8 @@ public abstract class UploadStream {
     }
 
     public abstract void onError(String err);
+
+    public abstract void onWarning(String err);
 
     public synchronized void stopASAP() {
         stopASAP=true;

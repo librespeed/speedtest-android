@@ -176,6 +176,11 @@ public class ExampleSpeedTest
                 res.setError(err);
                 logger.speedTestlog(res.toString());
             }
+            @Override
+            public void onNonCriticalFailure(String err)
+            {
+                logger.speedTestlog(err);
+            }
         };
         try
         {

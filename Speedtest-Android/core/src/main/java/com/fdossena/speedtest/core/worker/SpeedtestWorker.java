@@ -107,6 +107,12 @@ public abstract class SpeedtestWorker extends Thread{
                     abort();
                     onCriticalFailure(err);
                 }
+                @Override
+                public void onWarning(String err) {
+                    log.l("Download: Warning");
+                    onNonCriticalFailure(err);
+                }
+
             };
             Utils.sleep(config.getDl_streamDelay());
         }
@@ -158,6 +164,11 @@ public abstract class SpeedtestWorker extends Thread{
                     log.l("Upload: FAILED (took "+(System.currentTimeMillis()-start)+"ms)");
                     abort();
                     onCriticalFailure(err);
+                }
+                @Override
+                public void onWarning(String err) {
+                    log.l("Upload: Warning");
+                    onNonCriticalFailure(err);
                 }
             };
             Utils.sleep(config.getUl_streamDelay());
@@ -279,5 +290,6 @@ public abstract class SpeedtestWorker extends Thread{
     public abstract void onEnd();
 
     public abstract void onCriticalFailure(String err);
+    public abstract void onNonCriticalFailure(String err);
 
 }

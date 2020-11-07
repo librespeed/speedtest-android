@@ -1,4 +1,4 @@
-package com.playip.speedtest.examplespeedtest;
+package com.fdossena.speedtest.httpverybasicspeedtest;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -10,18 +10,16 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.fdossena.speedtest.core.serverSelector.TestPoint;
-
-public class MainActivity extends AppCompatActivity implements ExampleSpeedTest.SpeedTestLog
+public class MainActivity extends AppCompatActivity implements DonwUpSpeedTest.SpeedTestLog
 {
     Button button_run;
     TextView tvReport;
-    ExampleSpeedTest exampleSpeedTest;
+    DonwUpSpeedTest exampleSpeedTest;
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        exampleSpeedTest = new ExampleSpeedTest();
+        exampleSpeedTest = new DonwUpSpeedTest();
         setContentView(R.layout.activity_main);
         button_run = ((Button)findViewById(R.id.button_run));
         tvReport = ((TextView)findViewById(R.id.tv_report));
@@ -64,36 +62,11 @@ public class MainActivity extends AppCompatActivity implements ExampleSpeedTest.
         {
             try
             {
-/*
-                String  name = "Helsinki, Finland";
-                String server = "//fi.openspeed.org";
-                String dlURL = "garbage.php";
-                String ulURL = "empty.php";
-                String pingURL = "empty.php";
-                String getIpURL = "getIP.php";
-*/
-                String  name = "PlayIP";
-                String server = "http://170.238.84.8:8080/";
-                String dlURL = "backend/garbage.php";
-                String ulURL = "backend/empty.php";
-                String pingURL = "backend/empty.php";
-                String getIpURL = "backend/getIP.php";
-
-/*
-                String  name = "Local";
-                String server = "http://192.168.12.43:8080";
-                String dlURL = "backend/garbage.php";
-                String ulURL = "backend/empty.php";
-                String pingURL = "backend/empty.php";
-                String getIpURL = "backend/getIP.php";
-*/
-
-
-                TestPoint tp = new TestPoint(name, server, dlURL, ulURL, pingURL, getIpURL);
-                exampleSpeedTest.test(tp, MainActivity.this);
+                exampleSpeedTest.test(MainActivity.this);
             }
             catch (Throwable e)
             {
+                e.printStackTrace();
             }
         }
     }

@@ -234,6 +234,11 @@ public class Speedtest {
                     }
                     callback.onCriticalFailure(err);
                 }
+                @Override
+                public void onNonCriticalFailure(String err) {
+                    callback.onNonCriticalFailure(err);
+                }
+                
             };
         }
     }
@@ -267,5 +272,7 @@ public class Speedtest {
         public abstract void onTestIDReceived(String id, String shareURL);
         public abstract void onEnd();
         public abstract void onCriticalFailure(String err);
+
+        public abstract void onNonCriticalFailure(String err);
     }
 }

@@ -77,8 +77,21 @@ public abstract class DownloadStream {
                                     previouslyDownloaded+=currentDownloaded;
                                 }
                                 if (max_number_of_restarts > numStarted)
+                                {
+                                    DownloadStream.this.onWarning(err);
                                     init();
+                                }
+                                else
+                                {
+                                    DownloadStream.this.onError(err);
+                                    return;
+                                }
                             }
+                        }
+                        @Override
+                        public void onWarning(String err)
+                        {
+                            DownloadStream.this.onWarning(err);
                         }
                         @Override
                         public void onEnd() {
@@ -126,6 +139,8 @@ public abstract class DownloadStream {
     }
 
     public abstract void onError(String err);
+
+    public abstract void onWarning(String err);
 
     public synchronized void stopASAP() {
         stopASAP=true;

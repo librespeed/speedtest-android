@@ -73,6 +73,7 @@ public abstract class Downloader extends Thread{
 
     public abstract void onProgress(long downloaded);
     public abstract void onError(String err);
+    public abstract void onWarning(String err);
 
     public void resetDownloadCounter(){
         resetASAP=true;

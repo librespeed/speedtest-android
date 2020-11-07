@@ -32,20 +32,25 @@ public abstract class Uploader extends Thread{
 */
     private static final int BUFFER_SIZE=16384;
     public void run(){
+        System.out.println("Uploader run");
         OutputStream out = null;
         try
         {
             String s=path;
             long lastProgressEvent=System.currentTimeMillis();
             out=c.getOutputStream();
-            byte[] buf=new byte[BUFFER_SIZE];
+            //byte[] buf=new byte[BUFFER_SIZE];
+            int n = 0;
             for(;;){
                 synchronized(this)  { if(stopASAP) break; }
+                System.out.println("Uploader loop");
                 c.POST(s,true,"application/octet-stream",garbage.length);
                 for(int offset=0;offset<garbage.length;offset+=BUFFER_SIZE){
                     synchronized(this)  { if(stopASAP) break; }
                     int l=(offset+BUFFER_SIZE>=garbage.length)?(garbage.length-offset):BUFFER_SIZE;
+                    //System.out.println("Uploader before out");
                     out.write(garbage,offset,l);
+                    //System.out.println("Uploader after out");
                     long curTotUploaded;
                     synchronized(this)  {
                         if(stopASAP) break;
@@ -58,13 +63,23 @@ public abstract class Uploader extends Thread{
                     }
                     if(System.currentTimeMillis()-lastProgressEvent>200){
                         lastProgressEvent=System.currentTimeMillis();
+                        System.out.println("Uploader before on progress");
                         onProgress(curTotUploaded); // makes the call outside the critical region using a local variable as parameter
                     }
+                    //System.out.println("Loop "+n+" "+offset);
+                    n++;
                 }
                 synchronized(this)  { if(stopASAP) break; }
-                while(!c.readLineUnbuffered().trim().isEmpty()); // Is this loop guaranteed to end?
+                for(;;)
+                {
+                    String lin = c.readLineUnbuffered();
+                    System.out.println(lin);
+                    if (lin==null || lin.trim().isEmpty())
+                        break;
+                }
             }
         } catch(Throwable t){
+            t.printStackTrace();
             onError(t.toString());
         } finally {
             try {
@@ -90,6 +105,7 @@ public abstract class Uploader extends Thread{
     public abstract void onEnd();
     public abstract void onProgress(long uploaded);
     public abstract void onError(String err);
+    public abstract void onWarning(String err);
 
     public synchronized void resetUploadCounter(){
         resetASAP=true;

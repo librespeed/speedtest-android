@@ -1,3 +1,4 @@
+include ':httpverybasicspeedtest'
 include ':examplespeedtest'
 include ':core'
 include ':app'
