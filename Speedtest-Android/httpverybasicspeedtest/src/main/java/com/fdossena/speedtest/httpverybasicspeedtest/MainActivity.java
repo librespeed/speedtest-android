@@ -10,16 +10,18 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-public class MainActivity extends AppCompatActivity implements DonwUpSpeedTest.SpeedTestLog
+public class MainActivity extends AppCompatActivity
 {
     Button button_run;
     TextView tvReport;
-    DonwUpSpeedTest exampleSpeedTest;
+    UploadSpeedTest uploadSpeedTest;
+    DownloadSpeedTest downloadSpeedTest;
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        exampleSpeedTest = new DonwUpSpeedTest();
+        uploadSpeedTest = new UploadSpeedTest();
+        downloadSpeedTest = new DownloadSpeedTest();
         setContentView(R.layout.activity_main);
         button_run = ((Button)findViewById(R.id.button_run));
         tvReport = ((TextView)findViewById(R.id.tv_report));
@@ -37,8 +39,7 @@ public class MainActivity extends AppCompatActivity implements DonwUpSpeedTest.S
                 );
 
     }
-    @Override
-    public void speedTestlog(final String s)
+    public void speedTestLog(final String s)
     {
 
         final Handler UIHandler = new Handler(Looper.getMainLooper());
@@ -62,7 +63,28 @@ public class MainActivity extends AppCompatActivity implements DonwUpSpeedTest.S
         {
             try
             {
-                exampleSpeedTest.test(MainActivity.this);
+                uploadSpeedTest.test
+                ("170.238.84.8", 8080, "/backend/empty.php", 10,
+                        new SpeedTestListener()
+                        {
+                            @Override
+                            public void speedTestEnded()
+                            {
+                                MainActivity.this.speedTestLog("Upload "+uploadSpeedTest.getResult().toString());
+                            }
+                        }
+                );
+                downloadSpeedTest.test
+                ("170.238.84.8", 8080, "/backend/garbage.php", 10,
+                        new SpeedTestListener()
+                        {
+                            @Override
+                            public void speedTestEnded()
+                            {
+                                MainActivity.this.speedTestLog("Download "+downloadSpeedTest.getResult().toString());
+                            }
+                        }
+                );
             }
             catch (Throwable e)
             {
