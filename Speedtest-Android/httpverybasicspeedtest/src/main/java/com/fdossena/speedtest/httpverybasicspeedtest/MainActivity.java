@@ -16,12 +16,15 @@ public class MainActivity extends AppCompatActivity
     TextView tvReport;
     UploadSpeedTest uploadSpeedTest;
     DownloadSpeedTest downloadSpeedTest;
+    PingTest pingTest;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         uploadSpeedTest = new UploadSpeedTest();
         downloadSpeedTest = new DownloadSpeedTest();
+        pingTest = new PingTest();
         setContentView(R.layout.activity_main);
         button_run = ((Button)findViewById(R.id.button_run));
         tvReport = ((TextView)findViewById(R.id.tv_report));
@@ -63,6 +66,18 @@ public class MainActivity extends AppCompatActivity
         {
             try
             {
+                pingTest.test
+                        ("170.238.84.8", 8080, "/backend/empty.php", 10,
+                                new SpeedTestListener()
+                                {
+                                    @Override
+                                    public void speedTestEnded()
+                                    {
+                                        MainActivity.this.speedTestLog("Ping "+pingTest.getResult().toString());
+                                    }
+                                },
+                                null
+                        );
                 uploadSpeedTest.test
                 ("170.238.84.8", 8080, "/backend/empty.php", 10,
                         new SpeedTestListener()
@@ -72,7 +87,8 @@ public class MainActivity extends AppCompatActivity
                             {
                                 MainActivity.this.speedTestLog("Upload "+uploadSpeedTest.getResult().toString());
                             }
-                        }
+                        },
+                        null
                 );
                 downloadSpeedTest.test
                 ("170.238.84.8", 8080, "/backend/garbage.php", 10,
@@ -83,7 +99,8 @@ public class MainActivity extends AppCompatActivity
                             {
                                 MainActivity.this.speedTestLog("Download "+downloadSpeedTest.getResult().toString());
                             }
-                        }
+                        },
+                        null
                 );
             }
             catch (Throwable e)

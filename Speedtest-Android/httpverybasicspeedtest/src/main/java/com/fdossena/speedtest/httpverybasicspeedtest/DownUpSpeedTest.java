@@ -1,6 +1,10 @@
 package com.fdossena.speedtest.httpverybasicspeedtest;
 
 import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.Socket;
+
+import javax.net.SocketFactory;
 
 abstract public class DownUpSpeedTest
 {
@@ -22,6 +26,27 @@ abstract public class DownUpSpeedTest
     {
         this.error = error;
     }
+    class DownUpSpeedResult
+    {
+        double speed;
+        double percentage;
+        boolean ended;
+        Throwable error;
+        public DownUpSpeedResult(double speed, Throwable error,double percentage, boolean ended)
+        {
+            this.speed = speed;
+            this.error = error;
+            this.ended = ended;
+            this.percentage = percentage;
+        }
+        public String toString()
+        {
+            return  "Ended = " + ended +
+                    " Percentage = " + percentage +
+                    " Speed  = " + speed +
+                    " Error = " + (error==null?"None":error.getMessage());
+        }
+    }
     public synchronized DownUpSpeedResult getResult()  // the client code can keep calling this method to get partial results
     {
         long time2 = running ? timeEnd : System.currentTimeMillis();
@@ -31,24 +56,44 @@ abstract public class DownUpSpeedTest
         double perc = (running ? Math.min(delta * 1.0 / (beginDelay + testLength + overhead), 1.0) : 1.0) * 100;
         return new DownUpSpeedResult(speed, error, perc, !running);
     }
+    abstract class SocketTestRunnable implements Runnable
+    {
+        SpeedTestListener log;
+        Socket socket;
+        String host;
+        int port;
+        String path;
+        SocketTestRunnable(SpeedTestListener log, String host, int port, String path, Socket socket) throws IOException
+        {
+            this.log = log;
+            this.socket = socket;
+            this.host = host;
+            this.port = port;
+            this.path = path;
+        }
+    }
 
-    abstract SocketHolder getSocketTestRunnable(SpeedTestListener log, String host, int port, String path) throws IOException;
+    abstract SocketTestRunnable getSocketTestRunnable(SpeedTestListener log, String host, int port, String path, Socket socket) throws IOException;
 
     int beginDelay = 10;
     int testLength = 30;
 
-    public void test(String host, int port, String path, int nt, SpeedTestListener log)
+    public void test(String host, int port, String path, int nt, SpeedTestListener log, SocketFactory clientSocketFactory)
     {
         if (running)
             return;  // does not not start again if still running
         stop = false;
         running =  true;
+        error = null;
         try
         {
             Thread[] th = new Thread[nt];
             for (int t = 0; t < nt; t++)
             {
-                th[t] = new Thread(getSocketTestRunnable(log,host, port, path));
+                SocketFactory factory = clientSocketFactory==null ? SocketFactory.getDefault() : clientSocketFactory;
+                Socket socket = factory.createSocket();
+                socket.connect(new InetSocketAddress(host, port));
+                th[t] = new Thread(getSocketTestRunnable(log,host, port, path, socket));
             }
             timeIni = System.currentTimeMillis();
             for (int t = 0; t < nt; t++)
@@ -99,8 +144,4 @@ abstract public class DownUpSpeedTest
             log.speedTestEnded();
         }
     }
-
-
-
-
 }

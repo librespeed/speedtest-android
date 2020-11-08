@@ -11,7 +11,6 @@ package com.fdossena.speedtest.httpverybasicspeedtest;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.PrintStream;
 import java.net.Socket;
 
 public class DownloadSpeedTest extends DownUpSpeedTest
@@ -22,26 +21,26 @@ public class DownloadSpeedTest extends DownUpSpeedTest
         super();
     }
 
-    class Downloader extends SocketHolder
+    class Downloader extends SocketTestRunnable
     {
-        public Downloader(SpeedTestListener log, String host, int port, String path) throws IOException
+        public Downloader(SpeedTestListener log, String host, int port, String path, Socket socket) throws IOException
         {
-            super(log, host, port, path);
+            super(log, host, port, path, socket);
         }
         public void run()
         {
-            testDownloadIntern(log, socket, host, port, path);
+            testDownloadIntern(socket, host, port, path);
         }
     }
-    SocketHolder getSocketTestRunnable(SpeedTestListener log, String host, int port, String path) throws IOException
+    SocketTestRunnable getSocketTestRunnable(SpeedTestListener log, String host, int port, String path, Socket socket) throws IOException
     {
-         return new Downloader(log, host, port, path);
+         return new Downloader(log, host, port, path, socket);
     }
 
     int n = 100;
     int sizeChunks = n*1048576;
 
-    private void testDownloadIntern(SpeedTestListener log, Socket socket, String host, int port, String path)
+    private void testDownloadIntern(Socket socket, String host, int port, String path)
     {
         try
         {
@@ -56,13 +55,7 @@ public class DownloadSpeedTest extends DownUpSpeedTest
             {
                 if(bytesLeft<=newRequestThreshold)  // send a new request before having read all bytes from the previous, in order to keep the flow
                 {
-                    PrintStream ps = new PrintStream(out, false, "utf-8");
-                    ps.print("GET "+path+" HTTP/1.1\r\n");
-                    ps.print("Host: "+host+"\r\n");
-                    ps.print("Connection: keep-alive\r\n");
-                    ps.print("Accept-Encoding: identity\r\n");
-                    ps.print("\r\n");
-                    ps.flush();
+                    HTTPHelper.putGetHeadersInStream(out, host, path);
                     bytesLeft+=sizeChunks;
                 }
                 int numRead=in.read(buf);

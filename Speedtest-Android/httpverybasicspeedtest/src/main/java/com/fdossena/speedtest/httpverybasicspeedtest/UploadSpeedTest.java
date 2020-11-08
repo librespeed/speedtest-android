@@ -12,8 +12,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.PrintStream;
 import java.net.Socket;
+
+import javax.net.SocketFactory;
 
 public class UploadSpeedTest extends DownUpSpeedTest
 {
@@ -33,26 +34,26 @@ public class UploadSpeedTest extends DownUpSpeedTest
 
     }
 
-    class Uploader extends SocketHolder
+    class Uploader extends SocketTestRunnable
     {
-        public Uploader(SpeedTestListener log, String host, int port, String path) throws IOException
+        public Uploader(SpeedTestListener log, String host, int port, String path, Socket socket) throws IOException
         {
-            super(log, host, port, path);
+            super(log, host, port, path, socket);
         }
         public void run()
         {
-            testUploadIntern(log, socket, host, port, path);
+            testUploadIntern(socket, host, port, path);
         }
     }
-    SocketHolder getSocketTestRunnable(SpeedTestListener log, String host, int port, String path) throws IOException
+    SocketTestRunnable getSocketTestRunnable(SpeedTestListener log, String host, int port, String path, Socket socket) throws IOException
     {
-         return new Uploader(log, host, port, path);
+         return new Uploader(log, host, port, path, socket);
     }
 
     int n = 3;
     int lenData = 2*1048576;
 
-    private void testUploadIntern(SpeedTestListener log, Socket socket, String host, int port, String path)
+    private void testUploadIntern(Socket socket, String host, int port, String path)
     {
         try
         {
@@ -61,15 +62,7 @@ public class UploadSpeedTest extends DownUpSpeedTest
             InputStream in = socket.getInputStream();
             for (;;)
             {
-                PrintStream ps = new PrintStream(out, false, "utf-8");
-                ps.print("POST "+path+" HTTP/1.1\r\n"); // /backend/empty.php
-                ps.print("Host: "+host+"\r\n"); // 192.168.0.102:8080
-                ps.print("Connection: keep-alive\r\n");
-                ps.print("Accept-Encoding: identity\r\n");
-                ps.print("Content-Type: application/octet-stream\r\n");
-                ps.print("Content-Length: " + data.length * n + "\r\n");
-                ps.print("\r\n");
-                ps.flush();
+                HTTPHelper.putPostHeadersInStream(out, host, path, data.length * n);
                 int bufSize = 64 * 1024;
                 for (int tt = 0; tt < n; tt++)
                 {
@@ -80,19 +73,10 @@ public class UploadSpeedTest extends DownUpSpeedTest
                             return;
                     }
                 }
-                InputStreamReader isr = new InputStreamReader(in, "utf-8");
-
+                HTTPHelper.HTTPLineReader lineReader = new HTTPHelper.HTTPLineReader(in);
                 for (;;) // reads and ignores the server answer, which consists of http headers
                 {
-                    StringBuilder sb = new StringBuilder();
-                    while (true)
-                    {
-                        int c = isr.read();
-                        if (c == -1) break;
-                        sb.append((char) c);
-                        if (c == '\n') break;
-                    }
-                    String lin = sb.toString();
+                    String lin = lineReader.readLine();
                     if (lin == null || lin.trim().isEmpty())
                         break;
                 }
