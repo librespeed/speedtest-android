@@ -34,7 +34,7 @@ public class PingTest
             jitter=j>jitter?(jitter*0.3+j*0.7):(jitter*0.8+j*0.2);
         }
         prevPing = ms;
-        return counter < numToPing;
+        return counter > numToPing;
     }
     synchronized void setError(Throwable error)
     {

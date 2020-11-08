@@ -17,6 +17,7 @@ public class MainActivity extends AppCompatActivity
     UploadSpeedTest uploadSpeedTest;
     DownloadSpeedTest downloadSpeedTest;
     PingTest pingTest;
+    GetIP getIP;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -25,6 +26,7 @@ public class MainActivity extends AppCompatActivity
         uploadSpeedTest = new UploadSpeedTest();
         downloadSpeedTest = new DownloadSpeedTest();
         pingTest = new PingTest();
+        getIP = new GetIP();
         setContentView(R.layout.activity_main);
         button_run = ((Button)findViewById(R.id.button_run));
         tvReport = ((TextView)findViewById(R.id.tv_report));
@@ -66,6 +68,18 @@ public class MainActivity extends AppCompatActivity
         {
             try
             {
+                getIP.test
+                        ("170.238.84.8", 8080, "/backend/getIP.php", 10,
+                                new SpeedTestListener()
+                                {
+                                    @Override
+                                    public void speedTestEnded()
+                                    {
+                                        MainActivity.this.speedTestLog("GetIp "+getIP.getResult().toString());
+                                    }
+                                },
+                                null
+                        );
                 pingTest.test
                         ("170.238.84.8", 8080, "/backend/empty.php", 10,
                                 new SpeedTestListener()
