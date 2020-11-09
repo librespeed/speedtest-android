@@ -16,6 +16,7 @@ public class GetIP
     String ipData;
     Throwable error;
     boolean running;
+    boolean ended;
 
     synchronized void update(String ipData)
     {
@@ -31,11 +32,13 @@ public class GetIP
         boolean ended;
         double percentage;
         String ipData;
-        public IPResult(boolean ended, double percentage, String ipData)
+        Throwable error;
+        public IPResult(boolean ended, double percentage, String ipData, Throwable error)
         {
             this.ended = ended;
             this.percentage = percentage;
             this.ipData = ipData;
+            this.error = error;
         }
         public String toString()
         {
@@ -46,16 +49,24 @@ public class GetIP
     }
     public synchronized IPResult getResult()
     {
-        return new IPResult(!running, running?0:100, ipData);
+        return new IPResult(ended, ended?100:0, ipData, error);
     }
 
-    public void test(String host, int port, String path, int nt, SpeedTestListener log, SocketFactory clientSocketFactory)
+    public synchronized void clear()
     {
-        if (running)
-            return;  // does not not start again if still running
-        running =  true;
         ipData = null;
         error = null;
+        ended = false;
+    }
+    public void test(String host, int port, String path, SpeedTestListener log, SocketFactory clientSocketFactory)
+    {
+        synchronized (this)
+        {
+            if (running)
+                return;  // does not not start again if still running
+            running = true;
+        }
+        clear();
         try
         {
             SocketFactory factory = clientSocketFactory==null ? SocketFactory.getDefault() : clientSocketFactory;
@@ -69,7 +80,11 @@ public class GetIP
         }
         finally
         {
-            running =  false;
+            synchronized (this)
+            {
+                running = false;
+                ended = true;
+            }
             log.speedTestEnded();
         }
     }
@@ -95,7 +110,6 @@ public class GetIP
                 if (l.contains("200 ok")) ok=true;
                 if (l.contains("content-length"))
                     content_length = Integer.parseInt(l.split(":")[1].trim());
-                System.out.println(l);
                 if (l.trim().isEmpty())
                     break;
             }
@@ -111,25 +125,10 @@ public class GetIP
             else
             {
                 // the server does not follow the official protocol for chunked content
-
+                lineReader.readLine();
                 String l = lineReader.readLine();
-                l = lineReader.readLine();
                 update(l);
-                l = lineReader.readLine();
-
-                /*
-                String l = lineReader.readLine();
-                content_length = Integer.parseInt(l.trim(),10); // the server sends the length in decimal not hexadecimal as specified fro chunked data
-                StringBuilder sb = new StringBuilder();
-                while (content_length!=0)
-                {
-                    char[] buf=new char[content_length];
-                    BufferedReader br=new BufferedReader(new InputStreamReader(in));
-                    br.read(buf);
-                    String data=new String(buf);
-                    sb.append(data);
-                    content_length = Integer.parseInt(l.trim());
-                } */
+                lineReader.readLine();
             }
         }
         catch(Throwable th)

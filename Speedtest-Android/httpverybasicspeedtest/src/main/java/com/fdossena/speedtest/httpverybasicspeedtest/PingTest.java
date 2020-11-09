@@ -17,6 +17,7 @@ public class PingTest
     double prevPing;
     boolean running;
     Throwable error;
+    boolean ended;
 
     int numToPing = 10;
 
@@ -47,12 +48,14 @@ public class PingTest
         double percentage;
         double ping;
         double jitter;
-        public PingResult(boolean ended, double percentage, double ping, double jitter)
+        Throwable error;
+        public PingResult(boolean ended, double percentage, double ping, double jitter, Throwable th)
         {
             this.ended = ended;
             this.percentage = percentage;
             this.ping = ping;
             this.jitter = jitter;
+            this.error = error;
         }
         public String toString()
         {
@@ -64,18 +67,28 @@ public class PingTest
     }
     public synchronized PingResult getResult()
     {
-        return new PingResult(!running, counter * 100.0 / numToPing, minPing, jitter);
+        if (!ended && !running)
+            new PingResult(false, 0,  0, 0, error);
+        return new PingResult(ended, counter * 100.0 / numToPing, minPing, jitter, error);
     }
-
-    public void test(String host, int port, String path, int nt, SpeedTestListener log, SocketFactory clientSocketFactory)
+    public synchronized void clear()
     {
-        if (running)
-            return;  // does not not start again if still running
-        running =  true;
         prevPing = -1;
         minPing = Double.MAX_VALUE;
         counter = 0;
         error = null;
+        ended = false;
+    }
+    public void test(String host, int port, String path, SpeedTestListener log, SocketFactory clientSocketFactory)
+    {
+        synchronized (this)
+        {
+
+            if (running)
+                return;  // does not not start again if still running
+            running = true;
+            clear();
+        }
         try
         {
             SocketFactory factory = clientSocketFactory==null ? SocketFactory.getDefault() : clientSocketFactory;
@@ -89,7 +102,11 @@ public class PingTest
         }
         finally
         {
-            running =  false;
+            synchronized (this)
+            {
+                running = false;
+                ended = true;
+            }
             log.speedTestEnded();
         }
     }

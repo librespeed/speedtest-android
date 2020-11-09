@@ -11,6 +11,7 @@ abstract public class DownUpSpeedTest
     long numBytesMoved;
     boolean stop;
     boolean running;
+    boolean ended;
     long timeIni;
     long timeEnd;
     Throwable error;
@@ -49,12 +50,14 @@ abstract public class DownUpSpeedTest
     }
     public synchronized DownUpSpeedResult getResult()  // the client code can keep calling this method to get partial results
     {
+        if (!ended && ! running)
+            new DownUpSpeedResult(0, error, 0, false);
         long time2 = running ? timeEnd : System.currentTimeMillis();
         long delta = (time2 - timeIni) / 1000;
         double speed = numBytesMoved * 8.0 / delta / 1024 / 1024;
         int overhead = 1;
         double perc = (running ? Math.min(delta * 1.0 / (beginDelay + testLength + overhead), 1.0) : 1.0) * 100;
-        return new DownUpSpeedResult(speed, error, perc, !running);
+        return new DownUpSpeedResult(speed, error, perc, ended);
     }
     abstract class SocketTestRunnable implements Runnable
     {
@@ -78,13 +81,22 @@ abstract public class DownUpSpeedTest
     int beginDelay = 10;
     int testLength = 30;
 
+    public synchronized void clear()
+    {
+        stop = false;
+        error = null;
+        ended = false;
+    }
     public void test(String host, int port, String path, int nt, SpeedTestListener log, SocketFactory clientSocketFactory)
     {
-        if (running)
-            return;  // does not not start again if still running
-        stop = false;
-        running =  true;
-        error = null;
+        synchronized (this)
+        {
+
+            if (running)
+                return;  // does not not start again if still running
+            running = true;
+            clear();
+        }
         try
         {
             Thread[] th = new Thread[nt];
@@ -140,7 +152,11 @@ abstract public class DownUpSpeedTest
         }
         finally
         {
-            running =  false;
+            synchronized (this)
+            {
+                running = false;
+                ended = true;
+            }
             log.speedTestEnded();
         }
     }

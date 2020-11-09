@@ -10,7 +10,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-public class MainActivity extends AppCompatActivity
+public class MainActivity extends AppCompatActivity implements SpeedTestListener
 {
     Button button_run;
     TextView tvReport;
@@ -18,15 +18,17 @@ public class MainActivity extends AppCompatActivity
     DownloadSpeedTest downloadSpeedTest;
     PingTest pingTest;
     GetIP getIP;
-
+    FullSpeedTest fullSpeedTest;
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+
         uploadSpeedTest = new UploadSpeedTest();
         downloadSpeedTest = new DownloadSpeedTest();
         pingTest = new PingTest();
         getIP = new GetIP();
+        fullSpeedTest = new FullSpeedTest();
         setContentView(R.layout.activity_main);
         button_run = ((Button)findViewById(R.id.button_run));
         tvReport = ((TextView)findViewById(R.id.tv_report));
@@ -61,66 +63,62 @@ public class MainActivity extends AppCompatActivity
                         }
                 );
     }
+
+    @Override
+    public void speedTestEnded()
+    {
+        SpeedTestResult res = fullSpeedTest.getResult();
+        speedTestLog(res.toString());
+    }
+
     private class TaskSpeed implements Runnable
     {
         @Override
         public void run()
         {
-            try
-            {
-                getIP.test
-                        ("170.238.84.8", 8080, "/backend/getIP.php", 10,
-                                new SpeedTestListener()
-                                {
-                                    @Override
-                                    public void speedTestEnded()
-                                    {
-                                        MainActivity.this.speedTestLog("GetIp "+getIP.getResult().toString());
-                                    }
-                                },
-                                null
-                        );
-                pingTest.test
-                        ("170.238.84.8", 8080, "/backend/empty.php", 10,
-                                new SpeedTestListener()
-                                {
-                                    @Override
-                                    public void speedTestEnded()
-                                    {
-                                        MainActivity.this.speedTestLog("Ping "+pingTest.getResult().toString());
-                                    }
-                                },
-                                null
-                        );
-                uploadSpeedTest.test
-                ("170.238.84.8", 8080, "/backend/empty.php", 10,
-                        new SpeedTestListener()
+/*
+                String  name = "Helsinki, Finland";
+                String server = "//fi.openspeed.org";
+                String downLoadPath = "garbage.php";
+                String uploadPath = "empty.php";
+                String pingPath = "empty.php";
+                String getpath = "getIP.php";
+*/
+            String  name = "PlayIP";
+            String server = "http://170.238.84.8:8080/";
+            String downLoadPath = "/backend/garbage.php";
+            String uploadPath = "/backend/empty.php";
+            String pingPath = "/backend/empty.php";
+            String getpath = "/backend/getIP.php";
+
+/*
+                String  name = "Local";
+                String server = "http://192.168.12.43:8080";
+                String downLoadPath = "backend/garbage.php";
+                String uploadPath = "backend/empty.php";
+                String pingPath = "backend/empty.php";
+                String getpath = "backend/getIP.php";
+*/
+
+
+            TestPoint tp = new TestPoint(name, server, downLoadPath, uploadPath, pingPath, getpath);
+/*
+            downloadSpeedTest.test(tp.getHost(),  tp.getPort(), tp.getDownloadPath(), 10,
+                    new SpeedTestListener()
+                    {
+                        @Override
+                        public void speedTestEnded()
                         {
-                            @Override
-                            public void speedTestEnded()
-                            {
-                                MainActivity.this.speedTestLog("Upload "+uploadSpeedTest.getResult().toString());
-                            }
-                        },
-                        null
-                );
-                downloadSpeedTest.test
-                ("170.238.84.8", 8080, "/backend/garbage.php", 10,
-                        new SpeedTestListener()
-                        {
-                            @Override
-                            public void speedTestEnded()
-                            {
-                                MainActivity.this.speedTestLog("Download "+downloadSpeedTest.getResult().toString());
-                            }
-                        },
-                        null
-                );
-            }
-            catch (Throwable e)
-            {
-                e.printStackTrace();
-            }
+                              speedTestLog(downloadSpeedTest.getResult().toString());
+                        }
+                    },
+                    null
+            );
+*/
+            fullSpeedTest.test(tp, MainActivity.this, null);
+            SpeedTestResult res = fullSpeedTest.getResult();
+            speedTestLog(res.toString());
+
         }
     }
 
