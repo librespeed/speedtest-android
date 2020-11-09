@@ -50,11 +50,13 @@ abstract public class DownUpSpeedTest
     }
     public synchronized DownUpSpeedResult getResult()  // the client code can keep calling this method to get partial results
     {
-        if (!ended && ! running)
-            new DownUpSpeedResult(0, error, 0, false);
-        long time2 = running ? timeEnd : System.currentTimeMillis();
+        long time2 = ended ? timeEnd : System.currentTimeMillis();
         long delta = (time2 - timeIni) / 1000;
+        if (!ended && ! running || delta <=0)
+            return new DownUpSpeedResult(0, error, 0, false);
         double speed = numBytesMoved * 8.0 / delta / 1024 / 1024;
+        if (Double.isInfinite(speed))
+            throw new RuntimeException("Velocidade infinita");
         int overhead = 1;
         double perc = (running ? Math.min(delta * 1.0 / (beginDelay + testLength + overhead), 1.0) : 1.0) * 100;
         return new DownUpSpeedResult(speed, error, perc, ended);
@@ -89,6 +91,7 @@ abstract public class DownUpSpeedTest
     }
     public void test(String host, int port, String path, int nt, SpeedTestListener log, SocketFactory clientSocketFactory)
     {
+        System.out.println("Test DownUp Called");
         synchronized (this)
         {
 
@@ -145,6 +148,7 @@ abstract public class DownUpSpeedTest
                 }
             }
             timeEnd = System.currentTimeMillis();
+            System.out.println("Test DownUp Ended "+(timeEnd-timeIni)/1000+" timeIni "+timeIni+" timeEnd "+timeEnd );
         }
         catch(Throwable th)
         {
