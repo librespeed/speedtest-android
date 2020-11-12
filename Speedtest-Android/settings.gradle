@@ -1,2 +1,5 @@
+include ':httpverybasicspeedtest'
+include ':examplespeedtest'
+include ':core'
 include ':app'
-rootProject.name='Speedtest-Android'
+rootProject.name = "speedtest-android-lib"

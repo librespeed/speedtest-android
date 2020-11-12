@@ -1,10 +1,29 @@
 [
   {
     "name":"Helsinki, Finland",
-    "server":"//fi.openspeed.org",
+    "server":"http://fi.openspeed.org",
     "dlURL":"garbage.php",
     "ulURL":"empty.php",
     "pingURL":"empty.php",
     "getIpURL":"getIP.php"
+  },
+  {
+    "name":"Local",
+    "server":"http://192.168.12.43:8080",
+    "dlURL":"backend/garbage.php",
+    "ulURL":"backend/empty.php",
+    "pingURL":"backend/empty.php",
+    "getIpURL":"backend/getIP.php"
+  },
+  {
+    "name":"PlayIP",
+    "server":"http://170.238.84.8:8080/",
+    "dlURL":"backend/garbage.php",
+    "ulURL":"backend/empty.php",
+    "pingURL":"backend/empty.php",
+    "getIpURL":"backend/getIP.php"
   }
+
+
+
 ]

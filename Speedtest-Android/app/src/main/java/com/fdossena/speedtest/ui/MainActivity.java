@@ -402,6 +402,10 @@ public class MainActivity extends Activity {
                     }
                 });
             }
+            @Override
+            public void onNonCriticalFailure(String err)
+            {
+            }
         });
     }
 
