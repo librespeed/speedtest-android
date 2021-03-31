@@ -1,0 +1,26 @@
+<resources>
+    <string name="app_name">Шаблон LibreSpeed ​​для Android</string>
+    <string name="logo_inapp_link">https://github.com/librespeed/speedtest-android</string>
+    <string name="privacy_policy">file:///android_asset/privacy_en.html</string>
+
+
+    <string name="init_init">Загрузка</string>
+    <string name="initFail_configError">Ошибка конфигурации</string>
+    <string name="initFail_retry">Повторить</string>
+    <string name="init_selecting">Выбор сервера</string>
+    <string name="initFail_noServers">Нет доступных серверов</string>
+    <string name="serverSelect_message">Выбор сервера</string>
+    <string name="start">Начать</string>
+    <string name="test_dl">Загрузка</string>
+    <string name="test_ul">Выгрузка</string>
+    <string name="test_speedMeasure">Mbps</string>
+    <string name="test_ping">Пинг</string>
+    <string name="test_jitter">Джиттер</string>
+    <string name="test_timeMeasure">ms</string>
+    <string name="test_share">Поделиться результатом</string>
+    <string name="test_restart">Новый тест</string>
+    <string name="testFail_err">Произошла ошибка</string>
+    <string name="testFail_retry">Попробуйте снова</string>
+    <string name="privacy_open"><u >Приватность</u></string>
+    <string name="privacy_close"><u >Назад</u></string>
+</resources>
