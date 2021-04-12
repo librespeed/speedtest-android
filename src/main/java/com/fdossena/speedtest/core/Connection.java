@@ -75,7 +75,7 @@ class Connection {
             throw new IllegalArgumentException("Malformed URL (Unknown or unspecified protocol)");
         }
         try{
-            if(tryHTTPS){
+            if(mode == MODE_NOT_SET && tryHTTPS){
                 SocketFactory factory = SSLSocketFactory.getDefault();
                 socket=factory.createSocket();
                 if(connectTimeout>0){
@@ -87,7 +87,7 @@ class Connection {
             }
         }catch(Throwable t){}
         try{
-            if(tryHTTP){
+            if(mode == MODE_NOT_SET && tryHTTP){
                 SocketFactory factory = SocketFactory.getDefault();
                 socket=factory.createSocket();
                 if(connectTimeout>0) {
