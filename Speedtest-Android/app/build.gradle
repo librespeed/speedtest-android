@@ -7,8 +7,8 @@ android {
         applicationId "your.name.here.speedtest"
         minSdkVersion 15
         targetSdkVersion 28
-        versionCode 8
-        versionName '1.2.2'
+        versionCode 9
+        versionName '1.2.3'
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

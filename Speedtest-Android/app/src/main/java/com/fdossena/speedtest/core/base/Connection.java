@@ -21,7 +21,7 @@ public class Connection {
     private int mode=MODE_NOT_SET;
     private static final int MODE_NOT_SET=0, MODE_HTTP=1, MODE_HTTPS=2;
 
-    private static final String USER_AGENT="Speedtest-Android/1.2 (SDK "+Build.VERSION.SDK_INT+"; "+Build.PRODUCT+"; Android "+Build.VERSION.RELEASE+")",
+    private static final String USER_AGENT="Speedtest-Android/1.2.3 (SDK "+Build.VERSION.SDK_INT+"; "+Build.PRODUCT+"; Android "+Build.VERSION.RELEASE+")",
                                 LOCALE= Build.VERSION.SDK_INT>=21?Locale.getDefault().toLanguageTag():null;
 
     public Connection(String url, int connectTimeout, int soTimeout, int recvBuffer, int sendBuffer){
@@ -59,7 +59,7 @@ public class Connection {
             throw new IllegalArgumentException("Malformed URL (Unknown or unspecified protocol)");
         }
         try{
-            if(tryHTTPS){
+            if(mode == MODE_NOT_SET && tryHTTPS){
                 SocketFactory factory = SSLSocketFactory.getDefault();
                 socket=factory.createSocket();
                 if(connectTimeout>0){
@@ -71,7 +71,7 @@ public class Connection {
             }
         }catch(Throwable t){}
         try{
-            if(tryHTTP){
+            if(mode == MODE_NOT_SET && tryHTTP){
                 SocketFactory factory = SocketFactory.getDefault();
                 socket=factory.createSocket();
                 if(connectTimeout>0) {
