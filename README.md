@@ -1,7 +1,7 @@
 ![LibreSpeed-Android Logo](https://github.com/adolfintel/speedtest-android/blob/master/.github/Readme-Logo.png?raw=true)
  
 # LibreSpeed Android Template
-The Speedtest Android template allows you to configure and distribute an Android app that performs a speedtest using your existing [LibreSpeed](https://github.com/librespeed/speedtest) server(s).
+The LibreSpeed Android template allows you to configure and distribute an Android app that performs a speedtest using your existing [LibreSpeed](https://github.com/librespeed/speedtest) server(s).
 
 The template is easy to configure, customize and distribute.
  
