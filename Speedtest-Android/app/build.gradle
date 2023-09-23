@@ -2,7 +2,6 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 28
-    buildToolsVersion "29.0.0"
     defaultConfig {
         applicationId "your.name.here.speedtest"
         minSdkVersion 15
@@ -17,6 +16,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+    namespace 'your.name.here.speedtest'
 }
 
 dependencies {
