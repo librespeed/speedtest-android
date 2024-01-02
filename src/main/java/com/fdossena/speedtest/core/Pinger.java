@@ -19,8 +19,6 @@ package com.fdossena.speedtest.core;
 
 import java.io.InputStream;
 
-import com.fdossena.speedtest.core.Connection;
-
 abstract class Pinger extends Thread{
     private Connection c;
     private String path;
