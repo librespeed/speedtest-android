@@ -68,7 +68,7 @@ publishing {
     }
     publications {
         gpr(MavenPublication) {
-            groupId = 'ch.pec0ra'
+            groupId = 'com.fdossena'
             artifactId = 'librespeed'
             version = this.version
 
