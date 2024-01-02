@@ -18,17 +18,16 @@
 plugins {
     // Apply the java-library plugin to add support for Java Library
     id 'java-library'
-    id "com.vanniktech.maven.publish" version "0.8.0"
 }
 
 repositories {
     // Use jcenter for resolving dependencies.
     // You can declare any Maven/Ivy/file repository here.
-    jcenter()
+    mavenCentral()
 }
 
 dependencies {
-    implementation group: 'org.json', name: 'json', version: '20190722'
+    implementation group: 'org.json', name: 'json', version: '20231013'
 }
 
 test {
