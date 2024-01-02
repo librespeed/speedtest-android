@@ -23,7 +23,7 @@ One or more servers with [LibreSpeed](https://github.com/librespeed/speedtest) i
 [Donate with PayPal](https://www.paypal.me/sineisochronic)  
 
 ## License
-Copyright (C) 2019 Federico Dossena
+Copyright (C) 2023 Federico Dossena
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Lesser General Public License as published by
