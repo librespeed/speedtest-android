@@ -31,7 +31,7 @@ gitVersioning.apply {
         branch(".+") {
             version = "\${ref}-\${commit}-SNAPSHOT"
         }
-        tag("v(?<version>.*)") {
+        tag("(?<version>.*)") {
             version = "\${ref.version}"
         }
     }
