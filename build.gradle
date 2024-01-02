@@ -67,9 +67,12 @@ publishing {
         }
     }
     publications {
-        core(MavenPublication) {
-            from(components.java)
-            setGroupId("ch.pec0ra.librespeed")
+        gpr(MavenPublication) {
+            groupId = 'ch.pec0ra'
+            artifactId = 'librespeed'
+            version = this.version
+
+            from components.java
         }
     }
 }
