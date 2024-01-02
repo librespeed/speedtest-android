@@ -17,7 +17,27 @@
 
 plugins {
     // Apply the java-library plugin to add support for Java Library
-    id 'java-library'
+    id("java-library")
+    id("maven-publish")
+    id("me.qoomon.git-versioning") version("6.4.3")
+}
+
+version = "0.0.0"
+gitVersioning.apply {
+    refs {
+        branch("main") {
+            version = "\${ref}-SNAPSHOT"
+        }
+        branch(".+") {
+            version = "\${ref}-\${commit}-SNAPSHOT"
+        }
+        tag("v(?<version>.*)") {
+            version = "\${ref.version}"
+        }
+    }
+    rev {
+        version = "\${commit}"
+    }
 }
 
 repositories {
@@ -33,4 +53,23 @@ dependencies {
 test {
     // Use junit platform for unit tests
     useJUnitPlatform()
+}
+
+publishing {
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/pec0ra/speedtest-android")
+            credentials {
+                username = System.getenv("GITHUB_ACTOR")
+                password = System.getenv("GITHUB_TOKEN")
+            }
+        }
+    }
+    publications {
+        core(MavenPublication) {
+            from(components.java)
+            setGroupId("ch.pec0ra.librespeed")
+        }
+    }
 }
