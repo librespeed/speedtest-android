@@ -1,0 +1,78 @@
+/*
+ *     This file is part of the LibreSpeed speedtest library.
+ *
+ *     The LibreSpeed speedtest library is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU Lesser General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     The LibreSpeed speedtest library is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU Lesser General Public License for more details.
+ *
+ *     You should have received a copy of the GNU Lesser General Public License
+ *     along with The LibreSpeed speedtest library.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+plugins {
+    // Apply the java-library plugin to add support for Java Library
+    id("java-library")
+    id("maven-publish")
+    id("me.qoomon.git-versioning") version("6.4.3")
+}
+
+version = "0.0.0"
+gitVersioning.apply {
+    refs {
+        branch("main") {
+            version = "\${ref}-SNAPSHOT"
+        }
+        branch(".+") {
+            version = "\${ref}-\${commit}-SNAPSHOT"
+        }
+        tag("(?<version>.*)") {
+            version = "\${ref.version}"
+        }
+    }
+    rev {
+        version = "\${commit}"
+    }
+}
+
+repositories {
+    // Use jcenter for resolving dependencies.
+    // You can declare any Maven/Ivy/file repository here.
+    mavenCentral()
+}
+
+dependencies {
+    implementation group: 'org.json', name: 'json', version: '20231013'
+}
+
+test {
+    // Use junit platform for unit tests
+    useJUnitPlatform()
+}
+
+publishing {
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/pec0ra/speedtest-android")
+            credentials {
+                username = System.getenv("GITHUB_ACTOR")
+                password = System.getenv("GITHUB_TOKEN")
+            }
+        }
+    }
+    publications {
+        gpr(MavenPublication) {
+            groupId = 'com.fdossena'
+            artifactId = 'librespeed'
+            version = this.version
+
+            from components.java
+        }
+    }
+}
