@@ -17,14 +17,13 @@
 
 package com.fdossena.speedtest.core;
 
+import com.fdossena.speedtest.core.config.SpeedtestConfig;
+import com.fdossena.speedtest.core.config.TelemetryConfig;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-
-import com.fdossena.speedtest.core.config.SpeedtestConfig;
-import com.fdossena.speedtest.core.config.TelemetryConfig;
 
 /**
  * A utility class to measure network speed to one or more LibreSpeed servers.

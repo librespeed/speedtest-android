@@ -51,7 +51,7 @@ Add a telemetry config (Optional)
 ```java
 TelemetryConfig telemetryConfig = new TelemetryConfig(
         "full",
-        "https://speedtest-local.pec0ra.ch",
+        "https://librespeed.org",
         "results/telemetry.php",
         "results/?id=%s"
 );

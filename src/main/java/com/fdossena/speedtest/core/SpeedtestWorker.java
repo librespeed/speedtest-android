@@ -17,19 +17,9 @@
 
 package com.fdossena.speedtest.core;
 
-import org.json.JSONObject;
-
-import com.fdossena.speedtest.core.Connection;
-import com.fdossena.speedtest.core.Utils;
 import com.fdossena.speedtest.core.config.SpeedtestConfig;
 import com.fdossena.speedtest.core.config.TelemetryConfig;
-import com.fdossena.speedtest.core.DownloadStream;
-import com.fdossena.speedtest.core.GetIP;
-import com.fdossena.speedtest.core.Logger;
-import com.fdossena.speedtest.core.PingStream;
-import com.fdossena.speedtest.core.TestPoint;
-import com.fdossena.speedtest.core.Telemetry;
-import com.fdossena.speedtest.core.UploadStream;
+import org.json.JSONObject;
 
 import java.util.Locale;
 

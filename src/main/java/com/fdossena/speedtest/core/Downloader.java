@@ -19,9 +19,6 @@ package com.fdossena.speedtest.core;
 
 import java.io.InputStream;
 
-import com.fdossena.speedtest.core.Connection;
-import com.fdossena.speedtest.core.Utils;
-
 abstract class Downloader extends Thread{
     private Connection c;
     private String path;

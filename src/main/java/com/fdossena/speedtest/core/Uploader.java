@@ -20,8 +20,6 @@ package com.fdossena.speedtest.core;
 import java.io.OutputStream;
 import java.util.Random;
 
-import com.fdossena.speedtest.core.Connection;
-
 abstract class Uploader extends Thread{
     private Connection c;
     private String path;

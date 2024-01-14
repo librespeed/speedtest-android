@@ -17,6 +17,8 @@
 
 package com.fdossena.speedtest.core;
 
+import javax.net.SocketFactory;
+import javax.net.ssl.SSLSocketFactory;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -27,9 +29,6 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Locale;
-
-import javax.net.SocketFactory;
-import javax.net.ssl.SSLSocketFactory;
 
 class Connection {
     private Socket socket;

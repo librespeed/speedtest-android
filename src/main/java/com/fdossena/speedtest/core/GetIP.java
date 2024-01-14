@@ -17,12 +17,10 @@
 
 package com.fdossena.speedtest.core;
 
+import com.fdossena.speedtest.core.config.SpeedtestConfig;
+
 import java.io.BufferedReader;
 import java.util.HashMap;
-
-import com.fdossena.speedtest.core.config.SpeedtestConfig;
-import com.fdossena.speedtest.core.Connection;
-import com.fdossena.speedtest.core.Utils;
 
 abstract class GetIP extends Thread{
     private Connection c;

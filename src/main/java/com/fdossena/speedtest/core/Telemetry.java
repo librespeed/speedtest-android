@@ -17,12 +17,10 @@
 
 package com.fdossena.speedtest.core;
 
+import com.fdossena.speedtest.core.config.TelemetryConfig;
+
 import java.io.PrintStream;
 import java.util.HashMap;
-
-import com.fdossena.speedtest.core.config.TelemetryConfig;
-import com.fdossena.speedtest.core.Connection;
-import com.fdossena.speedtest.core.Utils;
 
 abstract class Telemetry extends Thread{
     private Connection c;

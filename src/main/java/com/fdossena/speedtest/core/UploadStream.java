@@ -25,7 +25,7 @@ abstract class UploadStream {
     private int connectTimeout, soTimeout, recvBuffer, sendBuffer;
     private Connection c=null;
     private Uploader uploader;
-    private String errorHandlingMode= SpeedtestConfig.ONERROR_ATTEMPT_RESTART;
+    private String errorHandlingMode;
     private long currentUploaded=0, previouslyUploaded=0;
     private boolean stopASAP=false;
     private Logger log;
