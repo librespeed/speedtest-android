@@ -5,7 +5,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
@@ -78,11 +77,15 @@ public class Speedtest {
     }
 
     private static class ServerListLoader {
+        //without timeouts a black-holed network keeps discovery waiting forever
+        private static final int FETCH_TIMEOUT=5000;
         private static String read(String url){
+            BufferedReader br=null;
             try{
-                URL u=new URL(url);
-                InputStream in=u.openStream();
-                BufferedReader br=new BufferedReader(new InputStreamReader(u.openStream()));
+                java.net.URLConnection conn=new URL(url).openConnection();
+                conn.setConnectTimeout(FETCH_TIMEOUT);
+                conn.setReadTimeout(FETCH_TIMEOUT);
+                br=new BufferedReader(new InputStreamReader(conn.getInputStream()));
                 String s="";
                 try{
                     for(;;){
@@ -90,11 +93,13 @@ public class Speedtest {
                         if(r==null) break; else s+=r;
                     }
                 }catch(Throwable t){}
-                br.close();
-                in.close();
                 return s;
             }catch(Throwable t){
                 return null;
+            }finally{
+                if(br!=null){
+                    try{br.close();}catch(Throwable t){}
+                }
             }
         }
 
@@ -196,14 +201,19 @@ public class Speedtest {
                 }
 
                 @Override
+                public void onLossUpdate(double loss) {
+                    callback.onLossUpdate(loss);
+                }
+
+                @Override
                 public void onIPInfoUpdate(String ipInfo) {
                     callback.onIPInfoUpdate(ipInfo);
                 }
 
                 @Override
-                public void onTestIDReceived(String id) {
-                    String shareURL=prepareShareURL(telemetryConfig);
-                    if(shareURL!=null) shareURL=String.format(shareURL,id);
+                public void onTestIDReceived(String id, String shareURLTemplate) {
+                    String shareURL=shareURLTemplate;
+                    if(shareURL!=null&&id!=null) shareURL=String.format(shareURL,id);
                     callback.onTestIDReceived(id,shareURL);
                 }
 
@@ -226,16 +236,6 @@ public class Speedtest {
         }
     }
 
-    private String prepareShareURL(TelemetryConfig c){
-        if(c==null) return null;
-        String server=c.getServer(), shareURL=c.getShareURL();
-        if(server==null||server.isEmpty()||shareURL==null||shareURL.isEmpty()) return null;
-        if(!server.endsWith("/")) server=server+"/";
-        while(shareURL.startsWith("/")) shareURL=shareURL.substring(1);
-        if(server.startsWith("//")) server="https:"+server;
-        return server+shareURL;
-    }
-
     public void abort(){
         synchronized (mutex) {
             if (state == 2) ss.stopASAP();
@@ -251,6 +251,7 @@ public class Speedtest {
         public abstract void onDownloadUpdate(double dl, double progress);
         public abstract void onUploadUpdate(double ul, double progress);
         public abstract void onPingJitterUpdate(double ping, double jitter, double progress);
+        public abstract void onLossUpdate(double loss);
         public abstract void onIPInfoUpdate(String ipInfo);
         public abstract void onTestIDReceived(String id, String shareURL);
         public abstract void onEnd();

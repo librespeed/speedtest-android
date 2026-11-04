@@ -1,10 +1,1 @@
-[
-  {
-    "name":"Helsinki, Finland",
-    "server":"//fi.openspeed.org",
-    "dlURL":"garbage.php",
-    "ulURL":"empty.php",
-    "pingURL":"empty.php",
-    "getIpURL":"getIP.php"
-  }
-]
+"//librespeed.org/backend-servers/servers.php"

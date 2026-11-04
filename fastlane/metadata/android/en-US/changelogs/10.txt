@@ -1,0 +1,1 @@
+Complete rewrite: Material 3 UI, dark theme, server favorites and custom servers, history, IPv6, Czech translation, modern Android (target API 36).

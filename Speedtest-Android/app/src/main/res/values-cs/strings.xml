@@ -1,0 +1,206 @@
+<resources>
+    <string name="app_name">LibreSpeed</string>
+
+    <string name="nav_speedtest">Test rychlosti</string>
+    <string name="nav_history">Historie</string>
+    <string name="nav_servers">Servery</string>
+    <string name="nav_settings">Nastavení</string>
+
+    <string name="unit_mbps">Mb/s</string>
+    <string name="unit_mbytes">MB/s</string>
+    <string name="unit_ms">ms</string>
+    <string name="unit_percent" formatted="false">%</string>
+    <string name="unit_seconds_fmt">%1$s s</string>
+    <string name="data_mb_fmt">~ %1$s MB</string>
+
+    <string name="test_download">Stahování</string>
+    <string name="test_upload">Odesílání</string>
+    <string name="test_ping">Ping</string>
+    <string name="test_jitter">Jitter</string>
+    <string name="test_loss">Ztráta</string>
+    <string name="test_start">Spustit test</string>
+    <string name="test_stop">Zastavit test</string>
+    <string name="test_restart">Nový test</string>
+    <string name="test_failed">Test se nezdařil</string>
+
+    <string name="phase_ping">Měřím odezvu…</string>
+    <string name="phase_download">Měřím stahování…</string>
+    <string name="phase_upload">Měřím odesílání…</string>
+    <string name="phase_done">Hotovo</string>
+
+    <string name="servers_selecting">Vybírám server…</string>
+    <string name="servers_load_failed">Nepodařilo se načíst seznam serverů — klepnutím opakujte</string>
+    <string name="servers_none">Žádné servery nejsou k dispozici</string>
+    <string name="servers_favorites">Oblíbené</string>
+    <string name="servers_all">Všechny servery</string>
+    <string name="servers_no_favorites">Zatím žádné oblíbené servery — označte je hvězdičkou v záložce Všechny servery</string>
+    <string name="servers_refresh">Obnovit servery</string>
+    <string name="servers_unreachable">nedostupný</string>
+    <string name="servers_favorite">Oblíbený</string>
+    <string name="servers_delete">Smazat server</string>
+    <string name="servers_add">Přidat vlastní server</string>
+    <string name="servers_add_name">Název</string>
+    <string name="servers_add_url">URL</string>
+    <string name="servers_add_hint">URL musí ukazovat na LibreSpeed backend.</string>
+    <string name="servers_add_invalid">Neplatná URL</string>
+    <string name="servers_add_confirm">Přidat</string>
+    <string name="dialog_cancel">Zrušit</string>
+    <string name="dialog_close">Zavřít</string>
+    <string name="nav_back">Zpět</string>
+    <string name="more_options">Další možnosti</string>
+
+    <string name="history_empty">Zatím žádné testy — spusťte svůj první test rychlosti</string>
+    <string name="history_clear">Smazat historii</string>
+    <string name="history_clear_confirm">Smazat všechny uložené výsledky?</string>
+    <string name="history_delete">Smazat</string>
+    <string name="detail_server">Server</string>
+    <string name="detail_protocol">Protokol</string>
+    <string name="detail_ip">IP adresa</string>
+
+    <string name="settings_section_display">Zobrazení</string>
+    <string name="settings_section_telemetry">Telemetrie</string>
+    <string name="settings_section_about">O aplikaci</string>
+    <string name="settings_theme">Motiv</string>
+    <string name="theme_system">Podle systému</string>
+    <string name="theme_light">Světlý</string>
+    <string name="theme_dark">Tmavý</string>
+    <string name="settings_language">Jazyk</string>
+    <string name="language_system">Systémový</string>
+    <string name="settings_units">Jednotky</string>
+    <string name="unit_mbps_long">Mb/s — megabity za sekundu</string>
+    <string name="unit_mbytes_long">MB/s — megabajty za sekundu</string>
+    <string name="settings_units_hint">Internetové tarify se obvykle prodávají v Mb/s (megabitech). 8 Mb/s odpovídá 1 MB/s (megabajtu za sekundu), tedy jednotce, kterou většinou ukazují správci souborů.</string>
+    <string name="settings_telemetry">Sdílet výsledky testů s testovaným serverem</string>
+    <string name="settings_telemetry_summary">Pomozte zlepšovat LibreSpeed sdílením výsledků testů se serverem, proti kterému testujete. Ve výchozím stavu vypnuto.</string>
+    <string name="settings_telemetry_detail">Po zapnutí se po každém testu odešle na testovaný server výsledek testu (rychlosti, ping, jitter), vaše IP adresa spolu s údaji o poskytovateli a přibližné poloze, které k ní server uvádí, technický záznam průběhu testu a informace o klientovi (verze aplikace, verze Androidu, produkt zařízení, architektura procesoru a jazyk). Provozovatel serveru je uloží do své databáze výsledků a aplikace dostane odkaz na uložený výsledek. Žádný centrální sběr neexistuje.</string>
+    <string name="settings_telemetry_detail_off">Při vypnutí se neposílá nic.</string>
+    <string name="settings_license">Svobodný a otevřený software pod licencí LGPL-3.0</string>
+    <string name="settings_report_issue">Nahlásit chybu nebo navrhnout funkci</string>
+    <string name="settings_privacy">Zásady ochrany soukromí</string>
+
+    <string name="share_result">Sdílet výsledek</string>
+    <string name="share_open_url">Otevřít URL výsledku</string>
+    <string name="share_text">Výsledek LibreSpeed — Stahování: %1$s, Odesílání: %2$s, Ping: %3$s ms, Jitter: %4$s ms (server: %5$s)</string>
+    <string name="share_text_loss">Ztráta paketů: %1$s %%</string>
+    <string name="share_text_network">Připojení: %1$s</string>
+    <string name="share_text_protocol">Protokol: IPv%1$d</string>
+
+    <string name="server_auto_select">Automatický výběr serveru</string>
+    <string name="server_auto_select_with">Automaticky (%1$s)</string>
+    <string name="server_selected">Vybraný server</string>
+
+    <string name="result_title">Detail výsledku</string>
+    <string name="test_details_title">Detail testu</string>
+    <string name="more_details">Více informací</string>
+    <string name="section_test">Test</string>
+    <string name="section_date">Datum</string>
+    <string name="section_server">Server</string>
+    <string name="section_network">Síť</string>
+    <string name="section_client">Klient</string>
+    <string name="section_application">Aplikace</string>
+    <string name="section_version">Verze</string>
+    <string name="section_device">Zařízení</string>
+    <string name="section_data">Data testu</string>
+    <string name="section_telemetry">Telemetrie</string>
+    <string name="detail_dl_data">Data stahování</string>
+    <string name="detail_ul_data">Data odesílání</string>
+    <string name="telemetry_submitted">Odesláno testovanému serveru</string>
+    <string name="telemetry_not_submitted">Neodesláno</string>
+    <string name="detail_network">Síť</string>
+    <string name="detail_client">Klient</string>
+    <string name="detail_result_id">ID testu</string>
+
+    <string name="settings_section_test">Test</string>
+    <string name="settings_section_general">Obecné</string>
+    <string name="settings_server">Server</string>
+    <string name="settings_test_mode">Režim testu</string>
+    <string name="settings_whats_sent">Co se odesílá?</string>
+    <string name="settings_licenses">Licence open source</string>
+    <string name="detail_user_agent">User agent</string>
+    <string name="detail_isp">Poskytovatel</string>
+    <string name="servers_details">Podrobnosti serveru</string>
+    <string name="servers_sponsor">Sponzor: %1$s</string>
+    <string name="servers_distance">Vzdálenost: %1$d km</string>
+    <string name="servers_show_distances">Zobrazit vzdálenosti serverů</string>
+    <string name="sheet_select">Vybrat server</string>
+    <string name="sheet_select_hint">Použít tento server pro příští test</string>
+    <string name="sheet_favorite">Přidat do oblíbených</string>
+    <string name="sheet_favorite_hint">Přidat tento server mezi oblíbené</string>
+    <string name="sheet_unfavorite">Odebrat z oblíbených</string>
+    <string name="sheet_unfavorite_hint">Odebrat tento server z oblíbených</string>
+    <string name="sheet_info">Informace o serveru</string>
+    <string name="sheet_info_hint">Podrobné informace o tomto serveru</string>
+    <string name="sheet_ping">Změřit ping</string>
+    <string name="sheet_ping_hint">Změřit odezvu tohoto serveru</string>
+    <string name="sheet_share">Sdílet server</string>
+    <string name="sheet_share_hint">Sdílet tento server s ostatními</string>
+    <string name="sheet_delete_hint">Odebrat tento vlastní server</string>
+    <string name="share_server_text">LibreSpeed server: %1$s — %2$s</string>
+    <string name="info_location">Poloha</string>
+    <string name="info_distance">Vzdálenost</string>
+    <string name="info_latency">Odezva</string>
+    <string name="info_last_test">Poslední test</string>
+    <string name="share_image">Sdílet obrázek</string>
+    <string name="share_image_hint">Sdílet obrázek s výsledkem</string>
+    <string name="share_link">Sdílet odkaz</string>
+    <string name="share_link_hint">Sdílet odkaz na stránku výsledku</string>
+    <string name="share_copy">Kopírovat výsledek</string>
+    <string name="share_copy_hint">Zkopírovat textový výsledek</string>
+    <string name="share_image_subtitle">Test rychlosti internetu</string>
+    <string name="result_test_again">Testovat znovu</string>
+    <string name="detail_duration">Délka testu</string>
+    <string name="detail_data">Přenesená data</string>
+    <string name="test_mode_standard">Standardní — více spojení</string>
+    <string name="test_mode_single">Jedno spojení</string>
+    <string name="test_mode_hint">Jedno TCP spojení ukáže, kolik zvládne jediný stream; více spojení lépe vytíží rychlé linky. Test stability stahuje celou minutu a ukáže, jak je linka vyrovnaná.</string>
+    <string name="test_mode_stability">Stabilita — 60 s stahování</string>
+
+    <string name="detail_mode">Režim testu</string>
+    <string name="mode_standard">Standardní</string>
+    <string name="mode_single">Jedno spojení</string>
+    <string name="mode_stability">Stabilita</string>
+    <string name="detail_bufferbloat">Bufferbloat</string>
+    <string name="detail_loaded_dl">Odezva při stahování</string>
+    <string name="detail_loaded_ul">Odezva při nahrávání</string>
+    <string name="section_stability">Stabilita</string>
+    <string name="detail_min">Minimum</string>
+    <string name="detail_max">Maximum</string>
+    <string name="detail_avg">Průměr</string>
+    <string name="detail_variation">Kolísání</string>
+    <string name="detail_operator">Mobilní síť</string>
+
+    <string name="servers_compare">Porovnat servery</string>
+    <string name="compare_hint">Spustí krátký test stahování proti nejrychlejším serverům.</string>
+    <string name="compare_run">Spustit porovnání</string>
+    <string name="compare_running">Testuji %1$s…</string>
+    <string name="compare_use">Použít tento server</string>
+
+    <string name="history_filter">Filtr</string>
+    <string name="filter_all">Vše</string>
+    <string name="filter_network">Síť</string>
+    <string name="filter_server">Server</string>
+    <string name="filter_period">Období</string>
+    <string name="filter_days_7">Posledních 7 dní</string>
+    <string name="filter_days_30">Posledních 30 dní</string>
+    <string name="history_export_csv">Export CSV</string>
+    <string name="history_export_json">Export JSON</string>
+    <string name="history_trends">Trendy</string>
+
+    <string name="settings_scheduled">Plánované testy</string>
+    <string name="scheduled_off">Vypnuto</string>
+    <string name="scheduled_6h">Každých 6 hodin</string>
+    <string name="scheduled_daily">Denně</string>
+    <string name="scheduled_weekly">Týdně</string>
+    <string name="scheduled_hint">Spustí celý test na pozadí a uloží ho do historie. Jeden běh může na rychlé lince přenést ~100 MB dat.</string>
+    <string name="mode_scheduled">Plánovaný</string>
+    <string name="notif_channel">Výsledky testů</string>
+    <string name="notif_title">Test rychlosti dokončen</string>
+
+    <string name="settings_section_diagnostics">Diagnostika</string>
+    <string name="settings_report">Diagnostický report</string>
+    <string name="settings_report_hint">Souhrn aplikace, zařízení a posledního testu pro hlášení chyb. IP adresa není součástí.</string>
+    <string name="settings_report_send">Přiložte tento report ke GitHub issue, ať jde problém zreprodukovat.</string>
+    <string name="report_share">Sdílet</string>
+
+    <string name="bufferbloat_info">Bufferbloat je nárůst odezvy ve chvíli, kdy je linka plně vytížená — právě kvůli němu se při stahování sekají hovory a hry. Známka A a lepší znamená, že připojení zůstává svižné; C a horší je znát. Zlepšíte ho zapnutím chytré správy front (SQM/QoS s fq_codel nebo CAKE) na routeru a nastavením šířky pásma na cca 95 %% naměřené rychlosti.</string>
+</resources>

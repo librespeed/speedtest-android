@@ -7,7 +7,9 @@ import com.fdossena.speedtest.core.base.Connection;
 public abstract class Pinger extends Thread{
     private Connection c;
     private String path;
-    private boolean stopASAP=false;
+    //written by the caller's thread, read by the ping thread: the bufferbloat
+    //pinger runs bare, without a PingStream to close its connection underneath
+    private volatile boolean stopASAP=false;
 
     public Pinger(Connection c, String path){
         this.c=c;
@@ -31,7 +33,10 @@ public abstract class Pinger extends Thread{
                     if(l==null) break;
                     l=l.trim().toLowerCase();
                     if(l.equals("transfer-encoding: chunked")) chunked=true;
-                    if(l.contains("200 ok")) ok=true;
+                    if(l.startsWith("http/")){
+                        String[] statusParts=l.split(" ");
+                        if(statusParts.length>=2&&statusParts[1].startsWith("2")) ok=true;
+                    }
                     if(l.trim().isEmpty()){
                         if(chunked){c.readLineUnbuffered(); c.readLineUnbuffered();}
                         break;
@@ -40,7 +45,9 @@ public abstract class Pinger extends Thread{
                 if(!ok) throw new Exception("Did not get a 200");
                 t=System.nanoTime()-t;
                 if(stopASAP) break;
-                if(!onPong(t/2)) break;
+                //the full request-response time, as the web client and the CLI report it;
+                //halving it used to cancel out a round trip that Nagle's algorithm added
+                if(!onPong(t)) break;
             }
             c.close();
         }catch(Throwable t){

@@ -1,0 +1,12 @@
+LibreSpeed measures your internet connection speed against community-run LibreSpeed servers or your own self-hosted one.
+
+Features:
+
+- Download, upload, ping, jitter and approximate packet loss
+- IPv4 and IPv6 support
+- Server selection with favorites and custom self-hosted servers
+- Test history with sharing
+- Dark and light theme, Material 3 design
+- No ads, no tracking; telemetry is strictly opt-in
+
+LibreSpeed is free software licensed under LGPL-3.0.

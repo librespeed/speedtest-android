@@ -9,11 +9,13 @@ public abstract class DownloadStream {
     private String server, path;
     private int ckSize;
     private int connectTimeout, soTimeout, recvBuffer, sendBuffer;
-    private Connection c=null;
-    private Downloader downloader;
+    private volatile Connection c=null;
+    private volatile Downloader downloader;
     private String errorHandlingMode= SpeedtestConfig.ONERROR_ATTEMPT_RESTART;
-    private long currentDownloaded=0, previouslyDownloaded=0;
-    private boolean stopASAP=false;
+    private volatile long currentDownloaded=0, previouslyDownloaded=0;
+    //ended means no downloader will ever (re)appear: hard failure or stopped
+    //before one was created; join() must not keep waiting past it
+    private volatile boolean stopASAP=false, ended=false;
     private Logger log;
 
     public DownloadStream(String server, String path, int ckSize, String errorHandlingMode, int connectTimeout, int soTimeout, int recvBuffer, int sendBuffer, Logger log){
@@ -41,6 +43,7 @@ public abstract class DownloadStream {
                 try {
                     c = new Connection(server, connectTimeout, soTimeout, recvBuffer, sendBuffer);
                     if(stopASAP){
+                        ended=true;
                         try{c.close();}catch (Throwable t){}
                         return;
                     }
@@ -52,8 +55,10 @@ public abstract class DownloadStream {
 
                         @Override
                         public void onError(String err) {
+                            if(stopASAP) return;
                             log("A downloader died");
                             if(errorHandlingMode.equals(SpeedtestConfig.ONERROR_FAIL)){
+                                ended=true;
                                 DownloadStream.this.onError(err);
                                 return;
                             }
@@ -70,7 +75,10 @@ public abstract class DownloadStream {
                     if(errorHandlingMode.equals(SpeedtestConfig.ONERROR_MUST_RESTART)){
                         Utils.sleep(100);
                         init();
-                    }else onError(t.toString());
+                    }else{
+                        ended=true;
+                        onError(t.toString());
+                    }
                 }
             }
         }.start();
@@ -82,6 +90,12 @@ public abstract class DownloadStream {
     public void stopASAP(){
         stopASAP=true;
         if(downloader !=null) downloader.stopASAP();
+        //closing the connection unblocks a thread parked in a read or write,
+        //making the stop prompt instead of waiting out the socket timeout
+        Connection conn=c;
+        if(conn!=null){
+            try{conn.close();}catch (Throwable t){}
+        }
     }
 
     public long getTotalDownloaded(){
@@ -95,8 +109,11 @@ public abstract class DownloadStream {
     }
 
     public void join(){
-        while(downloader==null) Utils.sleep(0,100);
-        try{downloader.join();}catch (Throwable t){}
+        while(downloader==null&&!ended&&!stopASAP) Utils.sleep(1);
+        Downloader d=downloader;
+        if(d!=null){
+            try{d.join();}catch (Throwable t){}
+        }
     }
 
     private void log(String s){

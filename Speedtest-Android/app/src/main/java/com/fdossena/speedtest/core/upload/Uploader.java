@@ -8,16 +8,28 @@ import com.fdossena.speedtest.core.base.Connection;
 public abstract class Uploader extends Thread{
     private Connection c;
     private String path;
-    private boolean stopASAP=false, resetASAP=false;
-    private long totUploaded=0;
+    private volatile boolean stopASAP=false, resetASAP=false;
+    private volatile long totUploaded=0;
     private byte[] garbage;
+
+    private static byte[] sharedGarbage;
+    //the payload is random so it cannot be compressed on the way; one copy per
+    //process is enough -- filling 20 MB per stream and per restart stalled the
+    //start of the upload phase and spiked the heap
+    private static synchronized byte[] garbage(int ckSize){
+        int size=ckSize*1048576;
+        if(sharedGarbage==null||sharedGarbage.length!=size){
+            byte[] g=new byte[size];
+            new Random(System.nanoTime()).nextBytes(g);
+            sharedGarbage=g;
+        }
+        return sharedGarbage;
+    }
 
     public Uploader(Connection c, String path, int ckSize){
         this.c=c;
         this.path=path;
-        garbage=new byte[ckSize*1048576];
-        Random r=new Random(System.nanoTime());
-        r.nextBytes(garbage);
+        garbage=garbage(ckSize);
         start();
     }
 
@@ -52,7 +64,9 @@ public abstract class Uploader extends Thread{
             c.close();
         }catch(Throwable t){
             try{c.close();}catch(Throwable t1){}
-            onError(t.toString());
+            //a stopped stream closes the connection to unblock this thread;
+            //that is a clean stop, not an error
+            if(!stopASAP) onError(t.toString());
         }
     }
 

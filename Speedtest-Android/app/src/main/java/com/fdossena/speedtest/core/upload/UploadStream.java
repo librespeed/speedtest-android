@@ -9,11 +9,13 @@ public abstract class UploadStream {
     private String server, path;
     private int ckSize;
     private int connectTimeout, soTimeout, recvBuffer, sendBuffer;
-    private Connection c=null;
-    private Uploader uploader;
+    private volatile Connection c=null;
+    private volatile Uploader uploader;
     private String errorHandlingMode= SpeedtestConfig.ONERROR_ATTEMPT_RESTART;
-    private long currentUploaded=0, previouslyUploaded=0;
-    private boolean stopASAP=false;
+    private volatile long currentUploaded=0, previouslyUploaded=0;
+    //ended means no uploader will ever (re)appear: hard failure or stopped
+    //before one was created; join() must not keep waiting past it
+    private volatile boolean stopASAP=false, ended=false;
     private Logger log;
 
     public UploadStream(String server, String path, int ckSize, String errorHandlingMode, int connectTimeout, int soTimeout, int recvBuffer, int sendBuffer, Logger log){
@@ -41,6 +43,7 @@ public abstract class UploadStream {
                 try {
                     c = new Connection(server, connectTimeout, soTimeout, recvBuffer, sendBuffer);
                     if(stopASAP){
+                        ended=true;
                         try{c.close();}catch (Throwable t){}
                         return;
                     }
@@ -52,8 +55,10 @@ public abstract class UploadStream {
 
                         @Override
                         public void onError(String err) {
+                            if(stopASAP) return;
                             log("An uploader died");
                             if(errorHandlingMode.equals(SpeedtestConfig.ONERROR_FAIL)){
+                                ended=true;
                                 UploadStream.this.onError(err);
                                 return;
                             }
@@ -70,7 +75,10 @@ public abstract class UploadStream {
                     if(errorHandlingMode.equals(SpeedtestConfig.ONERROR_MUST_RESTART)){
                         Utils.sleep(100);
                         init();
-                    }else onError(t.toString());
+                    }else{
+                        ended=true;
+                        onError(t.toString());
+                    }
                 }
             }
         }.start();
@@ -81,6 +89,12 @@ public abstract class UploadStream {
     public void stopASAP(){
         stopASAP=true;
         if(uploader !=null) uploader.stopASAP();
+        //closing the connection unblocks a thread parked in a read or write,
+        //making the stop prompt instead of waiting out the socket timeout
+        Connection conn=c;
+        if(conn!=null){
+            try{conn.close();}catch (Throwable t){}
+        }
     }
 
     public long getTotalUploaded(){
@@ -94,8 +108,11 @@ public abstract class UploadStream {
     }
 
     public void join(){
-        while(uploader==null) Utils.sleep(0,100);
-        try{uploader.join();}catch (Throwable t){}
+        while(uploader==null&&!ended&&!stopASAP) Utils.sleep(1);
+        Uploader u=uploader;
+        if(u!=null){
+            try{u.join();}catch (Throwable t){}
+        }
     }
 
     private void log(String s){

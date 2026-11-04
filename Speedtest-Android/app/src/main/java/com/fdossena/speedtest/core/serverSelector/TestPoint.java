@@ -6,6 +6,8 @@ import org.json.JSONObject;
 public class TestPoint {
     private final String name, server, dlURL, ulURL, pingURL, getIpURL;
     protected float ping=-1;
+    protected int ipVersion=0; //0=unknown, set from the socket used during ping
+    protected int serverId=0; //0=not part of the public server list
 
     public TestPoint(String name, String server, String dlURL, String ulURL, String pingURL, String getIpURL){
         this.name=name;
@@ -30,13 +32,22 @@ public class TestPoint {
             if (pingURL == null) throw new IllegalArgumentException("Missing pingURL field");
             getIpURL = json.getString("getIpURL");
             if (getIpURL == null) throw new IllegalArgumentException("Missing getIpURL field");
+            serverId = json.optInt("id", 0);
         }catch (JSONException t){
             throw new IllegalArgumentException("Invalid JSON");
         }
     }
 
+    public int getServerId() {
+        return serverId;
+    }
+
     public String getName() {
         return name;
+    }
+
+    public int getIpVersion() {
+        return ipVersion;
     }
 
     public String getServer() {

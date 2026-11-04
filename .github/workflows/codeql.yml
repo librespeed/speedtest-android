@@ -1,0 +1,30 @@
+name: CodeQL
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+  schedule:
+    - cron: "30 4 * * 1"
+  workflow_dispatch:
+
+jobs:
+  analyze:
+    name: Analyze
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "21"
+      - uses: github/codeql-action/init@v4
+        with:
+          languages: java-kotlin
+          # buildless analysis; also enables incremental overlay databases
+          build-mode: none
+      - uses: github/codeql-action/analyze@v4

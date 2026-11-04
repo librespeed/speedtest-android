@@ -1,0 +1,55 @@
+name: Publish to Google Play
+
+# Manual only — uploads the signed AAB to the chosen track, never to production.
+on:
+  workflow_dispatch:
+    inputs:
+      track:
+        description: Play track
+        type: choice
+        default: internal
+        options: [ internal, alpha, beta ]
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    working-directory: Speedtest-Android
+
+jobs:
+  publish:
+    name: Upload AAB to Play (${{ inputs.track }})
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "21"
+      - uses: gradle/actions/setup-gradle@v6
+      - name: Check required secrets
+        run: |
+          if [ -z "${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}" ] || [ -z "${{ secrets.SIGNING_KEYSTORE_BASE64 }}" ]; then
+            echo "PLAY_SERVICE_ACCOUNT_JSON and SIGNING_* secrets are required" >&2
+            exit 1
+          fi
+      - name: Prepare signing keystore
+        run: |
+          echo "${{ secrets.SIGNING_KEYSTORE_BASE64 }}" | base64 -d > "$RUNNER_TEMP/keystore.jks"
+          {
+            echo "SIGNING_KEYSTORE=$RUNNER_TEMP/keystore.jks"
+            echo "SIGNING_STORE_PASSWORD=${{ secrets.SIGNING_STORE_PASSWORD }}"
+            echo "SIGNING_KEY_ALIAS=${{ secrets.SIGNING_KEY_ALIAS }}"
+            echo "SIGNING_KEY_PASSWORD=${{ secrets.SIGNING_KEY_PASSWORD }}"
+          } >> "$GITHUB_ENV"
+      - name: Tests and release bundle
+        run: ./gradlew :app:testReleaseUnitTest :app:bundleRelease
+      - uses: r0adkll/upload-google-play@e738b9dd8f2476ea806d921b64aacd24f34515a5 # v1.1.5
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+          packageName: org.librespeed.speedtest
+          releaseFiles: Speedtest-Android/app/build/outputs/bundle/release/*.aab
+          track: ${{ inputs.track }}
+          status: draft
+          mappingFile: Speedtest-Android/app/build/outputs/mapping/release/mapping.txt

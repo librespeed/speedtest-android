@@ -1,0 +1,12 @@
+LibreSpeed měří rychlost vašeho připojení proti komunitním LibreSpeed serverům nebo vašemu vlastnímu.
+
+Funkce:
+
+- Stahování, odesílání, ping, jitter a přibližná ztráta paketů
+- Podpora IPv4 i IPv6
+- Výběr serveru s oblíbenými a vlastními servery
+- Historie testů se sdílením
+- Tmavý i světlý režim, design Material 3
+- Žádné reklamy ani sledování; telemetrie je přísně opt-in
+
+LibreSpeed je svobodný software pod licencí LGPL-3.0.

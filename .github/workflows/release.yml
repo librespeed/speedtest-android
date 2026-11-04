@@ -1,0 +1,65 @@
+name: Release
+
+on:
+  push:
+    tags: [ "v*" ]
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    working-directory: Speedtest-Android
+
+jobs:
+  release:
+    name: Release build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "21"
+      - uses: gradle/actions/setup-gradle@v6
+      - name: Check version against the tag
+        run: |
+          VERSION=$(sed -nE 's/.*versionName = "(.*)"/\1/p' app/build.gradle.kts)
+          if [[ "$GITHUB_REF_NAME" != "v$VERSION" ]]; then
+            echo "Tag $GITHUB_REF_NAME does not match versionName $VERSION" >&2
+            exit 1
+          fi
+      - name: Prepare signing keystore
+        run: |
+          if [ -z "${{ secrets.SIGNING_KEYSTORE_BASE64 }}" ]; then
+            echo "Release builds require the SIGNING_* secrets; refusing to ship a debug-signed release" >&2
+            exit 1
+          fi
+          echo "${{ secrets.SIGNING_KEYSTORE_BASE64 }}" | base64 -d > "$RUNNER_TEMP/keystore.jks"
+          {
+            echo "SIGNING_KEYSTORE=$RUNNER_TEMP/keystore.jks"
+            echo "SIGNING_STORE_PASSWORD=${{ secrets.SIGNING_STORE_PASSWORD }}"
+            echo "SIGNING_KEY_ALIAS=${{ secrets.SIGNING_KEY_ALIAS }}"
+            echo "SIGNING_KEY_PASSWORD=${{ secrets.SIGNING_KEY_PASSWORD }}"
+          } >> "$GITHUB_ENV"
+      - name: Lint and unit tests
+        run: ./gradlew :app:lintRelease :app:testReleaseUnitTest
+      - name: Build release APK and AAB
+        run: ./gradlew :app:assembleRelease :app:bundleRelease
+      - name: Collect artifacts
+        run: |
+          VERSION=$(sed -nE 's/.*versionName = "(.*)"/\1/p' app/build.gradle.kts)
+          cp app/build/outputs/apk/release/*.apk "librespeed_${VERSION}.apk"
+          cp app/build/outputs/bundle/release/*.aab "librespeed_${VERSION}.aab"
+      - uses: actions/upload-artifact@v7
+        with:
+          name: librespeed-release
+          path: |
+            Speedtest-Android/librespeed_*.apk
+            Speedtest-Android/librespeed_*.aab
+      - uses: softprops/action-gh-release@v3
+        with:
+          draft: true
+          files: Speedtest-Android/librespeed_*.apk

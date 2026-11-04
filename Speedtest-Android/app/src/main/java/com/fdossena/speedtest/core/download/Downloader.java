@@ -9,8 +9,8 @@ public abstract class Downloader extends Thread{
     private Connection c;
     private String path;
     private int ckSize;
-    private boolean stopASAP=false, resetASAP=false;
-    private long totDownloaded=0;
+    private volatile boolean stopASAP=false, resetASAP=false;
+    private volatile long totDownloaded=0;
 
     public Downloader(Connection c, String path, int ckSize){
         this.c=c;
@@ -38,6 +38,9 @@ public abstract class Downloader extends Thread{
                 if(stopASAP) break;
                 int l=in.read(buf);
                 if(stopASAP) break;
+                //an orderly close from the server would otherwise count -1 into the
+                //totals and turn this loop into a hot spin that never recovers
+                if(l<0) throw new Exception("Connection closed unexpectedly");
                 bytesLeft-=l;
                 if(resetASAP){
                     totDownloaded=0;
@@ -52,7 +55,9 @@ public abstract class Downloader extends Thread{
             c.close();
         }catch(Throwable t){
             try{c.close();}catch(Throwable t1){}
-            onError(t.toString());
+            //a stopped stream closes the connection to unblock this thread;
+            //that is a clean stop, not an error
+            if(!stopASAP) onError(t.toString());
         }
     }
 

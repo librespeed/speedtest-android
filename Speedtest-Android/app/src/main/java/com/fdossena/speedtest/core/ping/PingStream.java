@@ -7,12 +7,20 @@ import com.fdossena.speedtest.core.log.Logger;
 
 public abstract class PingStream {
     private String server, path;
-    private int remainingPings=10;
+    private volatile int remainingPings=10;
     private int connectTimeout, soTimeout, recvBuffer, sendBuffer;
-    private Connection c=null;
-    private Pinger pinger;
+    private volatile Connection c=null;
+
+    public Boolean usedIPv6(){
+        Connection conn=c;
+        return conn==null?null:conn.isIPv6();
+    }
+    private volatile Pinger pinger;
     private String errorHandlingMode= SpeedtestConfig.ONERROR_ATTEMPT_RESTART;
-    private boolean stopASAP=false;
+    //ended means the stream reached its terminal event (onDone or onError) and
+    //no pinger will ever (re)appear; error recovery replaces pinger threads, so
+    //waiting on one of them says nothing about the stream as a whole
+    private volatile boolean stopASAP=false, ended=false;
     private Logger log;
 
     public PingStream(String server, String path, int pings, String errorHandlingMode, int connectTimeout, int soTimeout, int recvBuffer, int sendBuffer, Logger log){
@@ -36,10 +44,14 @@ public abstract class PingStream {
         new Thread(){
             public void run(){
                 if(pinger !=null) pinger.stopASAP();
-                if(remainingPings<=0) return;
+                if(remainingPings<=0){
+                    ended=true;
+                    return;
+                }
                 try {
                     c = new Connection(server, connectTimeout, soTimeout, recvBuffer, sendBuffer);
                     if(stopASAP){
+                        ended=true;
                         try{c.close();}catch (Throwable t){}
                         return;
                     }
@@ -48,6 +60,7 @@ public abstract class PingStream {
                         public boolean onPong(long ns) {
                             boolean r=PingStream.this.onPong(ns);
                             if(--remainingPings<=0||!r){
+                                ended=true;
                                 onDone();
                                 return false;
                             } else return true;
@@ -55,8 +68,10 @@ public abstract class PingStream {
 
                         @Override
                         public void onError(String err) {
+                            if(stopASAP) return;
                             log("A pinger died");
                             if(errorHandlingMode.equals(SpeedtestConfig.ONERROR_FAIL)){
+                                ended=true;
                                 PingStream.this.onError(err);
                                 return;
                             }
@@ -72,7 +87,10 @@ public abstract class PingStream {
                     if(errorHandlingMode.equals(SpeedtestConfig.ONERROR_MUST_RESTART)){
                         Utils.sleep(100);
                         init();
-                    }else onError(t.toString());
+                    }else{
+                        ended=true;
+                        onError(t.toString());
+                    }
                 }
             }
         }.start();
@@ -85,11 +103,24 @@ public abstract class PingStream {
     public void stopASAP(){
         stopASAP=true;
         if(pinger !=null) pinger.stopASAP();
+        //closing the connection unblocks a thread parked in a read or write,
+        //making the stop prompt instead of waiting out the socket timeout
+        Connection conn=c;
+        if(conn!=null){
+            try{conn.close();}catch (Throwable t){}
+        }
+    }
+
+    public boolean hasEnded(){
+        return ended;
     }
 
     public void join(){
-        while(pinger==null) Utils.sleep(0,100);
-        try{pinger.join();}catch (Throwable t){}
+        while(pinger==null&&!ended&&!stopASAP) Utils.sleep(1);
+        Pinger p=pinger;
+        if(p!=null){
+            try{p.join();}catch (Throwable t){}
+        }
     }
 
     private void log(String s){

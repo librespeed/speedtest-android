@@ -9,13 +9,19 @@ import com.fdossena.speedtest.core.ping.PingStream;
 
 public abstract class ServerSelector {
     private ArrayList<TestPoint> servers=new ArrayList<>();
-    private static final int PARALLELISM=6;
+    private static final int PARALLELISM=16;
     private TestPoint selectedTestPoint=null;
     private int state=NOT_STARTED;
     private static final int NOT_STARTED=0, WORKING=1, DONE=2;
     private int timeout;
     private static final int PINGS=3, SLOW_THRESHOLD=500;
-    private boolean stopASAP=false;
+    //written under Speedtest's mutex, read from Pinger callback threads that
+    //never take it: without volatile an aborted selection keeps walking the list
+    private volatile boolean stopASAP=false;
+    //lowest ping of any server that has finished; a server whose latest pong
+    //is already above it cannot win, so its remaining pings are not worth the
+    //wait -- selection ends when the slow servers have answered once, not thrice
+    private volatile float bestDone=Float.MAX_VALUE;
 
     public ServerSelector(TestPoint[] servers, int timeout){
         addTestPoints(servers);
@@ -84,13 +90,17 @@ public abstract class ServerSelector {
                 public boolean onPong(long ns) {
                     float p=ns/1000000f;
                     if(tp.ping==-1||p<tp.ping) tp.ping=p;
-                    if(stopASAP) return false;
+                    if(tp.ipVersion==0) tp.ipVersion=Boolean.TRUE.equals(usedIPv6())?6:4;
+                    if(stopASAP||p>=bestDone) return false;
                     return p<SLOW_THRESHOLD;
                 }
 
                 @Override
                 public void onDone() {
-                    synchronized (mutex){activeStreams--;}
+                    synchronized (mutex){
+                        activeStreams--;
+                        if(tp.ping!=-1&&tp.ping<bestDone) bestDone=tp.ping;
+                    }
                     next();
                 }
             };

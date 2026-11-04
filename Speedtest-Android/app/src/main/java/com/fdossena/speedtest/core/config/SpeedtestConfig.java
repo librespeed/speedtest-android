@@ -9,7 +9,9 @@ public class SpeedtestConfig {
     private int dl_streamDelay=300, ul_streamDelay=300;
     private double dl_graceTime=1.5, ul_graceTime=1.5;
     private int dl_connectTimeout=5000, dl_soTimeout=10000, ul_connectTimeout=5000, ul_soTimeout=10000, ping_connectTimeout=2000, ping_soTimeout=5000;
-    private int dl_recvBuffer=-1, dl_sendBuffer=-1, ul_recvBuffer=-1, ul_sendBuffer=16384, ping_recvBuffer=-1, ping_sendBuffer=-1;
+    //a fixed 16 KB send buffer locked the kernel out of autotuning and capped each
+    //upload stream at roughly 32 KB per round trip; -1 leaves the socket default
+    private int dl_recvBuffer=-1, dl_sendBuffer=-1, ul_recvBuffer=-1, ul_sendBuffer=-1, ping_recvBuffer=-1, ping_sendBuffer=-1;
     private String errorHandlingMode=ONERROR_ATTEMPT_RESTART;
     public static final String ONERROR_FAIL="fail", ONERROR_ATTEMPT_RESTART="attempt-restart", ONERROR_MUST_RESTART="must-restart";
     private int time_dl_max=15, time_ul_max=15;
