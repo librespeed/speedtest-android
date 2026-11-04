@@ -29,8 +29,8 @@ mockwebserver = { group = "com.squareup.okhttp3", name = "mockwebserver", versio
 json = { group = "org.json", name = "json", version = "20250107" }
 androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version = "1.3.0" }
 robolectric = { group = "org.robolectric", name = "robolectric", version = "4.15.1" }
-roborazzi = { group = "io.github.takahirom.roborazzi", name = "roborazzi", version = "1.44.0-alpha03" }
-roborazzi-compose = { group = "io.github.takahirom.roborazzi", name = "roborazzi-compose", version = "1.44.0-alpha03" }
+roborazzi = { group = "io.github.takahirom.roborazzi", name = "roborazzi", version = "1.77.0" }
+roborazzi-compose = { group = "io.github.takahirom.roborazzi", name = "roborazzi-compose", version = "1.77.0" }
 androidx-compose-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-compose-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 
