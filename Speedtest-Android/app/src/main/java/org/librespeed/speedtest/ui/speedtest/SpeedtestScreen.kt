@@ -8,9 +8,11 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -98,41 +100,17 @@ fun SpeedtestScreen(
         }
     }
 
-    Column(
-        modifier = Modifier.fillMaxSize().padding(horizontal = 20.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+    BoxWithConstraints(
+        modifier = Modifier.fillMaxSize().padding(horizontal = 20.dp)
     ) {
-        Box(modifier = Modifier.widthIn(max = 500.dp).fillMaxWidth()) {
-            Row(
-                modifier = Modifier.align(Alignment.Center),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Image(
-                    painter = painterResource(R.drawable.ic_logo),
-                    contentDescription = null,
-                    modifier = Modifier.size(28.dp)
-                )
-                Spacer(Modifier.width(8.dp))
-                Text(
-                    text = buildAnnotatedString {
-                        withStyle(SpanStyle(color = MaterialTheme.colorScheme.primary)) { append("Libre") }
-                        withStyle(SpanStyle(color = MaterialTheme.colorScheme.onBackground)) { append("Speed") }
-                    },
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold
-                )
-            }
-            IconButton(
-                onClick = onSettingsClick,
-                modifier = Modifier.align(Alignment.CenterEnd)
-            ) {
-                Icon(
-                    Icons.Filled.Settings,
-                    contentDescription = stringResource(R.string.nav_settings),
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-        }
+        //a car head unit is wide but short: the stacked layout needs more height than
+        //the screen has, which pushed the Start button completely off-screen
+        val splitLandscape = maxWidth > maxHeight && maxHeight < 800.dp
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+        Header(onSettingsClick)
         Spacer(Modifier.height(6.dp))
         ServerChip(
             state = state,
@@ -161,6 +139,24 @@ fun SpeedtestScreen(
                     }
                 }
             )
+        } else if (splitLandscape) {
+            //gauge and controls side by side so the Start button stays on screen
+            Row(
+                modifier = Modifier.weight(1f).widthIn(max = 1100.dp).fillMaxWidth().padding(vertical = 8.dp),
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Box(Modifier.weight(1f).fillMaxHeight(), contentAlignment = Alignment.Center) {
+                    GaugeSection(state, unitLabel, display = { display(it) })
+                }
+                Column(
+                    modifier = Modifier.weight(1f).fillMaxHeight(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    MetricsSection(state, viewModel, unitLabel, display = { display(it) })
+                }
+            }
         } else {
             Spacer(Modifier.weight(1f))
             GaugeSection(state, unitLabel, display = { display(it) })
@@ -168,6 +164,42 @@ fun SpeedtestScreen(
             MetricsSection(state, viewModel, unitLabel, display = { display(it) })
         }
         Spacer(Modifier.height(12.dp))
+        }
+    }
+}
+
+@Composable
+private fun Header(onSettingsClick: () -> Unit) {
+    Box(modifier = Modifier.widthIn(max = 500.dp).fillMaxWidth()) {
+        Row(
+            modifier = Modifier.align(Alignment.Center),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Image(
+                painter = painterResource(R.drawable.ic_logo),
+                contentDescription = null,
+                modifier = Modifier.size(28.dp)
+            )
+            Spacer(Modifier.width(8.dp))
+            Text(
+                text = buildAnnotatedString {
+                    withStyle(SpanStyle(color = MaterialTheme.colorScheme.primary)) { append("Libre") }
+                    withStyle(SpanStyle(color = MaterialTheme.colorScheme.onBackground)) { append("Speed") }
+                },
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold
+            )
+        }
+        IconButton(
+            onClick = onSettingsClick,
+            modifier = Modifier.align(Alignment.CenterEnd)
+        ) {
+            Icon(
+                Icons.Filled.Settings,
+                contentDescription = stringResource(R.string.nav_settings),
+                tint = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
     }
 }
 
