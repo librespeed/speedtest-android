@@ -141,7 +141,10 @@ fun App(windowWidth: WindowWidthSizeClass = WindowWidthSizeClass.Compact, hinge:
                         entryId = entry.arguments?.getLong("id") ?: 0L,
                         onBack = { navController.popBackStack() },
                         onTestAgain = { serverName ->
-                            navController.navigateTo(Destination.SPEEDTEST)
+                            //pop the result off the stack instead of using the tab helper:
+                            //its saveState/restoreState would put this result screen back on
+                            //top of the speedtest screen, hiding the test it just started
+                            navController.popBackStack(Destination.SPEEDTEST.route, inclusive = false)
                             speedtestViewModel.testAgain(serverName)
                         },
                         onTestDetails = { id -> navController.navigate("testdetails/$id") },
