@@ -6,6 +6,8 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,6 +16,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -263,45 +266,6 @@ private fun MetricsSection(
         }
 
         Spacer(Modifier.height(14.dp))
-        state.ipInfo?.takeIf { it.isNotBlank() }?.let { info ->
-            val display = parseIpInfoDisplay(info)
-            Card(
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                modifier = Modifier.widthIn(max = 500.dp).fillMaxWidth()
-            ) {
-                Column(Modifier.padding(horizontal = 16.dp, vertical = 10.dp)) {
-                    if (display.ip.isNotEmpty()) {
-                        Text(
-                            text = "${stringResource(R.string.detail_ip)}: ${display.ip}",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurface
-                        )
-                    }
-                    display.isp?.let {
-                        Text(
-                            text = "${stringResource(R.string.detail_isp)}: $it",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                    display.location?.let {
-                        Text(
-                            text = "${stringResource(R.string.detail_ip_location)}: $it",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                    display.coordinates?.let {
-                        Text(
-                            text = "${stringResource(R.string.detail_ip_coordinates)}: $it",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                }
-            }
-            Spacer(Modifier.height(10.dp))
-        }
         val running = state.phase in setOf(Phase.PING, Phase.DOWNLOAD, Phase.UPLOAD)
         val context = LocalContext.current
         val prefs = remember { AppPreferences(context.applicationContext) }
@@ -359,6 +323,50 @@ private fun MetricsSection(
                 style = MaterialTheme.typography.bodySmall,
                 textAlign = TextAlign.Center
             )
+        }
+
+        state.ipInfo?.takeIf { it.isNotBlank() }?.let { info ->
+            val display = parseIpInfoDisplay(info)
+            Spacer(Modifier.height(8.dp))
+            Card(
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                modifier = Modifier
+                    .widthIn(max = 500.dp)
+                    .fillMaxWidth()
+                    .heightIn(max = 72.dp)
+                    .verticalScroll(rememberScrollState())
+            ) {
+                Column(Modifier.padding(horizontal = 16.dp, vertical = 10.dp)) {
+                    if (display.ip.isNotEmpty()) {
+                        Text(
+                            text = "${stringResource(R.string.detail_ip)}: ${display.ip}",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+                    display.isp?.let {
+                        Text(
+                            text = "${stringResource(R.string.detail_isp)}: $it",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                    display.location?.let {
+                        Text(
+                            text = "${stringResource(R.string.detail_ip_location)}: $it",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                    display.coordinates?.let {
+                        Text(
+                            text = "${stringResource(R.string.detail_ip_coordinates)}: $it",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
+            }
         }
 }
 

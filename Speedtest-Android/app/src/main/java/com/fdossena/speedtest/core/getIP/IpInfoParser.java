@@ -59,7 +59,7 @@ public final class IpInfoParser {
             }
         }
 
-        if(city.isEmpty()||region.isEmpty()||countryName.isEmpty()&&country.isEmpty()) return null;
+        if(city.isEmpty()||region.isEmpty()||(countryName.isEmpty()&&country.isEmpty())) return null;
         if(place.isEmpty()||latitude==null||longitude==null) return null;
         if(latitude< -90||latitude>90||longitude< -180||longitude>180) return null;
         if(Double.isNaN(latitude)||Double.isNaN(longitude)||Double.isInfinite(latitude)||Double.isInfinite(longitude)) return null;
@@ -84,7 +84,8 @@ public final class IpInfoParser {
         }
         if(value instanceof String){
             try{
-                return Double.parseDouble(((String)value).trim());
+                double coordinate=Double.parseDouble(((String)value).trim());
+                return Double.isNaN(coordinate)||Double.isInfinite(coordinate)?null:coordinate;
             }catch(NumberFormatException ignored){}
         }
         return null;

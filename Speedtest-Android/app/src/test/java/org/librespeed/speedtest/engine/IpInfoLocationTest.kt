@@ -83,6 +83,46 @@ class IpInfoLocationTest {
     }
 
     @Test
+    fun nonFiniteStringsFallBackToAliasesAndLoc() {
+        val aliasPayload = JSONObject()
+            .put("processedString", "198.51.100.9 - Example ISP")
+            .put("location", JSONObject()
+                .put("city", "Aliasville")
+                .put("region", "Aliashire")
+                .put("countryName", "Testland")
+                .put("latitude", "NaN")
+                .put("lat", 38.1234)
+                .put("longitude", "Infinity")
+                .put("lon", -77.1234))
+            .toString()
+
+        assertEquals(
+            "198.51.100.9 - Example ISP\n" +
+                "Approximate IP-derived location: Aliasville, Aliashire, Testland\n" +
+                "Latitude/longitude: 38.1234, -77.1234",
+            IpInfoParser.formatDisplayString(aliasPayload)
+        )
+
+        val locPayload = JSONObject()
+            .put("processedString", "198.51.100.10 - Example ISP")
+            .put("location", JSONObject()
+                .put("city", "Locville")
+                .put("region", "Lochire")
+                .put("countryName", "Testland")
+                .put("latitude", "NaN")
+                .put("longitude", "Infinity")
+                .put("loc", "36.6676,-78.3875"))
+            .toString()
+
+        assertEquals(
+            "198.51.100.10 - Example ISP\n" +
+                "Approximate IP-derived location: Locville, Lochire, Testland\n" +
+                "Latitude/longitude: 36.6676, -78.3875",
+            IpInfoParser.formatDisplayString(locPayload)
+        )
+    }
+
+    @Test
     fun malformedOrIncompleteLocationKeepsLegacyText() {
         val processed = "203.0.113.20 - Legacy ISP"
         val cases = listOf(
