@@ -71,6 +71,7 @@ import org.librespeed.speedtest.R
 import org.librespeed.speedtest.ui.currentLocale
 import org.librespeed.speedtest.data.AppPreferences
 import org.librespeed.speedtest.data.NetworkInfo
+import org.librespeed.speedtest.data.parseIpInfoDisplay
 import org.librespeed.speedtest.ui.HingeBounds
 import org.librespeed.speedtest.ui.components.SpeedGauge
 import org.librespeed.speedtest.ui.components.Sparkline
@@ -262,6 +263,45 @@ private fun MetricsSection(
         }
 
         Spacer(Modifier.height(14.dp))
+        state.ipInfo?.takeIf { it.isNotBlank() }?.let { info ->
+            val display = parseIpInfoDisplay(info)
+            Card(
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                modifier = Modifier.widthIn(max = 500.dp).fillMaxWidth()
+            ) {
+                Column(Modifier.padding(horizontal = 16.dp, vertical = 10.dp)) {
+                    if (display.ip.isNotEmpty()) {
+                        Text(
+                            text = "${stringResource(R.string.detail_ip)}: ${display.ip}",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+                    display.isp?.let {
+                        Text(
+                            text = "${stringResource(R.string.detail_isp)}: $it",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                    display.location?.let {
+                        Text(
+                            text = "${stringResource(R.string.detail_ip_location)}: $it",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                    display.coordinates?.let {
+                        Text(
+                            text = "${stringResource(R.string.detail_ip_coordinates)}: $it",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
+            }
+            Spacer(Modifier.height(10.dp))
+        }
         val running = state.phase in setOf(Phase.PING, Phase.DOWNLOAD, Phase.UPLOAD)
         val context = LocalContext.current
         val prefs = remember { AppPreferences(context.applicationContext) }

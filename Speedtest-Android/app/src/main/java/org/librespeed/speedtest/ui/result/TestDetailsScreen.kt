@@ -65,6 +65,7 @@ import org.librespeed.speedtest.data.GeoDistance
 import org.librespeed.speedtest.data.HistoryDatabase
 import org.librespeed.speedtest.data.HistoryEntry
 import org.librespeed.speedtest.data.TestStats
+import org.librespeed.speedtest.data.parseIpInfoDisplay
 import org.librespeed.speedtest.ui.history.formatDate
 import java.util.Locale
 
@@ -152,12 +153,21 @@ fun TestDetailsScreen(entryId: Long, onBack: () -> Unit) {
                     RowDivider()
                 }
                 result.ipInfo?.takeIf { it.isNotBlank() }?.let { info ->
-                    val ip = info.substringBefore(" - ").trim()
-                    val provider = info.substringAfter(" - ", "").trim()
-                    DetailRow(stringResource(R.string.detail_ip), ip, Icons.Filled.MyLocation)
-                    if (provider.isNotEmpty()) {
+                    val display = parseIpInfoDisplay(info)
+                    if (display.ip.isNotEmpty()) {
+                        DetailRow(stringResource(R.string.detail_ip), display.ip, Icons.Filled.MyLocation)
+                    }
+                    display.isp?.let { provider ->
                         RowDivider()
                         DetailRow(stringResource(R.string.detail_isp), provider, Icons.Filled.Business)
+                    }
+                    display.location?.let { location ->
+                        RowDivider()
+                        DetailRow(stringResource(R.string.detail_ip_location), location, Icons.Filled.Public)
+                    }
+                    display.coordinates?.let { coordinates ->
+                        RowDivider()
+                        DetailRow(stringResource(R.string.detail_ip_coordinates), coordinates, Icons.Filled.MyLocation)
                     }
                 }
                 result.networkDetail?.let {
