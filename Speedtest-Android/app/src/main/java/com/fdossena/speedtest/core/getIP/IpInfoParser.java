@@ -23,9 +23,14 @@ public final class IpInfoParser {
             LocationInfo parsed=parseLocation(location);
             if(parsed==null) return processed;
 
-            return processed
-                    +"\n"+LOCATION_LABEL+" "+parsed.place
-                    +"\n"+COORDINATES_LABEL+" "+parsed.latitude+", "+parsed.longitude;
+            StringBuilder display=new StringBuilder(processed);
+            if(!parsed.place.isEmpty()){
+                display.append("\n").append(LOCATION_LABEL).append(" ").append(parsed.place);
+            }
+            if(!parsed.latitude.isEmpty()&&!parsed.longitude.isEmpty()){
+                display.append("\n").append(COORDINATES_LABEL).append(" ").append(parsed.latitude).append(", ").append(parsed.longitude);
+            }
+            return parsed.place.isEmpty()&&parsed.latitude.isEmpty()&&parsed.longitude.isEmpty()?processed:display.toString();
         }catch(Throwable t){
             return payload;
         }
@@ -38,54 +43,92 @@ public final class IpInfoParser {
         String country=cleanText(readText(location,"country","countryCode","country_code"));
         String place=formatPlace(city,region,countryName.isEmpty()?country:countryName);
 
-        Double latitude=readCoordinate(location,"latitude","lat");
-        Double longitude=readCoordinate(location,"longitude","lon","lng");
-        if(latitude==null||longitude==null){
-            JSONObject coordinates=location.optJSONObject("coordinates");
-            if(coordinates!=null){
-                if(latitude==null) latitude=readCoordinate(coordinates,"latitude","lat");
-                if(longitude==null) longitude=readCoordinate(coordinates,"longitude","lon","lng");
-            }
-        }
-        if(latitude==null||longitude==null){
-            Object locValue=location.opt("loc");
-            if(locValue instanceof String){
-                String loc=cleanText(locValue);
-                String[] parts=loc.split(",",-1);
-                if(parts.length>=2){
-                    if(latitude==null) latitude=parseCoordinate(parts[0].trim());
-                    if(longitude==null) longitude=parseCoordinate(parts[1].trim());
-                }
-            }
-        }
+        Double latitude=readLatitude(location);
+        Double longitude=readLongitude(location);
 
-        if(city.isEmpty()||region.isEmpty()||(countryName.isEmpty()&&country.isEmpty())) return null;
-        if(place.isEmpty()||latitude==null||longitude==null) return null;
-        if(latitude< -90||latitude>90||longitude< -180||longitude>180) return null;
-        if(Double.isNaN(latitude)||Double.isNaN(longitude)||Double.isInfinite(latitude)||Double.isInfinite(longitude)) return null;
-
-        return new LocationInfo(place, formatCoordinate(latitude), formatCoordinate(longitude));
+        if(place.isEmpty()&&latitude==null&&longitude==null) return null;
+        return new LocationInfo(
+                place,
+                latitude==null?"":formatCoordinate(latitude),
+                longitude==null?"":formatCoordinate(longitude)
+        );
     }
 
-    private static Double readCoordinate(JSONObject object,String... names){
+    private static Double readLatitude(JSONObject location){
+        Double latitude=readLatitudeFromObject(location);
+        if(latitude!=null) return latitude;
+
+        JSONObject coordinates=location.optJSONObject("coordinates");
+        if(coordinates!=null){
+            latitude=readLatitudeFromObject(coordinates);
+            if(latitude!=null) return latitude;
+            latitude=readLatitudeFromLoc(coordinates.opt("loc"));
+            if(latitude!=null) return latitude;
+        }
+        return readLatitudeFromLoc(location.opt("loc"));
+    }
+
+    private static Double readLongitude(JSONObject location){
+        Double longitude=readLongitudeFromObject(location);
+        if(longitude!=null) return longitude;
+
+        JSONObject coordinates=location.optJSONObject("coordinates");
+        if(coordinates!=null){
+            longitude=readLongitudeFromObject(coordinates);
+            if(longitude!=null) return longitude;
+            longitude=readLongitudeFromLoc(coordinates.opt("loc"));
+            if(longitude!=null) return longitude;
+        }
+        return readLongitudeFromLoc(location.opt("loc"));
+    }
+
+    private static Double readLatitudeFromObject(JSONObject object){
+        return readBoundedCoordinate(object,-90.0,90.0,"latitude","lat");
+    }
+
+    private static Double readLongitudeFromObject(JSONObject object){
+        return readBoundedCoordinate(object,-180.0,180.0,"longitude","lon","lng");
+    }
+
+    private static Double readBoundedCoordinate(JSONObject object,double minimum,double maximum,String... names){
         for(String name:names){
             if(object.has(name)){
-                Double coordinate=parseCoordinate(object.opt(name));
+                Double coordinate=parseCoordinate(object.opt(name),minimum,maximum);
                 if(coordinate!=null) return coordinate;
             }
         }
         return null;
     }
 
-    private static Double parseCoordinate(Object value){
+    private static Double readLatitudeFromLoc(Object locValue){
+        String[] parts=splitLoc(locValue);
+        return parts==null?null:parseCoordinate(parts[0],-90.0,90.0);
+    }
+
+    private static Double readLongitudeFromLoc(Object locValue){
+        String[] parts=splitLoc(locValue);
+        return parts==null?null:parseCoordinate(parts[1],-180.0,180.0);
+    }
+
+    private static String[] splitLoc(Object locValue){
+        if(!(locValue instanceof String)) return null;
+        String loc=cleanText(locValue);
+        if(loc.isEmpty()) return null;
+        String[] parts=loc.split(",",-1);
+        return parts.length>=2?parts:null;
+    }
+
+    private static Double parseCoordinate(Object value,double minimum,double maximum){
         if(value instanceof Number){
             double coordinate=((Number)value).doubleValue();
-            return Double.isNaN(coordinate)||Double.isInfinite(coordinate)?null:coordinate;
+            if(Double.isNaN(coordinate)||Double.isInfinite(coordinate)) return null;
+            return coordinate>=minimum&&coordinate<=maximum?coordinate:null;
         }
         if(value instanceof String){
             try{
                 double coordinate=Double.parseDouble(((String)value).trim());
-                return Double.isNaN(coordinate)||Double.isInfinite(coordinate)?null:coordinate;
+                if(Double.isNaN(coordinate)||Double.isInfinite(coordinate)) return null;
+                return coordinate>=minimum&&coordinate<=maximum?coordinate:null;
             }catch(NumberFormatException ignored){}
         }
         return null;

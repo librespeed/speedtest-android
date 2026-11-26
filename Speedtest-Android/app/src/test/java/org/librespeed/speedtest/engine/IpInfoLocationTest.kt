@@ -123,28 +123,151 @@ class IpInfoLocationTest {
     }
 
     @Test
-    fun malformedOrIncompleteLocationKeepsLegacyText() {
+    fun placeMetadataRemainsUsableWithoutCoordinates() {
+        val processed = "203.0.113.20 - Legacy ISP"
+        val fullPlace = JSONObject()
+            .put("processedString", processed)
+            .put("location", JSONObject()
+                .put("city", "Testville")
+                .put("region", "Testshire")
+                .put("countryName", "Testland"))
+            .toString()
+        assertEquals(
+            "$processed\nApproximate IP-derived location: Testville, Testshire, Testland",
+            IpInfoParser.formatDisplayString(fullPlace)
+        )
+
+        val countryOnly = JSONObject()
+            .put("processedString", processed)
+            .put("location", JSONObject()
+                .put("countryName", "United States"))
+            .toString()
+        assertEquals(
+            "$processed\nApproximate IP-derived location: United States",
+            IpInfoParser.formatDisplayString(countryOnly)
+        )
+
+        val regionAndCountry = JSONObject()
+            .put("processedString", processed)
+            .put("location", JSONObject()
+                .put("region", "Testshire")
+                .put("country", "US"))
+            .toString()
+        assertEquals(
+            "$processed\nApproximate IP-derived location: Testshire, US",
+            IpInfoParser.formatDisplayString(regionAndCountry)
+        )
+
+        val cityAndCountry = JSONObject()
+            .put("processedString", processed)
+            .put("location", JSONObject()
+                .put("city", "Testville")
+                .put("country", "US"))
+            .toString()
+        assertEquals(
+            "$processed\nApproximate IP-derived location: Testville, US",
+            IpInfoParser.formatDisplayString(cityAndCountry)
+        )
+
+        val malformedLoc = JSONObject()
+            .put("processedString", processed)
+            .put("location", JSONObject()
+                .put("city", "Testville")
+                .put("region", "Testshire")
+                .put("countryName", "Testland")
+                .put("loc", "not-a-coordinate"))
+            .toString()
+        assertEquals(
+            "$processed\nApproximate IP-derived location: Testville, Testshire, Testland",
+            IpInfoParser.formatDisplayString(malformedLoc)
+        )
+    }
+
+    @Test
+    fun coordinatesRemainUsableWithoutPlace() {
+        val processed = "203.0.113.29 - Legacy ISP"
+        val payload = JSONObject()
+            .put("processedString", processed)
+            .put("location", JSONObject()
+                .put("latitude", 38.1234)
+                .put("longitude", -77.1234))
+            .toString()
+
+        assertEquals(
+            "$processed\nLatitude/longitude: 38.1234, -77.1234",
+            IpInfoParser.formatDisplayString(payload)
+        )
+    }
+
+    @Test
+    fun invalidPrimaryCoordinatesFallBackToAliasesNestedAndLoc() {
+        val processed = "203.0.113.30 - Legacy ISP"
+        val aliasPayload = JSONObject()
+            .put("processedString", processed)
+            .put("location", JSONObject()
+                .put("city", "Testville")
+                .put("region", "Testshire")
+                .put("countryName", "Testland")
+                .put("latitude", 91)
+                .put("lat", 38.1234)
+                .put("longitude", 181)
+                .put("lon", -77.1234))
+            .toString()
+        assertEquals(
+            "$processed\nApproximate IP-derived location: Testville, Testshire, Testland\n" +
+                "Latitude/longitude: 38.1234, -77.1234",
+            IpInfoParser.formatDisplayString(aliasPayload)
+        )
+
+        val nestedPayload = JSONObject()
+            .put("processedString", processed)
+            .put("location", JSONObject()
+                .put("city", "Testville")
+                .put("region", "Testshire")
+                .put("countryName", "Testland")
+                .put("latitude", 91)
+                .put("longitude", 181)
+                .put("coordinates", JSONObject()
+                    .put("latitude", 36.6676)
+                    .put("longitude", -78.3875)))
+            .toString()
+        assertEquals(
+            "$processed\nApproximate IP-derived location: Testville, Testshire, Testland\n" +
+                "Latitude/longitude: 36.6676, -78.3875",
+            IpInfoParser.formatDisplayString(nestedPayload)
+        )
+
+        val locPayload = JSONObject()
+            .put("processedString", processed)
+            .put("location", JSONObject()
+                .put("city", "Testville")
+                .put("region", "Testshire")
+                .put("countryName", "Testland")
+                .put("latitude", 91)
+                .put("longitude", 181)
+                .put("loc", "35.1,-79.2"))
+            .toString()
+        assertEquals(
+            "$processed\nApproximate IP-derived location: Testville, Testshire, Testland\n" +
+                "Latitude/longitude: 35.1, -79.2",
+            IpInfoParser.formatDisplayString(locPayload)
+        )
+    }
+
+    @Test
+    fun malformedPayloadKeepsLegacyText() {
         val processed = "203.0.113.20 - Legacy ISP"
         val cases = listOf(
             JSONObject().put("processedString", processed).toString(),
             JSONObject().put("processedString", processed)
-                .put("location", JSONObject().put("city", "Only a city").put("latitude", 10).put("longitude", 20))
-                .toString(),
-            JSONObject().put("processedString", processed)
                 .put("location", JSONObject()
-                    .put("city", "Testville")
-                    .put("region", "Testshire")
-                    .put("countryName", "Testland")
-                    .put("latitude", 91)
-                    .put("longitude", 20))
-                .toString(),
-            JSONObject().put("processedString", processed)
-                .put("location", JSONObject()
-                    .put("city", "Testville")
-                    .put("region", "Testshire")
-                    .put("countryName", "Testland")
                     .put("latitude", "NaN")
-                    .put("longitude", 20))
+                    .put("longitude", "Infinity"))
+                .toString(),
+            JSONObject().put("processedString", processed)
+                .put("location", JSONObject()
+                    .put("latitude", 91)
+                    .put("longitude", 181))
                 .toString()
         )
 
