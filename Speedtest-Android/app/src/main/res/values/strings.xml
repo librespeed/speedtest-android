@@ -56,6 +56,8 @@
     <string name="detail_server">Server</string>
     <string name="detail_protocol">Protocol</string>
     <string name="detail_ip">IP address</string>
+    <string name="detail_ip_location">Approximate IP-derived location</string>
+    <string name="detail_ip_coordinates">Latitude/longitude</string>
 
     <string name="settings_section_display">Display</string>
     <string name="settings_section_telemetry">Telemetry</string>

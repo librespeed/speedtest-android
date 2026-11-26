@@ -75,6 +75,7 @@ import org.librespeed.speedtest.data.GeoDistance
 import org.librespeed.speedtest.data.HistoryDatabase
 import org.librespeed.speedtest.data.HistoryEntry
 import org.librespeed.speedtest.data.TestStats
+import org.librespeed.speedtest.data.parseIpInfoDisplay
 import org.librespeed.speedtest.share.ShareResult
 import org.librespeed.speedtest.ui.components.Sparkline
 import org.librespeed.speedtest.ui.history.formatDate
@@ -113,7 +114,7 @@ fun ResultScreen(
             ShareResult.buildText(
                 context, result.server, result.download, result.upload, result.ping,
                 result.jitter, result.loss, useMBytes, result.shareUrl,
-                result.networkType, result.ipVersion
+                result.networkType, result.ipVersion, result.ipInfo
             )
         )
     }
@@ -239,7 +240,22 @@ fun ResultScreen(
                         RowDivider()
                     }
                     result.ipInfo?.takeIf { it.isNotBlank() }?.let { info ->
-                        DetailRow(stringResource(R.string.detail_ip), info.substringBefore(" - ").trim(), Icons.Filled.MyLocation)
+                        val display = parseIpInfoDisplay(info)
+                        if (display.ip.isNotEmpty()) {
+                            DetailRow(stringResource(R.string.detail_ip), display.ip, Icons.Filled.MyLocation)
+                        }
+                        display.isp?.let {
+                            RowDivider()
+                            DetailRow(stringResource(R.string.detail_isp), it, Icons.Filled.Public)
+                        }
+                        display.location?.let {
+                            RowDivider()
+                            DetailRow(stringResource(R.string.detail_ip_location), it, Icons.Filled.Public)
+                        }
+                        display.coordinates?.let {
+                            RowDivider()
+                            DetailRow(stringResource(R.string.detail_ip_coordinates), it, Icons.Filled.MyLocation)
+                        }
                         RowDivider()
                     }
                     DetailRow(stringResource(R.string.detail_client), "Android ${android.os.Build.VERSION.RELEASE}", Icons.Filled.PhoneAndroid)

@@ -56,6 +56,8 @@
     <string name="detail_server">Server</string>
     <string name="detail_protocol">Protokol</string>
     <string name="detail_ip">IP adresa</string>
+    <string name="detail_ip_location">Přibližná poloha odvozená z IP</string>
+    <string name="detail_ip_coordinates">Zeměpisná šířka/délka</string>
 
     <string name="settings_section_display">Zobrazení</string>
     <string name="settings_section_telemetry">Telemetrie</string>

@@ -1,13 +1,12 @@
 package com.fdossena.speedtest.core.worker;
 
-import org.json.JSONObject;
-
 import com.fdossena.speedtest.core.base.Connection;
 import com.fdossena.speedtest.core.base.Utils;
 import com.fdossena.speedtest.core.config.SpeedtestConfig;
 import com.fdossena.speedtest.core.config.TelemetryConfig;
 import com.fdossena.speedtest.core.download.DownloadStream;
 import com.fdossena.speedtest.core.getIP.GetIP;
+import com.fdossena.speedtest.core.getIP.IpInfoParser;
 import com.fdossena.speedtest.core.log.Logger;
 import com.fdossena.speedtest.core.ping.PingStream;
 import com.fdossena.speedtest.core.serverSelector.TestPoint;
@@ -79,9 +78,7 @@ public abstract class SpeedtestWorker extends Thread{
                 @Override
                 public void onDataReceived(String data) {
                     ipIsp=data;
-                    try{
-                        data=new JSONObject(data).getString("processedString");
-                    }catch (Throwable t){}
+                    data=IpInfoParser.formatDisplayString(data);
                     log.l("GetIP: "+ data+ " (took "+(System.currentTimeMillis()-start)+"ms)");
                     onIPInfoUpdate(data);
                 }
