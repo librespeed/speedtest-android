@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import org.librespeed.speedtest.R
 import org.librespeed.speedtest.data.GeoDistance
+import org.librespeed.speedtest.data.parseIpInfoDisplay
 import java.util.Locale
 
 object ShareResult {
@@ -38,7 +39,8 @@ object ShareResult {
         useMBytes: Boolean,
         shareUrl: String?,
         networkType: String? = null,
-        ipVersion: Int = 0
+        ipVersion: Int = 0,
+        ipInfo: String? = null
     ): String {
         val unit = context.getString(if (useMBytes) R.string.unit_mbytes else R.string.unit_mbps)
         fun speed(value: Double) =
@@ -63,6 +65,18 @@ object ShareResult {
             if (ipVersion != 0) {
                 appendLine(context.getString(R.string.share_text_protocol, ipVersion))
             }
+            parseIpInfoDisplay(ipInfo).let { display ->
+                if (display.ip.isNotEmpty()) {
+                    appendLine(context.getString(R.string.detail_ip)+": "+display.ip)
+                }
+                display.isp?.let { appendLine(context.getString(R.string.detail_isp)+": "+it) }
+                display.location?.let {
+                    appendLine(context.getString(R.string.detail_ip_location)+": "+it)
+                }
+                display.coordinates?.let {
+                    appendLine(context.getString(R.string.detail_ip_coordinates)+": "+it)
+                }
+            }
             shareUrl?.let { appendLine(it) }
         }.trimEnd()
     }
@@ -78,9 +92,10 @@ object ShareResult {
         useMBytes: Boolean,
         shareUrl: String?,
         networkType: String? = null,
-        ipVersion: Int = 0
+        ipVersion: Int = 0,
+        ipInfo: String? = null
     ) {
-        val text = buildText(context, server, download, upload, ping, jitter, loss, useMBytes, shareUrl, networkType, ipVersion)
+        val text = buildText(context, server, download, upload, ping, jitter, loss, useMBytes, shareUrl, networkType, ipVersion, ipInfo)
         val intent = Intent(Intent.ACTION_SEND).apply {
             type = "text/plain"
             putExtra(Intent.EXTRA_TEXT, text)

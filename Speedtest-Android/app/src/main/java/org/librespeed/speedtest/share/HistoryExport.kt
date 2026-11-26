@@ -7,6 +7,7 @@ import org.json.JSONArray
 import org.json.JSONObject
 import org.librespeed.speedtest.R
 import org.librespeed.speedtest.data.HistoryEntry
+import org.librespeed.speedtest.data.parseIpInfoDisplay
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -21,9 +22,10 @@ object HistoryExport {
         share(context, buildJson(entries), "librespeed-history.json", "application/json")
 
     fun buildCsv(entries: List<HistoryEntry>): String = buildString {
-        appendLine("date,server,network,protocol,download_mbps,upload_mbps,ping_ms,jitter_ms,loss_pct,loaded_down_ms,loaded_up_ms,duration_s,mode")
+        appendLine("date,server,network,protocol,download_mbps,upload_mbps,ping_ms,jitter_ms,loss_pct,loaded_down_ms,loaded_up_ms,duration_s,mode,ip_address,provider,approximate_location,coordinates")
         val format = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US)
         entries.forEach { entry ->
+            val ipDisplay=parseIpInfoDisplay(entry.ipInfo)
             appendLine(
                 listOf(
                     format.format(Date(entry.date)),
@@ -38,7 +40,11 @@ object HistoryExport {
                     if (entry.loadedDown >= 0) entry.loadedDown.num() else "",
                     if (entry.loadedUp >= 0) entry.loadedUp.num() else "",
                     if (entry.durationMs > 0) (entry.durationMs / 1000.0).num() else "",
-                    entry.mode.orEmpty().csv()
+                    entry.mode.orEmpty().csv(),
+                    ipDisplay.ip.csv(),
+                    ipDisplay.isp.orEmpty().csv(),
+                    ipDisplay.location.orEmpty().csv(),
+                    ipDisplay.coordinates.orEmpty().csv()
                 ).joinToString(",")
             )
         }
@@ -61,6 +67,12 @@ object HistoryExport {
                 if (entry.loadedUp >= 0) put("loaded_up_ms", entry.loadedUp)
                 if (entry.durationMs > 0) put("duration_ms", entry.durationMs)
                 entry.mode?.let { put("mode", it) }
+                parseIpInfoDisplay(entry.ipInfo).let { ipDisplay ->
+                    if(ipDisplay.ip.isNotEmpty()) put("ip_address",ipDisplay.ip)
+                    ipDisplay.isp?.let { put("provider",it) }
+                    ipDisplay.location?.let { put("approximate_location",it) }
+                    ipDisplay.coordinates?.let { put("coordinates",it) }
+                }
             })
         }
         return array.toString(2)

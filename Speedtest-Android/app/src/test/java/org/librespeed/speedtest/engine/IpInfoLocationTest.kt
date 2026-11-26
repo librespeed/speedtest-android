@@ -219,6 +219,22 @@ class IpInfoLocationTest {
             IpInfoParser.formatDisplayString(aliasPayload)
         )
 
+        val mixedSourcesPayload = JSONObject()
+            .put("processedString", processed)
+            .put("location", JSONObject()
+                .put("city", "Testville")
+                .put("region", "Testshire")
+                .put("countryName", "Testland")
+                .put("latitude", 91)
+                .put("longitude", -77.1234)
+                .put("loc", "36.6676,-78.3875"))
+            .toString()
+        assertEquals(
+            "$processed\nApproximate IP-derived location: Testville, Testshire, Testland\n" +
+                "Latitude/longitude: 36.6676, -78.3875",
+            IpInfoParser.formatDisplayString(mixedSourcesPayload)
+        )
+
         val nestedPayload = JSONObject()
             .put("processedString", processed)
             .put("location", JSONObject()

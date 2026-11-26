@@ -43,71 +43,57 @@ public final class IpInfoParser {
         String country=cleanText(readText(location,"country","countryCode","country_code"));
         String place=formatPlace(city,region,countryName.isEmpty()?country:countryName);
 
-        Double latitude=readLatitude(location);
-        Double longitude=readLongitude(location);
+        CoordinatePair coordinates=readCoordinatePair(location);
 
-        if(place.isEmpty()&&latitude==null&&longitude==null) return null;
+        if(place.isEmpty()&&coordinates==null) return null;
         return new LocationInfo(
                 place,
-                latitude==null?"":formatCoordinate(latitude),
-                longitude==null?"":formatCoordinate(longitude)
+                coordinates==null?"":formatCoordinate(coordinates.latitude),
+                coordinates==null?"":formatCoordinate(coordinates.longitude)
         );
     }
 
-    private static Double readLatitude(JSONObject location){
-        Double latitude=readLatitudeFromObject(location);
-        if(latitude!=null) return latitude;
-
+    private static CoordinatePair readCoordinatePair(JSONObject location){
+        CoordinatePair pair=readCoordinatePairFromObject(location);
+        if(pair!=null) return pair;
         JSONObject coordinates=location.optJSONObject("coordinates");
         if(coordinates!=null){
-            latitude=readLatitudeFromObject(coordinates);
-            if(latitude!=null) return latitude;
-            latitude=readLatitudeFromLoc(coordinates.opt("loc"));
-            if(latitude!=null) return latitude;
+            pair=readCoordinatePairFromObject(coordinates);
+            if(pair!=null) return pair;
+            pair=readCoordinatePairFromLoc(coordinates.opt("loc"));
+            if(pair!=null) return pair;
         }
-        return readLatitudeFromLoc(location.opt("loc"));
+        return readCoordinatePairFromLoc(location.opt("loc"));
     }
 
-    private static Double readLongitude(JSONObject location){
-        Double longitude=readLongitudeFromObject(location);
-        if(longitude!=null) return longitude;
-
-        JSONObject coordinates=location.optJSONObject("coordinates");
-        if(coordinates!=null){
-            longitude=readLongitudeFromObject(coordinates);
-            if(longitude!=null) return longitude;
-            longitude=readLongitudeFromLoc(coordinates.opt("loc"));
-            if(longitude!=null) return longitude;
-        }
-        return readLongitudeFromLoc(location.opt("loc"));
+    private static CoordinatePair readCoordinatePairFromObject(JSONObject object){
+        if(object==null) return null;
+        CoordinatePair pair=readCoordinatePair(
+                object.opt("latitude"),object.opt("longitude"),-90.0,90.0,-180.0,180.0);
+        if(pair!=null) return pair;
+        pair=readCoordinatePair(object.opt("lat"),object.opt("lon"),-90.0,90.0,-180.0,180.0);
+        if(pair!=null) return pair;
+        pair=readCoordinatePair(object.opt("lat"),object.opt("lng"),-90.0,90.0,-180.0,180.0);
+        if(pair!=null) return pair;
+        pair=readCoordinatePair(object.opt("latitude"),object.opt("lon"),-90.0,90.0,-180.0,180.0);
+        if(pair!=null) return pair;
+        pair=readCoordinatePair(object.opt("latitude"),object.opt("lng"),-90.0,90.0,-180.0,180.0);
+        if(pair!=null) return pair;
+        return readCoordinatePair(object.opt("lat"),object.opt("longitude"),-90.0,90.0,-180.0,180.0);
     }
 
-    private static Double readLatitudeFromObject(JSONObject object){
-        return readBoundedCoordinate(object,-90.0,90.0,"latitude","lat");
+    private static CoordinatePair readCoordinatePair(Object latitudeValue,Object longitudeValue,
+                                                     double latitudeMinimum,double latitudeMaximum,
+                                                     double longitudeMinimum,double longitudeMaximum){
+        Double latitude=parseCoordinate(latitudeValue,latitudeMinimum,latitudeMaximum);
+        Double longitude=parseCoordinate(longitudeValue,longitudeMinimum,longitudeMaximum);
+        return latitude==null||longitude==null?null:new CoordinatePair(latitude,longitude);
     }
 
-    private static Double readLongitudeFromObject(JSONObject object){
-        return readBoundedCoordinate(object,-180.0,180.0,"longitude","lon","lng");
-    }
-
-    private static Double readBoundedCoordinate(JSONObject object,double minimum,double maximum,String... names){
-        for(String name:names){
-            if(object.has(name)){
-                Double coordinate=parseCoordinate(object.opt(name),minimum,maximum);
-                if(coordinate!=null) return coordinate;
-            }
-        }
-        return null;
-    }
-
-    private static Double readLatitudeFromLoc(Object locValue){
+    private static CoordinatePair readCoordinatePairFromLoc(Object locValue){
         String[] parts=splitLoc(locValue);
-        return parts==null?null:parseCoordinate(parts[0],-90.0,90.0);
-    }
-
-    private static Double readLongitudeFromLoc(Object locValue){
-        String[] parts=splitLoc(locValue);
-        return parts==null?null:parseCoordinate(parts[1],-180.0,180.0);
+        if(parts==null) return null;
+        return readCoordinatePair(parts[0],parts[1],-90.0,90.0,-180.0,180.0);
     }
 
     private static String[] splitLoc(Object locValue){
@@ -180,6 +166,16 @@ public final class IpInfoParser {
     private static String formatCoordinate(Double coordinate){
         if(coordinate==0.0) return "0";
         return Double.toString(coordinate);
+    }
+
+    private static final class CoordinatePair {
+        private final Double latitude;
+        private final Double longitude;
+
+        private CoordinatePair(Double latitude,Double longitude){
+            this.latitude=latitude;
+            this.longitude=longitude;
+        }
     }
 
     private static final class LocationInfo {

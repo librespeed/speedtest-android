@@ -101,4 +101,26 @@ class HistoryExportTest {
         assertFalse(second.has("duration_ms"))
     }
 
+    @Test
+    fun `exports include structured IP metadata`() {
+        val entry = plain.copy(
+            ipInfo = "203.0.113.7 - Example ISP\n" +
+                "Approximate IP-derived location: Testville, Testshire, United States\n" +
+                "Latitude/longitude: 38.1234, -77.1234"
+        )
+
+        val fields = HistoryExport.buildCsv(listOf(entry)).lines()[1]
+            .split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)".toRegex())
+        assertEquals("203.0.113.7", fields[13])
+        assertEquals("Example ISP", fields[14])
+        assertEquals("Testville, Testshire, United States", fields[15].removeSurrounding("\""))
+        assertEquals("38.1234, -77.1234", fields[16].removeSurrounding("\""))
+
+        val parsed = JSONArray(HistoryExport.buildJson(listOf(entry))).getJSONObject(0)
+        assertEquals("203.0.113.7", parsed.getString("ip_address"))
+        assertEquals("Example ISP", parsed.getString("provider"))
+        assertEquals("Testville, Testshire, United States", parsed.getString("approximate_location"))
+        assertEquals("38.1234, -77.1234", parsed.getString("coordinates"))
+    }
+
 }

@@ -57,7 +57,9 @@ class ScreenshotTest {
                 download = 942.31,
                 upload = 487.12,
                 loss = 0.0,
-                ipInfo = "203.0.113.7 - Example ISP",
+                ipInfo = "203.0.113.7 - Example ISP\n" +
+                    "Approximate IP-derived location: Testville, Testshire, United States\n" +
+                    "Latitude/longitude: 38.1234, -77.1234",
                 ipVersion = 4,
                 shareUrl = "https://librespeed.example/results/?id=abc123",
                 networkType = "Wi-Fi 6",

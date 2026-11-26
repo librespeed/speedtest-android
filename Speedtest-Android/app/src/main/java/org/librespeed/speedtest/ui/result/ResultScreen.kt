@@ -114,7 +114,7 @@ fun ResultScreen(
             ShareResult.buildText(
                 context, result.server, result.download, result.upload, result.ping,
                 result.jitter, result.loss, useMBytes, result.shareUrl,
-                result.networkType, result.ipVersion
+                result.networkType, result.ipVersion, result.ipInfo
             )
         )
     }
